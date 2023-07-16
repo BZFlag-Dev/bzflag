@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -21,25 +21,32 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		03071FDC209507250067269F /* licenses in Resources */ = {isa = PBXBuildFile; fileRef = 03071FDB209507250067269F /* licenses */; };
 		030D159D1E496126006FDFA3 /* SimpleTextUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */; };
 		0315BEB51B821C5D00FC7CE0 /* bzfscron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */; };
 		0315BEB61B821C5D00FC7CE0 /* CronJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */; };
-		0315BEB71B821C5D00FC7CE0 /* CronJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 0315BEB21B821C5D00FC7CE0 /* CronJob.h */; };
-		0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */; };
-		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
+		0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
 		031B7C3B1F114F4300A5ED20 /* OpenGLFramebuffer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 031B7C391F114F4300A5ED20 /* OpenGLFramebuffer.cxx */; };
+		031C10682A337866000EED16 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C10672A337866000EED16 /* CoreAudio.framework */; };
+		031C106A2A3378B2000EED16 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C10692A3378B2000EED16 /* AudioToolbox.framework */; };
+		031C106C2A3378ED000EED16 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C106B2A3378ED000EED16 /* CoreHaptics.framework */; };
+		031C106E2A33792B000EED16 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C106D2A33792A000EED16 /* CoreVideo.framework */; };
+		031C10702A337953000EED16 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C106F2A337953000EED16 /* ForceFeedback.framework */; };
+		031C10722A33797B000EED16 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C10712A33797B000EED16 /* GameController.framework */; };
+		031C10742A33799F000EED16 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C10732A33799F000EED16 /* IOKit.framework */; };
+		031C10762A3379E8000EED16 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C10752A3379E8000EED16 /* Carbon.framework */; };
+		031C10782A337A1F000EED16 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C10772A337A1F000EED16 /* Metal.framework */; };
+		031C107C2A337ACB000EED16 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C107B2A337ACB000EED16 /* libiconv.tbd */; };
 		031FBE431DB5A42500DD84DC /* COPYING.MPL in Resources */ = {isa = PBXBuildFile; fileRef = 031FBE421DB5A42500DD84DC /* COPYING.MPL */; };
 		0342A6FF1DD79C1B00D04E4C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
 		0342A7011DD79C4200D04E4C /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
 		0342A7021DD79C4800D04E4C /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
 		0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */; };
 		0342A7041DD79CCB00D04E4C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
-		0347EEB9167AC79B0023D9AD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0357A9F71670BF3A0056C938 /* bzadmin */; };
+		0347EEB9167AC79B0023D9AD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0357A9F71670BF3A0056C938 /* bzadmin */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
-		034E307A1B0C943300E7DDE2 /* modeltool in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0370A4861B0C921A00FEC9F7 /* modeltool */; };
-		034E307B1B0C945000E7DDE2 /* SDL2.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		034E307A1B0C943300E7DDE2 /* modeltool in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0370A4861B0C921A00FEC9F7 /* modeltool */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0357A7C01670AFE30056C938 /* AccessList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554440166C846F008806E9 /* AccessList.cxx */; };
 		0357A7C11670AFE30056C938 /* AutoCompleter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554441166C846F008806E9 /* AutoCompleter.cxx */; };
 		0357A7C21670AFE30056C938 /* Bundle.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554442166C846F008806E9 /* Bundle.cxx */; };
@@ -217,7 +224,6 @@
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
-		037D645620A1EB25000E5586 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 037D645520A1EB25000E5586 /* libGLEW.a */; };
 		037E808C25FDDF6600094715 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 037E808B25FDDF6600094715 /* libresolv.tbd */; };
 		037E808D25FDDF8300094715 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 037E808B25FDDF6600094715 /* libresolv.tbd */; };
 		037E808E25FDDF9E00094715 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 037E808B25FDDF6600094715 /* libresolv.tbd */; };
@@ -337,7 +343,7 @@
 		0394E6C7167B0CFD007F4035 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
 		0394E6C8167B0D04007F4035 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
 		0394E6CA167B0D0B007F4035 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
-		0394E6CE167B0DDA007F4035 /* bzfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E67D167B0AA3007F4035 /* bzfs */; };
+		0394E6CE167B0DDA007F4035 /* bzfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E67D167B0AA3007F4035 /* bzfs */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0394E7CA167B10A2007F4035 /* airspawn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6D9167B1024007F4035 /* airspawn.cpp */; };
 		0394E7E3167B18CF007F4035 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
 		0394E7EC167B1982007F4035 /* autoFlagReset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6E0167B1024007F4035 /* autoFlagReset.cpp */; };
@@ -374,37 +380,36 @@
 		0394E944167B2BE6007F4035 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		0394E945167B2C19007F4035 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		0394E946167B2C34007F4035 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
-		0394E948167B2D00007F4035 /* airspawn.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E6D3167B0F74007F4035 /* airspawn.dylib */; };
-		0394E949167B2D00007F4035 /* autoFlagReset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7E8167B196F007F4035 /* autoFlagReset.dylib */; };
-		0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7F3167B1A17007F4035 /* chathistory.dylib */; };
-		0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7FE167B1E66007F4035 /* customflagsample.dylib */; };
-		0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E809167B1ECE007F4035 /* fairCTF.dylib */; };
-		0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E814167B1F76007F4035 /* fastmap.dylib */; };
-		0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E81F167B1FFD007F4035 /* flagstay.dylib */; };
-		0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E835167B2132007F4035 /* HoldTheFlag.dylib */; };
-		0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E840167B2225007F4035 /* keepaway.dylib */; };
-		0394E952167B2D00007F4035 /* killall.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E84B167B228D007F4035 /* killall.dylib */; };
-		0394E953167B2D00007F4035 /* koth.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E856167B22E0007F4035 /* koth.dylib */; };
-		0394E954167B2D00007F4035 /* logDetail.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E869167B2360007F4035 /* logDetail.dylib */; };
-		0394E955167B2D00007F4035 /* nagware.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E874167B23B4007F4035 /* nagware.dylib */; };
-		0394E956167B2D00007F4035 /* Phoenix.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E87F167B2447007F4035 /* Phoenix.dylib */; };
-		0394E957167B2D00007F4035 /* playHistoryTracker.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E88A167B2494007F4035 /* playHistoryTracker.dylib */; };
-		0394E959167B2D00007F4035 /* rabbitTimer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */; };
-		0394E95A167B2D00007F4035 /* rabidRabbit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8B9167B2647007F4035 /* rabidRabbit.dylib */; };
-		0394E95B167B2D00007F4035 /* recordmatch.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8C4167B26B2007F4035 /* recordmatch.dylib */; };
-		0394E95C167B2D00007F4035 /* regFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8CF167B26E2007F4035 /* regFlag.dylib */; };
-		0394E95D167B2D00007F4035 /* RogueGenocide.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8DA167B272C007F4035 /* RogueGenocide.dylib */; };
-		0394E95E167B2D00007F4035 /* SAMPLE_PLUGIN.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8E5167B27A2007F4035 /* SAMPLE_PLUGIN.dylib */; };
-		0394E95F167B2D00007F4035 /* serverControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8F0167B27F7007F4035 /* serverControl.dylib */; };
-		0394E960167B2D00007F4035 /* shockwaveDeath.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8FB167B284B007F4035 /* shockwaveDeath.dylib */; };
-		0394E961167B2D00007F4035 /* teamflagreset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E906167B28A4007F4035 /* teamflagreset.dylib */; };
-		0394E962167B2D00007F4035 /* thiefControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E911167B28ED007F4035 /* thiefControl.dylib */; };
-		0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E91C167B293E007F4035 /* timedctf.dylib */; };
-		0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* TimeLimit.dylib */; };
-		0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwzones.dylib */; };
+		0394E948167B2D00007F4035 /* airspawn.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E6D3167B0F74007F4035 /* airspawn.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E949167B2D00007F4035 /* autoFlagReset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7E8167B196F007F4035 /* autoFlagReset.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7F3167B1A17007F4035 /* chathistory.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7FE167B1E66007F4035 /* customflagsample.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E809167B1ECE007F4035 /* fairCTF.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E814167B1F76007F4035 /* fastmap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E81F167B1FFD007F4035 /* flagstay.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E835167B2132007F4035 /* HoldTheFlag.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E840167B2225007F4035 /* keepaway.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E952167B2D00007F4035 /* killall.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E84B167B228D007F4035 /* killall.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E953167B2D00007F4035 /* koth.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E856167B22E0007F4035 /* koth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E954167B2D00007F4035 /* logDetail.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E869167B2360007F4035 /* logDetail.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E955167B2D00007F4035 /* nagware.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E874167B23B4007F4035 /* nagware.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E956167B2D00007F4035 /* Phoenix.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E87F167B2447007F4035 /* Phoenix.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E957167B2D00007F4035 /* playHistoryTracker.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E88A167B2494007F4035 /* playHistoryTracker.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E959167B2D00007F4035 /* rabbitTimer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E95A167B2D00007F4035 /* rabidRabbit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8B9167B2647007F4035 /* rabidRabbit.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E95B167B2D00007F4035 /* recordmatch.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8C4167B26B2007F4035 /* recordmatch.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E95C167B2D00007F4035 /* regFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8CF167B26E2007F4035 /* regFlag.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E95D167B2D00007F4035 /* RogueGenocide.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8DA167B272C007F4035 /* RogueGenocide.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E95E167B2D00007F4035 /* SAMPLE_PLUGIN.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8E5167B27A2007F4035 /* SAMPLE_PLUGIN.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E95F167B2D00007F4035 /* serverControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8F0167B27F7007F4035 /* serverControl.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E960167B2D00007F4035 /* shockwaveDeath.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8FB167B284B007F4035 /* shockwaveDeath.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E961167B2D00007F4035 /* teamflagreset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E906167B28A4007F4035 /* teamflagreset.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E962167B2D00007F4035 /* thiefControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E911167B28ED007F4035 /* thiefControl.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E91C167B293E007F4035 /* timedctf.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* TimeLimit.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwzones.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
 		0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
-		03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; };
 		03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FD166C846F008806E9 /* FontManager.cxx */; };
 		03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FE166C846F008806E9 /* ImageFont.cxx */; };
 		03C5E82D1670A98C005A26C4 /* TextureFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554302166C846F008806E9 /* TextureFont.cxx */; };
@@ -510,20 +515,17 @@
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
 		03CC33EF1E3D4B7E00CF55BC /* VotingArbiter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03CC33EC1E3D4A8A00CF55BC /* VotingArbiter.cxx */; };
 		03D479281BC73EED00C906A8 /* ServerListFilterMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03D479261BC73EED00C906A8 /* ServerListFilterMenu.cxx */; };
-		03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
-		03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9BB1B30E12300711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
 		03DBE9BC1B30E12F00711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
 		03DBE9BD1B30E13100711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
-		03DBE9BE1B30E77D00711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
-		03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */; };
+		03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		03FA7435174260CB00573D2D /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */; };
 		03FA7436174260D700573D2D /* serverSidePlayerSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */; };
 		C333EFD41E2B9F5500B4B182 /* customPollTypeSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */; };
-		C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */; };
+		C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C353B1E71AE23CA900C5AED5 /* CustomZoneSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */; };
 		C38E766527F9062B00EC312C /* CustomZoneSample.bzw in Copy Files (1 item) */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
-		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; };
+		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C3DE232E21E2FBDD0081B64E /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
@@ -956,16 +958,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0394E96C167B36DC007F4035 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				034E307B1B0C945000E7DDE2 /* SDL2.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C38E766427F9061F00EC312C /* Copy Files (1 item) */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1128,17 +1120,26 @@
 		0305D5FF166C9DAE00557FC4 /* WordFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordFilter.h; sourceTree = "<group>"; };
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
-		03071FDB209507250067269F /* licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = licenses; sourceTree = "<group>"; };
-		030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SimpleTextUtils.cxx; path = ../tools/modeltool/SimpleTextUtils.cxx; sourceTree = "<group>"; };
-		030D159B1E49610E006FDFA3 /* SimpleTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleTextUtils.h; path = ../tools/modeltool/SimpleTextUtils.h; sourceTree = "<group>"; };
+		030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleTextUtils.cxx; sourceTree = "<group>"; };
+		030D159B1E49610E006FDFA3 /* SimpleTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleTextUtils.h; sourceTree = "<group>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
 		0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = bzfscron.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzfscron.cpp; path = bzfscron/bzfscron.cpp; sourceTree = "<group>"; };
-		0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CronJob.cpp; path = bzfscron/CronJob.cpp; sourceTree = "<group>"; };
-		0315BEB21B821C5D00FC7CE0 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CronJob.h; path = bzfscron/CronJob.h; sourceTree = "<group>"; };
+		0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bzfscron.cpp; sourceTree = "<group>"; };
+		0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CronJob.cpp; sourceTree = "<group>"; };
+		0315BEB21B821C5D00FC7CE0 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronJob.h; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		031B7C391F114F4300A5ED20 /* OpenGLFramebuffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenGLFramebuffer.cxx; sourceTree = "<group>"; };
 		031B7C3C1F11563F00A5ED20 /* OpenGLFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLFramebuffer.h; sourceTree = "<group>"; };
+		031C10672A337866000EED16 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		031C10692A3378B2000EED16 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		031C106B2A3378ED000EED16 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
+		031C106D2A33792A000EED16 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		031C106F2A337953000EED16 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
+		031C10712A33797B000EED16 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		031C10732A33799F000EED16 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		031C10752A3379E8000EED16 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		031C10772A337A1F000EED16 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		031C107B2A337ACB000EED16 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		031FBE421DB5A42500DD84DC /* COPYING.MPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.MPL; path = ../COPYING.MPL; sourceTree = "<group>"; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		035542FD166C846F008806E9 /* FontManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontManager.cxx; sourceTree = "<group>"; };
@@ -1645,15 +1646,14 @@
 		0357A9F71670BF3A0056C938 /* bzadmin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bzadmin; sourceTree = BUILT_PRODUCTS_DIR; };
 		0358E67B1BF849EB001FF056 /* ServerListFilterHelpMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerListFilterHelpMenu.cxx; sourceTree = "<group>"; };
 		0358E67C1BF849EB001FF056 /* ServerListFilterHelpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListFilterHelpMenu.h; sourceTree = "<group>"; };
-		0370A4681B0C8FBA00FEC9F7 /* model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = model.h; path = ../tools/modeltool/model.h; sourceTree = "<group>"; };
-		0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modeltool.cxx; path = ../tools/modeltool/modeltool.cxx; sourceTree = "<group>"; };
-		0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Q3BSP.cxx; path = ../tools/modeltool/Q3BSP.cxx; sourceTree = "<group>"; };
-		0370A46B1B0C8FBA00FEC9F7 /* Q3BSP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Q3BSP.h; path = ../tools/modeltool/Q3BSP.h; sourceTree = "<group>"; };
-		0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wavefrontOBJ.cxx; path = ../tools/modeltool/wavefrontOBJ.cxx; sourceTree = "<group>"; };
-		0370A46D1B0C8FBA00FEC9F7 /* wavefrontOBJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavefrontOBJ.h; path = ../tools/modeltool/wavefrontOBJ.h; sourceTree = "<group>"; };
+		0370A4681B0C8FBA00FEC9F7 /* model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = model.h; sourceTree = "<group>"; };
+		0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = modeltool.cxx; sourceTree = "<group>"; };
+		0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Q3BSP.cxx; sourceTree = "<group>"; };
+		0370A46B1B0C8FBA00FEC9F7 /* Q3BSP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Q3BSP.h; sourceTree = "<group>"; };
+		0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wavefrontOBJ.cxx; sourceTree = "<group>"; };
+		0370A46D1B0C8FBA00FEC9F7 /* wavefrontOBJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavefrontOBJ.h; sourceTree = "<group>"; };
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
-		037D645520A1EB25000E5586 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = /usr/local/lib/libGLEW.a; sourceTree = "<absolute>"; };
 		037E808B25FDDF6600094715 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		038D05E41DB5A59300A00C9E /* COPYING.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.LGPL; path = ../COPYING.LGPL; sourceTree = "<group>"; };
@@ -1662,8 +1662,8 @@
 		038DA4DE1BB646030009F369 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
 		038DA4E31BB649130009F369 /* README.airspawn.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.airspawn.txt; sourceTree = "<group>"; };
 		038DA4E51BB6493D0009F369 /* README.autoFlagReset.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.autoFlagReset.txt; sourceTree = "<group>"; };
-		038DA4E71BB649640009F369 /* bzfscron.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bzfscron.cfg; path = bzfscron/bzfscron.cfg; sourceTree = "<group>"; };
-		038DA4E81BB649640009F369 /* README.bzfscron.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.bzfscron.txt; path = bzfscron/README.bzfscron.txt; sourceTree = "<group>"; };
+		038DA4E71BB649640009F369 /* bzfscron.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bzfscron.cfg; sourceTree = "<group>"; };
+		038DA4E81BB649640009F369 /* README.bzfscron.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.bzfscron.txt; sourceTree = "<group>"; };
 		038DA4EB1BB6498D0009F369 /* README.chathistory.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.chathistory.txt; sourceTree = "<group>"; };
 		038DA4ED1BB649A90009F369 /* README.customflagsample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.customflagsample.txt; sourceTree = "<group>"; };
 		038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.CustomZoneSample.txt; sourceTree = "<group>"; };
@@ -1692,7 +1692,7 @@
 		038DA5211BB64E310009F369 /* README.SAMPLE_PLUGIN.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.SAMPLE_PLUGIN.txt; sourceTree = "<group>"; };
 		038DA5231BB64E470009F369 /* README.serverControl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.serverControl.txt; sourceTree = "<group>"; };
 		038DA5241BB64E470009F369 /* serverControl.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = serverControl.cfg; sourceTree = "<group>"; };
-		038DA5271BB64E5D0009F369 /* README.serverSidePlayerSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.serverSidePlayerSample.txt; path = ../plugins/serverSidePlayerSample/README.serverSidePlayerSample.txt; sourceTree = "<group>"; };
+		038DA5271BB64E5D0009F369 /* README.serverSidePlayerSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.serverSidePlayerSample.txt; sourceTree = "<group>"; };
 		038DA5291BB64F090009F369 /* README.shockwaveDeath.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.shockwaveDeath.txt; sourceTree = "<group>"; };
 		038DA52B1BB64F1D0009F369 /* README.superUser.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.superUser.txt; sourceTree = "<group>"; };
 		038DA52C1BB64F1D0009F369 /* superUser.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = superUser.cfg; sourceTree = "<group>"; };
@@ -1775,7 +1775,6 @@
 		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		039708A11DD7991D00C9215C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		039708A21DD7991D00C9215C /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
-		03C338C51AFB59FF00E8F655 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Display.cxx; sourceTree = "<group>"; };
 		03C338C81AFB5AFC00E8F655 /* SDL2Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Display.h; sourceTree = "<group>"; };
 		03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Visual.cxx; sourceTree = "<group>"; };
@@ -1797,7 +1796,6 @@
 		03D88EAB1670CB1300725DBE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../README; sourceTree = "<group>"; };
 		03D88EAC1670CB1300725DBE /* README.MacOSX */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.MacOSX; path = ../README.MacOSX; sourceTree = "<group>"; };
 		03D926DF166C67EF00DDDBEB /* BZFlag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BZFlag.icns; sourceTree = "<group>"; };
-		03DBE9AC1B30D2ED00711E71 /* libcares.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcares.a; path = /usr/local/lib/libcares.a; sourceTree = "<absolute>"; };
 		03DBE9BA1B30E12300711E71 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		03E42D191B322DFC006EE763 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = "<group>"; };
@@ -1811,9 +1809,9 @@
 		C353B1E91AE2490D00C5AED5 /* flagStay.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flagStay.bzw; sourceTree = "<group>"; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
 		DF28982A16B4F5AE006C78AC /* ShotManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotManager.h; sourceTree = "<group>"; };
-		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playerHandler.cpp; path = ../plugins/serverSidePlayerSample/playerHandler.cpp; sourceTree = "<group>"; };
-		DF8950DE16E42CF800BA9DD5 /* playerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = playerHandler.h; path = ../plugins/serverSidePlayerSample/playerHandler.h; sourceTree = "<group>"; };
-		DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = serverSidePlayerSample.cpp; path = ../plugins/serverSidePlayerSample/serverSidePlayerSample.cpp; sourceTree = "<group>"; };
+		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = playerHandler.cpp; sourceTree = "<group>"; };
+		DF8950DE16E42CF800BA9DD5 /* playerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playerHandler.h; sourceTree = "<group>"; };
+		DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serverSidePlayerSample.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1917,10 +1915,9 @@
 				0357AA181670C0FD0056C938 /* libgame.a in Frameworks */,
 				0357AA161670C0EF0056C938 /* libdate.a in Frameworks */,
 				03DBE9BC1B30E12F00711E71 /* Cocoa.framework in Frameworks */,
-				038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */,
 				038DA4E01BB6465E0009F369 /* libcurl.tbd in Frameworks */,
+				038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */,
 				037E808D25FDDF8300094715 /* libresolv.tbd in Frameworks */,
-				03DBE9BE1B30E77D00711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1946,7 +1943,6 @@
 				038DA4E11BB646710009F369 /* libcurl.tbd in Frameworks */,
 				037E808E25FDDF9E00094715 /* libresolv.tbd in Frameworks */,
 				038DA4E21BB646750009F369 /* libz.tbd in Frameworks */,
-				03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2171,7 +2167,6 @@
 				03C8EF11167AC52800BB07A5 /* libcommon.a in Frameworks */,
 				0394E7E3167B18CF007F4035 /* libnet.a in Frameworks */,
 				03C8EF13167AC53000BB07A5 /* libgame.a in Frameworks */,
-				037D645620A1EB25000E5586 /* libGLEW.a in Frameworks */,
 				03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */,
 				03C8EF14167AC53400BB07A5 /* libgeometry.a in Frameworks */,
 				03C8EF15167AC53700BB07A5 /* libobstacle.a in Frameworks */,
@@ -2180,13 +2175,21 @@
 				03C8EF18167AC54C00BB07A5 /* libplatform.a in Frameworks */,
 				03C8EF19167AC55100BB07A5 /* libmediafile.a in Frameworks */,
 				03C8EF1A167AC55800BB07A5 /* libdate.a in Frameworks */,
-				03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */,
+				031C106A2A3378B2000EED16 /* AudioToolbox.framework in Frameworks */,
+				031C10762A3379E8000EED16 /* Carbon.framework in Frameworks */,
 				03DBE9BD1B30E13100711E71 /* Cocoa.framework in Frameworks */,
+				031C10682A337866000EED16 /* CoreAudio.framework in Frameworks */,
+				031C106C2A3378ED000EED16 /* CoreHaptics.framework in Frameworks */,
+				031C106E2A33792B000EED16 /* CoreVideo.framework in Frameworks */,
+				031C10702A337953000EED16 /* ForceFeedback.framework in Frameworks */,
+				031C10722A33797B000EED16 /* GameController.framework in Frameworks */,
+				031C10742A33799F000EED16 /* IOKit.framework in Frameworks */,
+				031C10782A337A1F000EED16 /* Metal.framework in Frameworks */,
 				03C8EF0D167AC50100BB07A5 /* OpenGL.framework in Frameworks */,
 				038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */,
+				031C107C2A337ACB000EED16 /* libiconv.tbd in Frameworks */,
 				037E808C25FDDF6600094715 /* libresolv.tbd in Frameworks */,
 				038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */,
-				03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2381,7 +2384,7 @@
 				0315BEB21B821C5D00FC7CE0 /* CronJob.h */,
 				038DA4E81BB649640009F369 /* README.bzfscron.txt */,
 			);
-			name = bzfscron;
+			path = bzfscron;
 			sourceTree = "<group>";
 		};
 		032F515F166C88650030544C /* Xcode */ = {
@@ -2391,7 +2394,6 @@
 				03D926DF166C67EF00DDDBEB /* BZFlag.icns */,
 				030DF52417424A4D00B3815C /* buildinfo.h */,
 				03C5E79716707857005A26C4 /* config.h */,
-				03071FDB209507250067269F /* licenses */,
 			);
 			name = Xcode;
 			sourceTree = "<group>";
@@ -3054,7 +3056,7 @@
 				0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */,
 				0370A46D1B0C8FBA00FEC9F7 /* wavefrontOBJ.h */,
 			);
-			name = modeltool;
+			path = modeltool;
 			sourceTree = "<group>";
 		};
 		0370A4721B0C900100FEC9F7 /* tools */ = {
@@ -3063,6 +3065,7 @@
 				0370A4711B0C8FCD00FEC9F7 /* modeltool */,
 			);
 			name = tools;
+			path = ../tools;
 			sourceTree = "<group>";
 		};
 		0394E6D7167B1024007F4035 /* plugins */ = {
@@ -3490,15 +3493,22 @@
 		03D935B1166C6C0600DDDBEB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				037E808B25FDDF6600094715 /* libresolv.tbd */,
-				03C338C51AFB59FF00E8F655 /* SDL2.framework */,
+				031C10692A3378B2000EED16 /* AudioToolbox.framework */,
+				031C10752A3379E8000EED16 /* Carbon.framework */,
 				03DBE9BA1B30E12300711E71 /* Cocoa.framework */,
+				031C10672A337866000EED16 /* CoreAudio.framework */,
+				031C106B2A3378ED000EED16 /* CoreHaptics.framework */,
+				031C106D2A33792A000EED16 /* CoreVideo.framework */,
+				031C106F2A337953000EED16 /* ForceFeedback.framework */,
+				031C10712A33797B000EED16 /* GameController.framework */,
+				031C10732A33799F000EED16 /* IOKit.framework */,
+				031C10772A337A1F000EED16 /* Metal.framework */,
 				03835D06166CB12D008CE9C3 /* OpenGL.framework */,
-				038DA4DE1BB646030009F369 /* libncurses.tbd */,
 				038DA4DC1BB645D80009F369 /* libcurl.tbd */,
+				031C107B2A337ACB000EED16 /* libiconv.tbd */,
+				038DA4DE1BB646030009F369 /* libncurses.tbd */,
+				037E808B25FDDF6600094715 /* libresolv.tbd */,
 				038DA4DA1BB645CA0009F369 /* libz.tbd */,
-				03DBE9AC1B30D2ED00711E71 /* libcares.a */,
-				037D645520A1EB25000E5586 /* libGLEW.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3530,8 +3540,7 @@
 				038DA5271BB64E5D0009F369 /* README.serverSidePlayerSample.txt */,
 				DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */,
 			);
-			name = serverSidePlayerSample;
-			path = ../Xcode;
+			path = serverSidePlayerSample;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -3541,7 +3550,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0315BEB71B821C5D00FC7CE0 /* CronJob.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4665,7 +4673,6 @@
 				03C8EE22167ABE2300BB07A5 /* Frameworks */,
 				0347EEB8167AC7940023D9AD /* CopyFiles */,
 				0394E947167B2CF3007F4035 /* CopyFiles */,
-				0394E96C167B36DC007F4035 /* CopyFiles */,
 				03C8EE23167ABE2300BB07A5 /* Resources */,
 				03E42D171B32274A006EE763 /* ShellScript */,
 			);
@@ -4773,7 +4780,7 @@
 		03BFC301166C637600836142 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = BZFlag;
 				TargetAttributes = {
 					0315BEAA1B821BFF00FC7CE0 = {
@@ -4916,7 +4923,6 @@
 				036F58231DA2F8C300BF906C /* AUTHORS in Resources */,
 				036F58241DA2F8C800BF906C /* ChangeLog in Resources */,
 				036F58251DA2F8CC00BF906C /* COPYING in Resources */,
-				03071FDC209507250067269F /* licenses in Resources */,
 				036F58261DA2F8D400BF906C /* README in Resources */,
 				036F58271DA2F90900BF906C /* README.MacOSX in Resources */,
 			);
@@ -4927,6 +4933,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0355E7BC174264DB006E2991 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -4940,6 +4947,7 @@
 		};
 		03E42D171B32274A006EE763 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -4949,7 +4957,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# copy necessary files from data directory into the application package\nRESOURCES_DIR=${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\n\n# textures and sounds\ncp ../data/*.png ${RESOURCES_DIR}/\ncp ../data/*.wav ${RESOURCES_DIR}/\n\n# fonts\nmkdir -p ${RESOURCES_DIR}/fonts\ncp ../data/fonts/*.png ${RESOURCES_DIR}/fonts/\ncp ../data/fonts/*.fmt ${RESOURCES_DIR}/fonts/\ncp ../data/fonts/*.License ${RESOURCES_DIR}/fonts/\ncp ../data/fonts/README ${RESOURCES_DIR}/fonts/\n\n# internationalization files\nmkdir -p ${RESOURCES_DIR}/l10n\ncp ../data/l10n/*.po ${RESOURCES_DIR}/l10n/\ncp ../data/l10n/*.txt ${RESOURCES_DIR}/l10n/\n";
+			shellScript = "# copy necessary files from data directory into the application package\nRESOURCES_DIR=${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\n\n# textures and sounds\ncp ../data/*.png ${RESOURCES_DIR}/\ncp ../data/*.wav ${RESOURCES_DIR}/\n\n# fonts\nmkdir -p ${RESOURCES_DIR}/fonts\ncp ../data/fonts/*.png ${RESOURCES_DIR}/fonts/\ncp ../data/fonts/*.fmt ${RESOURCES_DIR}/fonts/\ncp ../data/fonts/*.License ${RESOURCES_DIR}/fonts/\ncp ../data/fonts/README ${RESOURCES_DIR}/fonts/\n\n# internationalization files\nmkdir -p ${RESOURCES_DIR}/l10n\ncp ../data/l10n/*.po ${RESOURCES_DIR}/l10n/\ncp ../data/l10n/*.txt ${RESOURCES_DIR}/l10n/\n\n# dependency license files\nif [[ -d \"../dependencies/licenses\" ]] ; then\n    mkdir -p ${RESOURCES_DIR}/licenses\n    cp ../dependencies/licenses/*.txt ${RESOURCES_DIR}/licenses/\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5924,32 +5932,6 @@
 		0315BEAC1B821BFF00FC7CE0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -5961,29 +5943,6 @@
 		0315BEAD1B821BFF00FC7CE0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -5995,12 +5954,6 @@
 		0318265A16A0BE2F005050BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6012,8 +5965,6 @@
 		0318265B16A0BE2F005050BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6039,13 +5990,7 @@
 		0357A7BE1670AF8F0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6053,10 +5998,7 @@
 		0357A7BF1670AF8F0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6064,13 +6006,7 @@
 		0357A7ED1670B11B0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6078,10 +6014,7 @@
 		0357A7EE1670B11B0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6089,12 +6022,7 @@
 		0357A7FD1670B1D80056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6102,9 +6030,7 @@
 		0357A7FE1670B1D80056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6112,13 +6038,7 @@
 		0357A81D1670B2990056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6126,10 +6046,7 @@
 		0357A81E1670B2990056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6137,13 +6054,7 @@
 		0357A8361670B39D0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6151,10 +6062,7 @@
 		0357A8371670B39D0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6162,13 +6070,7 @@
 		0357A85D1670B4B70056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6176,10 +6078,7 @@
 		0357A85E1670B4B70056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6187,13 +6086,7 @@
 		0357A8801670B5540056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6201,10 +6094,7 @@
 		0357A8811670B5540056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6212,13 +6102,7 @@
 		0357A8901670B5F50056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6226,10 +6110,7 @@
 		0357A8911670B5F50056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6237,13 +6118,7 @@
 		0357A8AF1670B79E0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6251,10 +6126,7 @@
 		0357A8B01670B79E0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6262,13 +6134,7 @@
 		0357A8C61670B8DE0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6276,10 +6142,7 @@
 		0357A8C71670B8DE0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6287,13 +6150,7 @@
 		0357A8D71670B9930056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6301,10 +6158,7 @@
 		0357A8D81670B9930056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6314,10 +6168,9 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"DEBUG=1",
 					BUILDING_BZADMIN,
 				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-lcares";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6329,7 +6182,7 @@
 					"$(inherited)",
 					BUILDING_BZADMIN,
 				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-lcares";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6337,28 +6190,6 @@
 		0370A48B1B0C921A00FEC9F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6366,25 +6197,6 @@
 		0370A48C1B0C921A00FEC9F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6395,8 +6207,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"INSIDE_BZ=1",
-					"DEBUG=1",
 				);
+				OTHER_LDFLAGS = "-lcares";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6408,6 +6220,7 @@
 					"$(inherited)",
 					"INSIDE_BZ=1",
 				);
+				OTHER_LDFLAGS = "-lcares";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6415,12 +6228,6 @@
 		0394E6D5167B0F74007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6432,8 +6239,6 @@
 		0394E6D6167B0F74007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6445,12 +6250,6 @@
 		0394E7EA167B196F007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6462,8 +6261,6 @@
 		0394E7EB167B196F007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6475,12 +6272,6 @@
 		0394E7F5167B1A17007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6492,8 +6283,6 @@
 		0394E7F6167B1A17007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6505,12 +6294,6 @@
 		0394E800167B1E66007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6522,8 +6305,6 @@
 		0394E801167B1E66007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6535,12 +6316,6 @@
 		0394E80B167B1ECE007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6552,8 +6327,6 @@
 		0394E80C167B1ECE007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6565,12 +6338,6 @@
 		0394E816167B1F76007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6582,8 +6349,6 @@
 		0394E817167B1F76007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6595,12 +6360,6 @@
 		0394E821167B1FFD007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6612,8 +6371,6 @@
 		0394E822167B1FFD007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6625,12 +6382,6 @@
 		0394E837167B2133007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6642,8 +6393,6 @@
 		0394E838167B2133007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6655,12 +6404,6 @@
 		0394E842167B2225007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6672,8 +6415,6 @@
 		0394E843167B2225007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6685,12 +6426,6 @@
 		0394E84D167B228D007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6702,8 +6437,6 @@
 		0394E84E167B228D007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6715,12 +6448,6 @@
 		0394E858167B22E0007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6732,8 +6459,6 @@
 		0394E859167B22E0007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6745,12 +6470,6 @@
 		0394E86B167B2360007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6762,8 +6481,6 @@
 		0394E86C167B2360007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6775,12 +6492,6 @@
 		0394E876167B23B5007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6792,8 +6503,6 @@
 		0394E877167B23B5007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6805,12 +6514,6 @@
 		0394E881167B2447007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6822,8 +6525,6 @@
 		0394E882167B2447007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6835,12 +6536,6 @@
 		0394E88C167B2494007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6852,8 +6547,6 @@
 		0394E88D167B2494007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6865,12 +6558,7 @@
 		0394E897167B2513007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6878,7 +6566,6 @@
 		0394E898167B2513007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -6887,12 +6574,6 @@
 		0394E8B0167B25EA007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6904,8 +6585,6 @@
 		0394E8B1167B25EA007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6917,12 +6596,6 @@
 		0394E8BB167B2647007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6934,8 +6607,6 @@
 		0394E8BC167B2647007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6947,12 +6618,6 @@
 		0394E8C6167B26B2007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6964,8 +6629,6 @@
 		0394E8C7167B26B2007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6977,12 +6640,6 @@
 		0394E8D1167B26E3007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6994,8 +6651,6 @@
 		0394E8D2167B26E3007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7007,12 +6662,6 @@
 		0394E8DC167B272D007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7024,8 +6673,6 @@
 		0394E8DD167B272D007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7037,12 +6684,6 @@
 		0394E8E7167B27A2007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7054,8 +6695,6 @@
 		0394E8E8167B27A2007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7067,12 +6706,6 @@
 		0394E8F2167B27F9007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7084,8 +6717,6 @@
 		0394E8F3167B27F9007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7097,12 +6728,6 @@
 		0394E8FD167B284C007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7114,8 +6739,6 @@
 		0394E8FE167B284C007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7127,12 +6750,6 @@
 		0394E908167B28A5007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7144,8 +6761,6 @@
 		0394E909167B28A5007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7157,12 +6772,6 @@
 		0394E913167B28EE007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7174,8 +6783,6 @@
 		0394E914167B28EE007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7187,12 +6794,6 @@
 		0394E91E167B293F007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7204,8 +6805,6 @@
 		0394E91F167B293F007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7217,12 +6816,6 @@
 		0394E929167B29CD007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7234,8 +6827,6 @@
 		0394E92A167B29CD007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7247,17 +6838,10 @@
 		0394E93F167B2A9F007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
 				);
-				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -7265,13 +6849,10 @@
 		0394E940167B2A9F007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
 				);
-				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -7280,54 +6861,42 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					HAVE_CONFIG_H,
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
-					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
 					BZ_PLUGINS,
 					HAVE_SDL2_SDL_H,
+					GL_SILENCE_DEPRECATION,
 					"DEBUG=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
+					"../dependencies/output-macOS-${CONFIGURATION}-${CURRENT_ARCH}/include",
 					/usr/local/include,
 				);
 				"HEADER_SEARCH_PATHS[arch=arm64]" = (
 					"$(inherited)",
 					/opt/homebrew/include,
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../PlugIns";
+				LIBRARY_SEARCH_PATHS = (
+					"../dependencies/output-macOS-${CONFIGURATION}-${CURRENT_ARCH}/lib",
+					/usr/local/lib,
+				);
 				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
 					"$(inherited)",
 					/opt/homebrew/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-Wno-inconsistent-missing-override",
-				);
-				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};
@@ -7335,65 +6904,47 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					HAVE_CONFIG_H,
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
-					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
 					BZ_PLUGINS,
 					HAVE_SDL2_SDL_H,
+					GL_SILENCE_DEPRECATION,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
+					"../dependencies/output-macOS-${CONFIGURATION}-${CURRENT_ARCH}/include",
 					/usr/local/include,
 				);
 				"HEADER_SEARCH_PATHS[arch=arm64]" = (
 					"$(inherited)",
 					/opt/homebrew/include,
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../PlugIns";
+				LIBRARY_SEARCH_PATHS = (
+					"../dependencies/output-macOS-${CONFIGURATION}-${CURRENT_ARCH}/lib",
+					/usr/local/lib,
+				);
 				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
 					"$(inherited)",
 					/opt/homebrew/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-Wno-inconsistent-missing-override",
-				);
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 		03C5E7BE1670A3DA005A26C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -7401,10 +6952,7 @@
 		03C5E7BF1670A3DA005A26C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -7412,19 +6960,12 @@
 		03C8EE3F167ABE2300BB07A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/Frameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DEBUG=1",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/BZFlag-Info.plist";
+				OTHER_LDFLAGS = (
+					"-lSDL2",
+					"-lGLEW",
+					"-lcares",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.bzflag.BZFlag;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -7434,16 +6975,12 @@
 		03C8EE40167ABE2300BB07A5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/Frameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/BZFlag-Info.plist";
+				OTHER_LDFLAGS = (
+					"-lSDL2",
+					"-lGLEW",
+					"-lcares",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.bzflag.BZFlag;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -7453,17 +6990,6 @@
 		03FA74301742601B00573D2D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7475,13 +7001,6 @@
 		03FA74311742601B00573D2D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7493,36 +7012,6 @@
 		C333EFCA1E2B9F0800B4B182 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7534,33 +7023,6 @@
 		C333EFCB1E2B9F0800B4B182 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7572,32 +7034,6 @@
 		C353B1D81AE239CC00C5AED5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7609,29 +7045,6 @@
 		C353B1D91AE239CC00C5AED5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
