@@ -961,7 +961,6 @@ AC_CONFIG_FILES([
 	MSVC/build/Makefile
 	Xcode/Makefile
 	Xcode/BZFlag.xcodeproj/Makefile
-	Xcode/licenses/Makefile
 	Makefile
 	bzflag.spec
 	data/Makefile
