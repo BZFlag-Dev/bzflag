@@ -47,7 +47,7 @@ DefaultDBItem defaultDBItems[] =
     { "mouseClamp",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsInvertAxes",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsRangeMax",       "100",            true,   StateDatabase::ReadWrite,   NULL },
-    { "jsRangeMin",       "0",            true,   StateDatabase::ReadWrite,   NULL },
+    { "jsRangeMin",       "5",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsStretchCorners",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsRampType",       "linear",            true,   StateDatabase::ReadWrite,   NULL },
     { "cpanelfontsize",       "0",            true,   StateDatabase::ReadWrite,   NULL },
