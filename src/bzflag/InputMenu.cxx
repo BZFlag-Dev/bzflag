@@ -43,12 +43,13 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     listHUD.push_back(keyMapping);
 
     HUDuiList* option;
+    std::vector<std::string>* options;
 
     activeInput = new HUDuiList;
     activeInput->setFontFace(fontFace);
     activeInput->setLabel("Active input device:");
     activeInput->setCallback(callback, "A");
-    std::vector<std::string>* options = &activeInput->getList();
+    options = &activeInput->getList();
     options->push_back("Auto");
     options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
     options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
@@ -57,7 +58,6 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     listHUD.push_back(activeInput);
 
     option = new HUDuiList;
-    options = &option->getList();
     // set joystick Device
     option->setFontFace(fontFace);
     option->setLabel("Joystick Device:");
