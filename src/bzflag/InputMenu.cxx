@@ -301,8 +301,8 @@ void InputMenu::fillJSOptions()
     }
     if (!found)
     {
-        if (yoptions->size() > 1)
-            jsy->setIndex(1);
+        if (yoptions->size() > 2)
+            jsy->setIndex(2);
         else
             jsy->setIndex(0);
     }
