@@ -6,6 +6,12 @@ BZFlag 2.5.x
 
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
+
+BZFlag 2.4.27
+-------------
+
+* Cleaned up and updated the Xcode project file - Joshua Bodine
+* Fixed yet another SDL2 window management regression on macOS - Joshua Bodine
 * Remove non-SDL2 platform code and add SDL2 controller rumble support
     - Scott Wichser
 * Fix libcurl deprecation warnings - Alfredo Tupone

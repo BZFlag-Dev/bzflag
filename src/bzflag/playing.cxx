@@ -6749,7 +6749,7 @@ static void setupRoamingCamera(float dt)
             else
                 deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
             if (control)
-                deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
+                deltaCamera.phi    = 2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
             if (shift)
                 deltaCamera.pos[2] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
         }
