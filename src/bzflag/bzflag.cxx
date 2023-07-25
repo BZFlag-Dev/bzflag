@@ -430,7 +430,7 @@ static void     parse(int argc, char** argv)
                         callsign = callsign.substr(0, passSplit);
                     }
                     if (!splitNamePort(argument.substr(atSplit + 1, argument.length() - atSplit), serverName, startupInfo.serverPort))
-                        printFatalError("Unable to parse server name %s", namePort);
+                        printFatalError("Unable to parse server name %s", namePort.c_str());
                     // length checks and always truncate everything after the max length
                     if (callsign.length() > sizeof(startupInfo.callsign))
                     {
@@ -456,7 +456,7 @@ static void     parse(int argc, char** argv)
                 else   // there is no callsign/password so only a destination
                 {
                     if (!splitNamePort(argument, serverName, startupInfo.serverPort))
-                        printFatalError("Unable to parse server name %s", namePort);
+                        printFatalError("Unable to parse server name %s", namePort.c_str());
 
                     // sanity check for length
                     if (serverName.length() > sizeof(startupInfo.serverName))
