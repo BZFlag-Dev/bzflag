@@ -33,8 +33,6 @@
 #include "Pack.h"
 #include "Protocol.h"
 
-typedef struct in6_addr  InAddr;         // shorthand
-
 // helpers
 char *sockaddr2iptext(const struct sockaddr *sa);
 char *sockaddr2iptextport(const struct sockaddr *sa);
@@ -48,12 +46,10 @@ public:
     Address(const std::string&);
     Address(const Address&);
     Address(const Address *);
-    Address(const InAddr&);         // input in nbo
     Address(const struct sockaddr_in6*); // input in nbo
     ~Address();
     Address&        operator=(const Address&);
 
-    operator InAddr() const;
     bool        operator==(const Address&) const;
     bool        operator!=(const Address&) const;
     bool        operator<(Address const&) const;
