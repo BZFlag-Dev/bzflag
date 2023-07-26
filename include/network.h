@@ -117,6 +117,10 @@ extern "C" {
     void          bzfherror(const char* msg);
 }
 
+# if defined(__APPLE__) && !defined(s6_addr16)
+#  define s6_addr16 __u6_addr.__u6_addr16
+# endif
+
 #endif /* defined(_WIN32) */
 
 // Can this happen?
