@@ -48,7 +48,7 @@ DefaultDBItem defaultDBItems[] =
     { "jsInvertAxes",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsRangeMax",       "100",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsRangeMin",       "5",            true,   StateDatabase::ReadWrite,   NULL },
-    { "jsStretchCorners",       "0",            true,   StateDatabase::ReadWrite,   NULL },
+    { "jsStretchCorners",       "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "jsRampType",       "linear",            true,   StateDatabase::ReadWrite,   NULL },
     { "cpanelfontsize",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "controlPanelTimestamp",    "0",            true,   StateDatabase::ReadWrite,   NULL },
