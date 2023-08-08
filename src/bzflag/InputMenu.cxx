@@ -72,7 +72,7 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     joystickDevices.erase(joystickDevices.begin(), joystickDevices.end());
     for (i = 0; i < (int)options->size(); i++)
     {
-        if ((*options)[i].compare(currentJoystickDevice) == 0)
+        if ((*options)[i].compare(0, 1, currentJoystickDevice, 0, 1) == 0)
         {
             option->setIndex(i);
             break;
