@@ -1,3 +1,6 @@
+# 3rd-Party dependencies
+dependencies/
+
 # Compiled Object files
 *.slo
 *.lo
