@@ -3,7 +3,7 @@ FROM alpine:3.18
 ARG BZ_VERSION
 
 RUN apk update && apk upgrade --no-cache
-RUN apk add autoconf automake c-ares-dev curl-dev g++ git glew libtool make ncurses zlib
+RUN apk add autoconf automake c-ares-dev curl-dev g++ git libtool make zlib
 
 RUN touch plugins.txt
 RUN git clone -b $BZ_VERSION https://github.com/BZFlag-Dev/bzflag.git
