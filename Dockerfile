@@ -14,7 +14,7 @@ RUN ./configure \
         --disable-bzadmin \
         --disable-client \
         --enable-custom-plugins-file=../plugins.txt
-RUN make
+RUN make -j$(nproc)
 
 RUN adduser -S bzfsd
 USER bzfsd
