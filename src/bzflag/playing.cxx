@@ -922,12 +922,21 @@ void     applyJSModifiers(float& jsx, float& jsy)
     const auto jsMagnitude = std::sqrt(jsx * jsx + jsy * jsy);
     const auto jsRangeMultiplier = jsRangeMax * (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
 
+    // exponential ramp
+    const auto jsRampType = BZDB.get("jsRampType");
+    auto jsRampFactor = jsRangeMultiplier;
+    if(jsRampType == "squared")
+        jsRampFactor = std::pow(jsRangeMultiplier, 2.0f);
+    else if(jsRampType == "cubed")
+        jsRampFactor = std::pow(jsRangeMultiplier, 3.0f);
+
+    // apply both factors
     if(jsMagnitude < jsRangeMin || isnan(jsRangeMultiplier))
         jsx = jsy = 0.0f;
     else
     {
-        jsx *= jsRangeMultiplier; // multiply normalized value (divide by jsMagnitude already applied) by the calculated scale
-        jsy *= jsRangeMultiplier;
+        jsx *= jsRampFactor;
+        jsy *= jsRampFactor;
     }
 
     // stretch corners
@@ -943,22 +952,15 @@ void     applyJSModifiers(float& jsx, float& jsy)
         }
     }
 
-    // exponential ramp
-    const auto jsRampType = BZDB.get("jsRampType");
-    int rampExponent = 1;
-    if(jsRampType == "squared")
-        rampExponent = 2;
-    else if(jsRampType == "cubed")
-        rampExponent = 3;
-    for(auto i = 1; i < rampExponent; ++i)
+    // proportionally scale the coordinates back to the range limit
+    const auto jsxAbs = std::abs(jsx);
+    const auto jsyAbs = std::abs(jsy);
+    if(jsxAbs > jsRangeMax || jsyAbs > jsRangeMax)
     {
-        jsx *= std::abs(jsx);
-        jsy *= std::abs(jsy);
+        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs) / jsRangeMax;
+        jsx /= jsRangeExcess;
+        jsy /= jsRangeExcess;
     }
-
-    // enforce overall range -1, 1
-    jsx = std::max(std::min(jsx, 1.0f), -1.0f);
-    jsy = std::max(std::min(jsy, 1.0f), -1.0f);
 }
 
 
