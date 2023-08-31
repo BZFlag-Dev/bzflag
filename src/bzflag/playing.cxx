@@ -6374,10 +6374,14 @@ void drawFrame(const float dt)
         else
         {
             // bind the multisample framebuffer, if enabled
-            bool useMultisampling = OpenGLGState::getMaxSamples() > 1 && BZDB.evalInt("multisample") > 1;
+            int maxSamples = OpenGLGState::getMaxSamples();
+            bool useMultisampling = maxSamples > 1 && BZDB.evalInt("multisample") > 1;
             if(useMultisampling)
             {
-                glFramebuffer.checkState(mainWindow->getWidth(), mainWindow->getHeight(), BZDB.evalInt("multisample"));
+                int samples = BZDB.evalInt("multisample");
+                if (samples > maxSamples)
+                    samples = maxSamples;
+                glFramebuffer.checkState(mainWindow->getWidth(), mainWindow->getHeight(), samples);
                 glBindFramebuffer(GL_FRAMEBUFFER, glFramebuffer.getFramebuffer());
             }
 
