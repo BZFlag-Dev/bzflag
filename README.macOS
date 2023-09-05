@@ -1,0 +1,86 @@
+BZFlag README for macOS
+=======================
+
+BZFlag is supported on macOS 10.13 (High Sierra) and later, and official builds
+are available for both Intel (x86_64) and Apple Silicon (arm64) processors.
+BZFlag may be installed by downloading an official build from the BZFlag web
+site (https://www.bzflag.org/downloads), expanding the archive (if necessary),
+and moving the game to the Applications folder. Please note that the official
+builds are not currently being signed or notarized by Apple, so on the first
+launch you must bypass Gatekeeper using the contextual menu by right-clicking,
+two-finger-clicking, or control-clicking on the application, selecting "Open,"
+and confirming when prompted.
+
+BZFlag is also available as a Homebrew cask using the following command (please
+note the --no-quarantine flag to bypass Gatekeeper for the reason stated above):
+
+  brew install --cask --no-quarantine bzflag
+
+The BZFlag macOS application package also contains the BZFlag server (bzfs),
+the text-based client (bzadmin), server plugins, and various other tools. You
+may access these additional components using a terminal application or by using
+the contextual menu in the Finder (as described above) to explore the
+application package contents.
+
+By default, the BZFlag configuration directory on macOS is located at the
+following path (note that the ~/Library directory is hidden by default, but you
+can open it using the command-shift-g key combination):
+
+  ~/Library/Application Support/BZFlag
+
+When using a MacBook which has a camera notch in the display, you may also want
+to enable the option "Scale to fit below built-in camera" in the "Get Info"
+panel for the application to avoid a portion of the game window being obscured
+while in fullscreen mode.
+
+Building from Source
+--------------------
+
+To build BZFlag from source code on macOS, you will first need to acquire the
+source code from the GitHub repository (https://github.com/BZFlag-Dev/bzflag)
+and install Xcode. You will also need to acquire our three library dependencies,
+SDL2, GLEW, and c-ares. The recommended method for acquiring these dependencies
+is to use our provided dependencies package, which can be accessed from the
+GitHub repository (https://github.com/BZFlag-Dev/bzflag-dependencies). Look for
+a release package for the BZFlag version you are building, or you may download
+the dependencies source package and build them using the following command:
+
+  ./buildmacOS.sh
+
+You should now have a directory named "dependencies" which you should copy to
+the root of the main BZFlag source code directory so it is available while
+building.
+
+Alternatively, the required dependencies may be installed at the system level
+using autotools or may be installed via Homebrew. Keep in mind that either of
+these these latter two options may cause a deployment target mismatch.
+
+The Xcode project file is located within the Xcode/ directory. Upon opening the
+project, please ensure that your desired scheme (usually "BZFlag") is activated
+at the top of the screen (you may also select "bzfs," "bzadmin," etc.). Please
+note that a debug build is configured by default. A release build may be
+configured by clicking the "BZFlag" scheme button at the top of the screen,
+selecting "Edit Scheme..." at the bottom of the pop-up menu, selecting the "Run"
+phase in the left sidebar, selecting the "Info" tab, and setting the desired
+build configuration. To compile BZFlag for a different architecture, in the
+project build settings set "Build Active Architecture Only" to "No" and manually
+set "Architectures" to the target architecture name ("x86_64" or "arm64").
+
+You may also build BZFlag from source code using the standard autotools build
+process, but please keep in mind that this method on macOS receives less
+maintenance effort than building with Xcode. To build via autotools, use the
+following commands:
+
+  ./autogen.sh
+  ./configure
+  make
+
+Issues
+------
+
+Due to diminishing support for OpenGL-based graphics on macOS, please note that
+occasional graphical issues have been known to arise. Updating to the latest
+macOS version has been known to improve graphics driver support in some cases.
+Our goal is to fix or mitigate any reported issues (graphical or otherwise) to
+the best of our ability. Please submit any bug reports or comments to the issue
+tracker on our GitHub page (https://github.com/BZFlag-Dev/bzflag/issues).
