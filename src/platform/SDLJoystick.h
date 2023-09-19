@@ -28,7 +28,7 @@ public:
 
     void    initJoystick(const char* joystickName);
     bool    joystick() const;
-    void    getJoy(int& x, int& y);
+    void    getJoy(float& x, float& y);
     unsigned long getJoyButtons();
     int     getNumHats();
     void    getJoyHat(int hat, float &hatX, float &hatY);

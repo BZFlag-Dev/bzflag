@@ -59,9 +59,9 @@ bool            BzfJoystick::joystick() const
     return false;
 }
 
-void            BzfJoystick::getJoy(int& x, int& y)
+void            BzfJoystick::getJoy(float& x, float& y)
 {
-    x = y = 0;
+    x = y = 0.0f;
 }
 
 void            BzfJoystick::getJoyDevices(std::vector<std::string>

@@ -24,7 +24,7 @@
 #include "playing.h"
 #include "HUDui.h"
 
-InputMenu::InputMenu() : keyboardMapMenu(NULL)
+InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
 {
     std::string currentJoystickDevice = BZDB.get("joystickname");
     // cache font face ID
@@ -43,12 +43,13 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     listHUD.push_back(keyMapping);
 
     HUDuiList* option;
+    std::vector<std::string>* options;
 
     activeInput = new HUDuiList;
     activeInput->setFontFace(fontFace);
     activeInput->setLabel("Active input device:");
     activeInput->setCallback(callback, "A");
-    std::vector<std::string>* options = &activeInput->getList();
+    options = &activeInput->getList();
     options->push_back("Auto");
     options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
     options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
@@ -57,10 +58,9 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     listHUD.push_back(activeInput);
 
     option = new HUDuiList;
-    options = &option->getList();
     // set joystick Device
     option->setFontFace(fontFace);
-    option->setLabel("Joystick device:");
+    option->setLabel("Joystick Device:");
     option->setCallback(callback, "J");
     options = &option->getList();
     options->push_back(std::string("Off"));
@@ -72,24 +72,12 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     joystickDevices.erase(joystickDevices.begin(), joystickDevices.end());
     for (i = 0; i < (int)options->size(); i++)
     {
-        if ((*options)[i].compare(currentJoystickDevice) == 0)
+        if ((*options)[i].compare(0, 1, currentJoystickDevice, 0, 1) == 0)
         {
             option->setIndex(i);
             break;
         }
     }
-    option->update();
-    listHUD.push_back(option);
-
-    option = new HUDuiList;
-    // force feedback
-    option->setFontFace(fontFace);
-    option->setLabel("Rumble:");
-    option->setCallback(callback, "F");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->setIndex(BZDB.isTrue("rumble") ? 1 : 0);
     option->update();
     listHUD.push_back(option);
 
@@ -107,18 +95,93 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     option->setCallback(callback, "Y");
     listHUD.push_back(option);
     fillJSOptions();
+
     option = new HUDuiList;
+    // joystick range settings
     option->setFontFace(fontFace);
-    option->setLabel("Invert Joystick Axes:");
-    option->setCallback(callback, "I");
+    option->setLabel("Joystick Range Limit:");
+    option->setCallback(callback, "T");
     options = &option->getList();
-    options->push_back(std::string("No"));
-    options->push_back(std::string("X"));
-    options->push_back(std::string("Y"));
-    options->push_back(std::string("X and Y"));
-    option->setIndex(BZDB.evalInt("jsInvertAxes"));
+    char percentText[5];
+    for(i = 25; i <= 100; ++i)
+    {
+        snprintf(percentText, 5, "%i%%", i);
+        options->push_back(percentText);
+    }
+    for (i = 0; i < (int)options->size(); i++)
+    {
+        std::string currentOption = (*options)[i];
+        if (BZDB.get("jsRangeMax") + "%" == currentOption)
+            option->setIndex(i);
+    }
     option->update();
     listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Joystick Dead Zone:");
+    option->setCallback(callback, "B");
+    options = &option->getList();
+    for(i = 0; i <= 20; ++i)
+    {
+        snprintf(percentText, 5, "%i%%", i);
+        options->push_back(percentText);
+    }
+    for (i = 0; i < (int)options->size(); i++)
+    {
+        std::string currentOption = (*options)[i];
+        if (BZDB.get("jsRangeMin") + "%" == currentOption)
+            option->setIndex(i);
+    }
+    option->update();
+    listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Stretch Joystick Range Corners:");
+    option->setCallback(callback, "S");
+    options = &option->getList();
+    options->push_back(std::string("No"));
+    options->push_back(std::string("Yes"));
+    option->setIndex(BZDB.isTrue("jsStretchCorners") ? 1 : 0);
+    option->update();
+    listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Joystick Ramp Type:");
+    option->setCallback(callback, "R");
+    options = &option->getList();
+    options->push_back(std::string("Linear"));
+    options->push_back(std::string("Exponential (Squared)"));
+    options->push_back(std::string("Exponential (Cubed)"));
+    if(BZDB.get("jsRampType") == "squared")
+        option->setIndex(1);
+    else if(BZDB.get("jsRampType") == "cubed")
+        option->setIndex(2);
+    else
+        option->setIndex(0);
+    option->update();
+    listHUD.push_back(option);
+
+    option = new HUDuiList;
+    // force feedback
+    option->setFontFace(fontFace);
+    option->setLabel("Force Feedback:");
+    option->setCallback(callback, "F");
+    options = &option->getList();
+    options->push_back(std::string("None"));
+    options->push_back(std::string("Rumble"));
+    options->push_back(std::string("Directional"));
+    for (i = 0; i < (int)options->size(); i++)
+    {
+        std::string currentOption = (*options)[i];
+        if (BZDB.get("forceFeedback") == currentOption)
+            option->setIndex(i);
+    }
+    option->update();
+    listHUD.push_back(option);
+    joystickTest = new HUDuiLabel;
+    joystickTest->setFontFace(fontFace);
+    joystickTest->setLabel("Test Joystick Range");
+    listHUD.push_back(joystickTest);
 
     option = new HUDuiList;
     // confine mouse
@@ -165,6 +228,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
 InputMenu::~InputMenu()
 {
     delete keyboardMapMenu;
+    delete joystickTestMenu;
 }
 
 void InputMenu::fillJSOptions()
@@ -173,38 +237,63 @@ void InputMenu::fillJSOptions()
     std::vector<std::string>* yoptions = &jsy->getList();
     std::vector<std::string> joystickAxes;
     getMainWindow()->getJoyDeviceAxes(joystickAxes);
-    if (joystickAxes.empty())
+    const auto xAxisInverted = BZDB.evalInt("jsInvertAxes") % 2 == 1;
+    const auto yAxisInverted = BZDB.evalInt("jsInvertAxes") > 1;
+
+    xoptions->clear();
+    yoptions->clear();
+
+    if(joystickAxes.empty())
         joystickAxes.push_back("N/A");
     int i;
     for (i = 0; i < (int)joystickAxes.size(); i++)
     {
         xoptions->push_back(joystickAxes[i]);
         yoptions->push_back(joystickAxes[i]);
+        if(joystickAxes[i] != "N/A")
+        {
+            xoptions->push_back(joystickAxes[i] + " (Inverted)");
+            yoptions->push_back(joystickAxes[i] + " (Inverted)");
+        }
     }
     bool found = false;
     for (i = 0; i < (int)xoptions->size(); i++)
     {
+        bool currentOptionInverted = false;
         std::string currentOption = (*xoptions)[i];
-        if (BZDB.get("jsXAxis") == currentOption)
+
+        // could also be inverted
+        if(currentOption.length() >= 12
+                && currentOption.substr(currentOption.length() - 10, std::string::npos) == "(Inverted)")
+        {
+            currentOption = currentOption.substr(0, currentOption.length() - 11);
+            currentOptionInverted = true;
+        }
+
+        if (BZDB.get("jsXAxis") == currentOption && currentOptionInverted == xAxisInverted)
         {
             jsx->setIndex(i);
             found = true;
         }
     }
     if (!found)
-    {
-        // If there are at least two axes, use the first one for X
-        if (xoptions->size() > 2)
-            jsx->setIndex(1);
-        else
-            jsx->setIndex(0);
-    }
+        jsx->setIndex(0);
     jsx->update();
     found = false;
     for (i = 0; i < (int)yoptions->size(); i++)
     {
+        bool currentOptionInverted = false;
         std::string currentOption = (*yoptions)[i];
-        if (BZDB.get("jsYAxis") == currentOption)
+
+        // could also be inverted
+        if(currentOption.length() >= 12
+                && currentOption.substr(currentOption.length() - 10, std::string::npos) == "(Inverted)")
+        {
+            currentOption = currentOption.substr(0, currentOption.length() - 11);
+            currentOptionInverted = true;
+        }
+
+        if (BZDB.get("jsYAxis") == currentOption && currentOptionInverted == yAxisInverted)
         {
             jsy->setIndex(i);
             found = true;
@@ -212,7 +301,6 @@ void InputMenu::fillJSOptions()
     }
     if (!found)
     {
-        // If there are at least two axes, use the second one for Y
         if (yoptions->size() > 2)
             jsy->setIndex(2);
         else
@@ -228,6 +316,11 @@ void            InputMenu::execute()
     {
         if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
         HUDDialogStack::get()->push(keyboardMapMenu);
+    }
+    else if (_focus == joystickTest)
+    {
+        if (!joystickTestMenu) joystickTestMenu = new JoystickTestMenu;
+        HUDDialogStack::get()->push(joystickTestMenu);
     }
 }
 
@@ -251,15 +344,73 @@ void            InputMenu::callback(HUDuiControl* w, const void* data)
 
     /* Joystick x-axis */
     case 'X':
-        BZDB.set("jsXAxis", selectedOption);
-        getMainWindow()->setJoyXAxis(selectedOption);
+    {
+        auto selectedAxis = selectedOption;
+        auto xAxisInverted = false;
+        const auto oldInvertAxes = BZDB.evalInt("jsInvertAxes");
+
+        if(selectedOption.length() >= 12
+                && selectedOption.substr(selectedOption.length() - 10, std::string::npos) == "(Inverted)")
+        {
+            selectedAxis = selectedAxis.substr(0, selectedAxis.length() - 11);
+            xAxisInverted = true;
+        }
+
+        BZDB.set("jsXAxis", selectedAxis);
+        getMainWindow()->setJoyXAxis(selectedAxis);
+
+        if(xAxisInverted) // X axis inversion needs to be enabled
+        {
+            if(oldInvertAxes % 2 != 1) // it wasn't already enabled
+            {
+                BZDB.setInt("jsInvertAxes", oldInvertAxes == 2 ? 3 : 1); // preserve the Y enabled value
+            }
+        }
+        else // X axis inversion needs to be disabled
+        {
+            if(oldInvertAxes % 2 == 1) // it was enabled previously
+            {
+                BZDB.setInt("jsInvertAxes", oldInvertAxes == 3 ? 2 : 0); // preserve the Y enabled value
+            }
+        }
+
         break;
+    }
 
     /* Joystick y-axis */
     case 'Y':
-        BZDB.set("jsYAxis", selectedOption);
-        getMainWindow()->setJoyYAxis(selectedOption);
+    {
+        auto selectedAxis = selectedOption;
+        auto yAxisInverted = false;
+        const auto oldInvertAxes = BZDB.evalInt("jsInvertAxes");
+
+        if(selectedOption.length() >= 12
+                && selectedOption.substr(selectedOption.length() - 10, std::string::npos) == "(Inverted)")
+        {
+            selectedAxis = selectedAxis.substr(0, selectedAxis.length() - 11);
+            yAxisInverted = true;
+        }
+
+        BZDB.set("jsYAxis", selectedAxis);
+        getMainWindow()->setJoyYAxis(selectedAxis);
+
+        if(yAxisInverted) // Y axis inversion needs to be enabled
+        {
+            if(oldInvertAxes < 2) // it wasn't already enabled
+            {
+                BZDB.setInt("jsInvertAxes", oldInvertAxes == 1 ? 3 : 2); // preserve the X enabled value
+            }
+        }
+        else // Y axis inversion needs to be disabled
+        {
+            if(oldInvertAxes > 1) // it was enabled previously
+            {
+                BZDB.setInt("jsInvertAxes", oldInvertAxes == 3 ? 1 : 0); // preserve the X enabled value
+            }
+        }
+
         break;
+    }
 
     /* Joystick axes inversion */
     case 'I':
@@ -318,9 +469,34 @@ void            InputMenu::callback(HUDuiControl* w, const void* data)
     }
     break;
 
-    /* Force feedback */
+    /* Force Feedback */
     case 'F':
-        BZDB.setBool("rumble", listHUD->getIndex() == 1);
+        BZDB.set("forceFeedback", selectedOption);
+        break;
+
+    /* Joystick Range Limit */
+    case 'T':
+        BZDB.set("jsRangeMax", selectedOption.substr(0, selectedOption.length() - 1));
+        break;
+
+    /* Joystick Dead Zone */
+    case 'B':
+        BZDB.set("jsRangeMin", selectedOption.substr(0, selectedOption.length() - 1));
+        break;
+
+    /* Stretch Joystick Range Corners */
+    case 'S':
+        BZDB.setBool("jsStretchCorners", selectedOption == "Yes" ? true : false);
+        break;
+
+    /* Joystick Ramp Type */
+    case 'R':
+        if(selectedOption == "Exponential (Squared)")
+            BZDB.set("jsRampType", "squared");
+        else if(selectedOption == "Exponential (Cubed)")
+            BZDB.set("jsRampType", "cubed");
+        else
+            BZDB.set("jsRampType", "linear");
         break;
 
     }
@@ -355,8 +531,8 @@ void            InputMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
-        // Add extra space after Change Key Mapping, Active input device, Invert Joystick Axes, and Mouse Box Size
-        if (i == 1 || i == 2 || i == 7 || i == 9)
+        // Add extra space after Change Key Mapping, Active input device, Test Joystick Range, and Mouse Box Size
+        if (i == 1 || i == 2 || i == 11 || i == 13)
             y -= 1.75f * h;
         else
             y -= 1.0f * h;
@@ -375,7 +551,7 @@ void            InputMenu::resize(int _width, int _height)
 
     SceneRenderer* renderer = getSceneRenderer();
     if (renderer != nullptr)
-        ((HUDuiList*)listHUD[9])->setIndex(renderer->getMaxMotionFactor() + 11);
+        ((HUDuiList*)listHUD[13])->setIndex(renderer->getMaxMotionFactor() + 11);
 }
 
 

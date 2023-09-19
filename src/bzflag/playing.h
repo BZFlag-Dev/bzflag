@@ -102,6 +102,8 @@ void killGlobalAres();
 
 extern void joinGame();
 
+extern void applyJSModifiers(float& jsx, float& jsy);
+
 extern HUDRenderer  *hud;
 extern char     messageMessage[PlayerIdPLen + MessageLen];
 extern ServerLink*  serverLink;

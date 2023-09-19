@@ -903,6 +903,67 @@ static void doKey(const BzfKeyEvent& key, bool pressed)
         doKeyPlaying(key, pressed, haveBinding);
 }
 
+
+void     applyJSModifiers(float& jsx, float& jsy)
+{
+    // enforce range setting limits (min 0% to 20%, max 25% to 100%) so the maximum can't be less than the minimum
+    const auto jsRangeMax = std::max(std::min(float(BZDB.evalInt("jsRangeMax")) / 100.0f, 1.0f), 0.25f);
+    const auto jsRangeMin = std::max(std::min(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.2f), 0.0f);
+
+    // joystick axes inversion values
+    // 0: no inversion
+    // 1: invert X
+    // 2: invert Y
+    // 3: invert both
+    jsx *= BZDB.evalInt("jsInvertAxes") % 2 == 1 ? -1.0f : 1.0f;
+    jsy *= BZDB.evalInt("jsInvertAxes") > 1 ? -1.0f : 1.0f;
+
+    // scaled radial dead zone and cap
+    const auto jsMagnitude = std::sqrt(jsx * jsx + jsy * jsy);
+    const auto jsRangeMultiplier = jsRangeMax * (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
+
+    // exponential ramp
+    const auto jsRampType = BZDB.get("jsRampType");
+    auto jsRampFactor = jsRangeMultiplier;
+    if(jsRampType == "squared")
+        jsRampFactor = std::pow(jsRangeMultiplier, 2.0f);
+    else if(jsRampType == "cubed")
+        jsRampFactor = std::pow(jsRangeMultiplier, 3.0f);
+
+    // apply both factors
+    if(jsMagnitude < jsRangeMin || isnan(jsRangeMultiplier))
+        jsx = jsy = 0.0f;
+    else
+    {
+        jsx *= jsRampFactor;
+        jsy *= jsRampFactor;
+    }
+
+    // stretch corners
+    if(BZDB.isTrue("jsStretchCorners"))
+    {
+        const auto stretchFactor = (1.0f - float(std::abs(std::abs(atan(jsy / jsx) / M_PI) - 0.25f)) * 4.0f) * jsMagnitude;
+        const auto stretchValue = std::sqrt(2.0f);
+
+        if(! isnan(stretchFactor))
+        {
+            jsx *= (1.0f - stretchFactor) + stretchValue * stretchFactor; // mix based on stretchFactor from 0.0 to 1.0
+            jsy *= (1.0f - stretchFactor) + stretchValue * stretchFactor;
+        }
+    }
+
+    // proportionally scale the coordinates back to the range limit
+    const auto jsxAbs = std::abs(jsx);
+    const auto jsyAbs = std::abs(jsy);
+    if(jsxAbs > jsRangeMax || jsyAbs > jsRangeMax)
+    {
+        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs) / jsRangeMax;
+        jsx /= jsRangeExcess;
+        jsy /= jsRangeExcess;
+    }
+}
+
+
 static void     doMotion()
 {
     float rotation = 0.0f, speed = 1.0f;
@@ -926,12 +987,13 @@ static void     doMotion()
     // determine if joystick motion should be used instead of mouse motion
     // when the player bumps the mouse, LocalPlayer::getInputMethod return Mouse;
     // make it return Joystick when the user bumps the joystick
+    auto jsx = 0.0f, jsy = 0.0f;
     if (mainWindow->haveJoystick())
     {
         if (myTank->getInputMethod() == LocalPlayer::Joystick)
         {
             // if we're using the joystick right now, replace mouse coords with joystick coords
-            mainWindow->getJoyPosition(mx, my);
+            mainWindow->getJoyPosition(jsx, jsy);
         }
         else
         {
@@ -939,11 +1001,10 @@ static void     doMotion()
             // see if it's moved and autoswitch
             if (BZDB.isTrue("allowInputChange"))
             {
-                int jx = 0, jy = 0;
-                mainWindow->getJoyPosition(jx, jy);
+                mainWindow->getJoyPosition(jsx, jsy);
+
                 // if we aren't using the joystick, but it's moving, start using it
-                if ((jx < -noMotionSize * 2) || (jx > noMotionSize * 2)
-                        || (jy < -noMotionSize * 2) || (jy > noMotionSize * 2))
+                if(std::sqrt(jsx * jsx + jsy * jsy) > std::min(std::max(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.0f), 0.2f))
                     myTank->setInputMethod(LocalPlayer::Joystick); // joystick motion
             } // allowInputChange
         } // getInputMethod == Joystick
@@ -977,9 +1038,48 @@ static void     doMotion()
             speed *= 0.5f;
         }
     }
-    else     // both mouse and joystick
+    else if (myTank->getInputMethod() == LocalPlayer::Joystick)
     {
+        applyJSModifiers(jsx, jsy);
 
+        // calculate desired rotation
+        if (keyboardRotation && !devDriving)
+        {
+            rotation = float(keyboardRotation);
+            rotation *= BZDB.eval("displayFOV") / 60.0f;
+            if (BZDB.isTrue("slowKeyboard"))
+                rotation *= 0.5f;
+        }
+        else
+        {
+            rotation = -jsx;
+
+            if (rotation > 1.0f)
+                rotation = 1.0f;
+            if (rotation < -1.0f)
+                rotation = -1.0f;
+        }
+
+        // calculate desired speed
+        if (keyboardSpeed && !devDriving)
+        {
+            speed = float(keyboardSpeed);
+            if (speed < 0.0f)
+                speed *= 0.5f;
+            if (BZDB.isTrue("slowKeyboard"))
+                speed *= 0.5f;
+        }
+        else
+        {
+            speed = -jsy;
+            if (speed > 1.0f)
+                speed = 1.0f;
+            if (speed < -0.5f)
+                speed = -0.5f;
+        }
+    }
+    else // mouse
+    {
         // calculate desired rotation
         if (keyboardRotation && !devDriving)
         {
