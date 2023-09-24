@@ -123,6 +123,10 @@ EighthDimShellNode::ShellRenderNode::~ShellRenderNode()
     return;
 }
 
+const GLfloat* EighthDimShellNode::ShellRenderNode::getPosition() const
+{
+    return renderNode->getPosition();
+}
 
 const OpenGLGState* EighthDimShellNode::ShellRenderNode::getGState() const
 {

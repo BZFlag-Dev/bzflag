@@ -134,6 +134,11 @@ EighthDBoxSceneNode::EighthDBoxRenderNode::~EighthDBoxRenderNode()
     // do nothing
 }
 
+const GLfloat* EighthDBoxSceneNode::EighthDBoxRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void            EighthDBoxSceneNode::EighthDBoxRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);

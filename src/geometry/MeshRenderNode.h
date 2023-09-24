@@ -34,10 +34,7 @@ public:
     void render();
     void renderRadar();
     void renderShadow();
-    virtual const GLfloat* getPosition() const
-    {
-        return NULL;
-    }
+    const GLfloat* getPosition() const override;
 private:
     void drawV() const;
     void drawVN() const;
@@ -62,10 +59,7 @@ public:
                          const GLfloat* color, int lod, int set,
                          const Extents* exts, const float pos[3],
                          int triangles);
-    const GLfloat* getPosition() const
-    {
-        return pos;
-    }
+    const GLfloat* getPosition() const override;
     void setPosition(const GLfloat* pos);
 private:
     float pos[3];

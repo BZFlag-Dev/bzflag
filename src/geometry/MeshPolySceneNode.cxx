@@ -48,6 +48,11 @@ MeshPolySceneNode::Geometry::~Geometry()
     return;
 }
 
+const GLfloat*  MeshPolySceneNode::Geometry::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 inline void MeshPolySceneNode::Geometry::drawV() const
 {
     const int count = vertices.getSize();

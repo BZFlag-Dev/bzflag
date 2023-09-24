@@ -135,6 +135,11 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
     // do nothing
 }
 
+const GLfloat* LaserSceneNode::LaserRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void LaserSceneNode::LaserRenderNode::render()
 {
     const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();

@@ -87,10 +87,7 @@ protected:
         ~SphereLodRenderNode();
         void setLod(int lod);
         void render();
-        const GLfloat* getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const GLfloat* getPosition() const override;
 
     private:
         const SphereLodSceneNode* sceneNode;
@@ -148,7 +145,7 @@ public:
         ~FragmentRenderNode();
         const GLfloat*  getVertex() const;
         void        render();
-        const GLfloat*  getPosition() const;
+        const GLfloat*  getPosition() const override;
     private:
         const SphereBspSceneNode*   sceneNode;
         int     theta, phi;
@@ -194,10 +191,7 @@ protected:
         void        setHighResolution(bool);
         void        setBaseIndex(int index);
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const GLfloat* getPosition() const override;
     private:
         const SphereBspSceneNode* sceneNode;
         bool        highResolution;
@@ -216,7 +210,7 @@ private:
 /******************************************************************************/
 
 
-#endif // BZF_FLAG_SCENE_NODE_H
+#endif // BZF_SPHERE_SCENE_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***

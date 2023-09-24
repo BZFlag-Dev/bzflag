@@ -50,10 +50,7 @@ protected:
             style = _style;
         }
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return wall->getSphere();
-        }
+        const GLfloat* getPosition() const override;
     private:
         void        drawV() const;
         void        drawVT() const;

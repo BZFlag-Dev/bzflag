@@ -330,6 +330,10 @@ SphereLodSceneNode::SphereLodRenderNode::~SphereLodRenderNode()
     return;
 }
 
+const GLfloat* SphereLodSceneNode::SphereLodRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
 
 void SphereLodSceneNode::SphereLodRenderNode::setLod(int _lod)
 {
@@ -596,6 +600,11 @@ SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
 SphereBspSceneNode::SphereBspRenderNode::~SphereBspRenderNode()
 {
     // do nothing
+}
+
+const GLfloat* SphereBspSceneNode::SphereBspRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
 }
 
 void            SphereBspSceneNode::SphereBspRenderNode::

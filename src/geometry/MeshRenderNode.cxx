@@ -45,6 +45,11 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 }
 
 
+const GLfloat* OpaqueRenderNode::getPosition() const
+{
+    return NULL;
+}
+
 void OpaqueRenderNode::render()
 {
     const bool switchLights = (exts != NULL);
@@ -120,6 +125,10 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
     return;
 }
 
+const GLfloat* AlphaGroupRenderNode::getPosition() const
+{
+    return pos;
+}
 
 void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
 {

@@ -50,7 +50,7 @@ public:
         invisible = _invisible;
     }
 
-    virtual void move(const GLfloat pos[3], const GLfloat forward[3]);
+    void move(const GLfloat pos[3], const GLfloat forward[3]);
     void        addLight(SceneRenderer&);
 
     void        notifyStyleChange();
@@ -67,10 +67,7 @@ protected:
         void        setColor(const GLfloat* rgba);
         void        setTextureColor(const GLfloat* rgba);
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const GLfloat* getPosition() const override;
         void        setAnimation(int cu, int cv);
 
         void        renderGeoBolt();

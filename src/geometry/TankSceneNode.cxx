@@ -733,6 +733,10 @@ TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
     return;
 }
 
+const GLfloat* TankIDLSceneNode::IDLRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
 
 void TankIDLSceneNode::IDLRenderNode::render()
 {
@@ -867,6 +871,10 @@ TankSceneNode::TankRenderNode::~TankRenderNode()
     return;
 }
 
+const GLfloat* TankSceneNode::TankRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
 
 void TankSceneNode::TankRenderNode::setRadar(bool radar)
 {

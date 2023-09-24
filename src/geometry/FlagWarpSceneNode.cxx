@@ -112,6 +112,11 @@ FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
     // do nothing
 }
 
+const GLfloat* FlagWarpSceneNode::FlagWarpRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void            FlagWarpSceneNode::FlagWarpRenderNode::render()
 {
     // make a perturbed ring

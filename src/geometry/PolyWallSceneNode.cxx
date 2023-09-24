@@ -41,6 +41,11 @@ PolyWallSceneNode::Geometry::~Geometry()
     // do nothing
 }
 
+const GLfloat* PolyWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getSphere();
+}
+
 void            PolyWallSceneNode::Geometry::render()
 {
     wall->setColor();

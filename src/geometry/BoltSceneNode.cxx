@@ -247,6 +247,11 @@ BoltSceneNode::BoltRenderNode::~BoltRenderNode()
     // do nothing
 }
 
+const GLfloat* BoltSceneNode::BoltRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void            BoltSceneNode::BoltRenderNode::setAnimation(
     int _cu, int _cv)
 {

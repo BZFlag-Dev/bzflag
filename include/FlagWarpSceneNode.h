@@ -42,10 +42,7 @@ protected:
         FlagWarpRenderNode(const FlagWarpSceneNode*);
         ~FlagWarpRenderNode();
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const GLfloat* getPosition() const override;
     private:
         const FlagWarpSceneNode* sceneNode;
     };

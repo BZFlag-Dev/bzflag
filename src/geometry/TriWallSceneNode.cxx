@@ -112,6 +112,11 @@ TriWallSceneNode::Geometry::~Geometry()
 #define EMITV(_i)   glVertex3fv(vertex[_i])
 #define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
+const GLfloat* TriWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getSphere();
+}
+
 void            TriWallSceneNode::Geometry::render()
 {
     wall->setColor();

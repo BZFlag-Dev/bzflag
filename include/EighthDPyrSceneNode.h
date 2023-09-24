@@ -40,10 +40,7 @@ protected:
                              const float size[3], float rotation);
         ~EighthDPyrRenderNode();
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const GLfloat* getPosition() const override;
     private:
         const EighthDPyrSceneNode* sceneNode;
         GLfloat     corner[5][3];

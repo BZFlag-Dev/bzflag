@@ -331,6 +331,11 @@ BillboardSceneNode::BillboardRenderNode::~BillboardRenderNode()
     // do nothing
 }
 
+const GLfloat* BillboardSceneNode::BillboardRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void            BillboardSceneNode::BillboardRenderNode::
 setFrame(float _u, float _v)
 {

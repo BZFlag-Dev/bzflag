@@ -45,10 +45,7 @@ protected:
         {
             return;
         }
-        const GLfloat* getPosition() const
-        {
-            return renderNode->getPosition();
-        }
+        const GLfloat* getPosition() const override;
     public:
         const OpenGLGState* getGState() const;
     private:

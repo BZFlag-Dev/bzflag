@@ -93,6 +93,11 @@ EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
     delete[] poly;
 }
 
+const GLfloat* EighthDimSceneNode::EighthDimRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void            EighthDimSceneNode::EighthDimRenderNode::render()
 {
     // draw polygons

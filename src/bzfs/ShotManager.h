@@ -255,7 +255,7 @@ protected:
     bool PointInSphere ( fvec3& point, Shot& shot );
 };
 }
-#endif  /*__SPAWNPOLICY_H__ */
+#endif  /* __SHOT_MANAGER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

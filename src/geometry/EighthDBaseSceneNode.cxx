@@ -128,6 +128,11 @@ EighthDBaseSceneNode::EighthDBaseRenderNode::~EighthDBaseRenderNode()
     // do nothing
 }
 
+const GLfloat* EighthDBaseSceneNode::EighthDBaseRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);

@@ -138,6 +138,11 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()
     // do nothing
 }
 
+const GLfloat* EighthDPyrSceneNode::EighthDPyrRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 void            EighthDPyrSceneNode::EighthDPyrRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
