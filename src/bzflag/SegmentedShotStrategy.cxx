@@ -157,9 +157,11 @@ void  SegmentedShotStrategy::update(float dt)
         {
             ShotPathSegment &segm = segments[numSegments - 1];
             const float     *dir = segm.ray.getDirection();
-            const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
+            const float speed2
+                = dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
             float pos[3];
-            segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
+            segm.ray.getPoint(
+                    float(segm.end - segm.start - bzInverseSqrt(speed2)), pos);
             /* NOTE -- comment out to not explode when shot expires */
             addShotExplosion(pos);
         }
