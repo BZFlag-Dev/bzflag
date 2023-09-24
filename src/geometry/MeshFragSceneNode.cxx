@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <cmath>
 #include <cstring>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "Intersect.h"
@@ -330,7 +331,7 @@ MeshFragSceneNode::MeshFragSceneNode(int faceCount_, const MeshFace** faces_)
                 if (face->useNormals())
                     memcpy(&normals[aIndex * 3], face->getNormal(vIndex), sizeof(float[3]));
                 else
-                    memcpy(&normals[aIndex * 3], face->getPlane(), sizeof(float[3]));
+                    memcpy(&normals[aIndex * 3], glm::value_ptr(face->getPlane()), sizeof(float[3]));
 
                 // get the texcoords
                 if (face->useTexcoords())

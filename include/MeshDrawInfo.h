@@ -23,7 +23,6 @@
 #include <iostream>
 
 // Common headers
-#include "vectors.h"
 #include "Extents.h"
 #include "BzMaterial.h"
 #include "MeshTransform.h"

@@ -18,6 +18,7 @@
 // system headers
 #include <math.h>
 #include <stdlib.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common headers
 #include "global.h"
@@ -58,32 +59,32 @@ MeshObstacle::MeshObstacle()
 }
 
 
-static void cfvec3ListToArray(const std::vector<cfvec3>& list,
+static void cfvec3ListToArray(const std::vector<glm::vec3>& list,
                               int& count, afvec3* &array)
 {
     count = list.size();
     array = new afvec3[count];
     for (int i = 0; i < count; i++)
-        memcpy (array[i], list[i].data, sizeof(afvec3));
+        memcpy (array[i], glm::value_ptr(list[i]), sizeof(afvec3));
     return;
 }
 
 static void arrayToCafvec3List(const afvec3* array, int count,
-                               std::vector<cfvec3>& list)
+                               std::vector<glm::vec3>& list)
 {
     list.clear();
     for (int i = 0; i < count; i++)
-        list.push_back(array[i]);
+        list.push_back(glm::make_vec3(array[i]));
     return;
 }
 
 
 MeshObstacle::MeshObstacle(const MeshTransform& transform,
                            const std::vector<char>& checkTypesL,
-                           const std::vector<cfvec3>& checkList,
-                           const std::vector<cfvec3>& verticeList,
-                           const std::vector<cfvec3>& normalList,
-                           const std::vector<cfvec2>& texcoordList,
+                           const std::vector<glm::vec3>& checkList,
+                           const std::vector<glm::vec3>& verticeList,
+                           const std::vector<glm::vec3>& normalList,
+                           const std::vector<glm::vec2>& texcoordList,
                            int _faceCount, bool _noclusters,
                            bool bounce, bool drive, bool shoot, bool rico)
 {
@@ -113,7 +114,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
     texcoordCount = texcoordList.size();
     texcoords = new afvec2[texcoordCount];
     for (i = 0; i < (unsigned int)texcoordCount; i++)
-        memcpy (texcoords[i], texcoordList[i].data, sizeof(afvec2));
+        memcpy (texcoords[i], glm::value_ptr(texcoordList[i]), sizeof(afvec2));
 
     faceSize = _faceCount;
     faceCount = 0;
@@ -310,10 +311,10 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 {
     MeshObstacle* copy;
     std::vector<char> ctlist;
-    std::vector<cfvec3> clist;
-    std::vector<cfvec3> vlist;
-    std::vector<cfvec3> nlist;
-    std::vector<cfvec2> tlist;
+    std::vector<glm::vec3> clist;
+    std::vector<glm::vec3> vlist;
+    std::vector<glm::vec3> nlist;
+    std::vector<glm::vec2> tlist;
 
     // empty arrays for copies of pure visual meshes
     if ((drawInfo != NULL) &&
@@ -333,7 +334,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
         arrayToCafvec3List(vertices, vertexCount, vlist);
         arrayToCafvec3List(normals, normalCount, nlist);
         for (i = 0; i < texcoordCount; i++)
-            tlist.push_back(texcoords[i]);
+            tlist.push_back(glm::make_vec2(texcoords[i]));
 
         copy = new MeshObstacle(xform, ctlist, clist,
                                 vlist, nlist, tlist, faceCount, noclusters,
@@ -477,15 +478,15 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
         return false;
 
     int c, f;
-    float dir[3];
     bool hasOutsides = false;
 
+    auto glmPoint = glm::make_vec3(point);
     for (c = 0; c < checkCount; c++)
     {
         if (checkTypes[c] == CheckInside)
         {
-            vec3sub (dir, checkPoints[c], point);
-            Ray ray(point, dir);
+            auto dir = glm::make_vec3(checkPoints[c]) - glmPoint;
+            Ray ray(point, glm::value_ptr(dir));
             bool hitFace = false;
             for (f = 0; f < faceCount; f++)
             {
@@ -503,8 +504,8 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
         else if (checkTypes[c] == CheckOutside)
         {
             hasOutsides = true;
-            vec3sub (dir, point, checkPoints[c]);
-            Ray ray(checkPoints[c], dir);
+            auto dir = glmPoint - glm::make_vec3(checkPoints[c]);
+            Ray ray(checkPoints[c], glm::value_ptr(dir));
             bool hitFace = false;
             for (f = 0; f < faceCount; f++)
             {
@@ -544,12 +545,11 @@ void MeshObstacle::get3DNormal(const float* UNUSED(p), float* UNUSED(n)) const
 
 void MeshObstacle::getNormal(const float* p, float* n) const
 {
-    const afvec3 center = { pos[0], pos[1], pos[2] + (0.5f * size[2]) };
-    afvec3 out;
-    vec3sub (out, p, center);
+    const auto center = glm::vec3(pos[0], pos[1], pos[2] + (0.5f * size[2]));
+    auto out = glm::make_vec3(p) - center;
     if (out[2] < 0.0f)
         out[2] = 0.0f;
-    float len = vec3dot(out, out);
+    float len = glm::dot(out, out);
     if (len > 0.0f)
     {
         len = 1 / sqrtf(len);

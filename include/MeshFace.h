@@ -17,16 +17,18 @@
 #ifndef BZF_MESH_FACE_OBSTACLE_H
 #define BZF_MESH_FACE_OBSTACLE_H
 
-#include "common.h"
+// Inherits from
+#include "Obstacle.h"
+
+// System headers
 #include <string>
 #include <iostream>
-#include "vectors.h"
+#include <glm/vec4.hpp>
+
+// Common headers
 #include "Ray.h"
-#include "Obstacle.h"
 #include "global.h"
 #include "BzMaterial.h"
-//#include "PhysicsDrive.h"
-
 
 class MeshFace : public Obstacle
 {
@@ -73,7 +75,7 @@ public:
     const float* getVertex(int index) const;
     const float* getNormal(int index) const;
     const float* getTexcoord(int index) const;
-    const float* getPlane() const;
+    const glm::vec4 &getPlane() const;
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
     bool noClusters() const;
@@ -115,8 +117,8 @@ private:
     bool noclusters;
     int phydrv;
 
-    afvec4 plane;
-    afvec4* edgePlanes;
+    glm::vec4 plane;
+    glm::vec4 *edgePlanes;
 
     MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
     // not currently used for anything
@@ -181,7 +183,7 @@ inline int MeshFace::getPhysicsDriver() const
     return phydrv;
 }
 
-inline const float* MeshFace::getPlane() const
+inline const glm::vec4 &MeshFace::getPlane() const
 {
     return plane;
 }

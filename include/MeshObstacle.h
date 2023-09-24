@@ -17,13 +17,18 @@
 #ifndef BZF_MESH_OBSTACLE_H
 #define BZF_MESH_OBSTACLE_H
 
-#include "common.h"
+// Inherits from
+#include "Obstacle.h"
+
+// System headers
 #include <string>
 #include <vector>
 #include <iostream>
-#include "vectors.h"
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
+// Common headers
 #include "Ray.h"
-#include "Obstacle.h"
 #include "MeshFace.h"
 #include "MeshTransform.h"
 
@@ -35,10 +40,10 @@ public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
                  const std::vector<char>& checkTypes,
-                 const std::vector<cfvec3>& checkPoints,
-                 const std::vector<cfvec3>& vertices,
-                 const std::vector<cfvec3>& normals,
-                 const std::vector<cfvec2>& texcoords,
+                 const std::vector<glm::vec3>& checkPoints,
+                 const std::vector<glm::vec3>& vertices,
+                 const std::vector<glm::vec3>& normals,
+                 const std::vector<glm::vec2>& texcoords,
                  int faceCount, bool noclusters,
                  bool bounce, bool drive, bool shoot, bool ricochet);
 
