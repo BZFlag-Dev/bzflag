@@ -136,7 +136,7 @@ bool CustomCone::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomCone::writeToGroupDef(GroupDefinition *groupdef)
 {
     int i;
     const BzMaterial* mats[MaterialCount];

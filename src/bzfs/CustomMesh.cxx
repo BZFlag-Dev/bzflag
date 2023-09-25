@@ -186,7 +186,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomMesh::writeToGroupDef(GroupDefinition *groupdef)
 {
     // include the old style parameters
     MeshTransform xform;
@@ -217,7 +217,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
         }
         else
             vert[0] = vert[1] = vert[2] = 0.0f;
-        const_cast<std::vector<cfvec3>*>(&vertices)->push_back(vert);
+        vertices.push_back(vert);
     }
 
     MeshObstacle* mesh =

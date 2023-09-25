@@ -305,7 +305,7 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
 }
 
 
-void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
 {
     if (isOldPyramid && transform.isEmpty())
     {

@@ -30,7 +30,7 @@ class CustomTetra : public WorldFileObstacle
 public:
     CustomTetra();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    void writeToGroupDef(GroupDefinition*) override;
 
 private:
     int vertexCount;

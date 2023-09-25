@@ -32,7 +32,7 @@ public:
     CustomGroup(const std::string& groupdef);
     ~CustomGroup();
     virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    void writeToGroupDef(GroupDefinition*) override;
 
 protected:
     mutable GroupInstance* group;

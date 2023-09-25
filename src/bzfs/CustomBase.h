@@ -30,7 +30,7 @@ class CustomBase : public WorldFileObstacle
 public:
     CustomBase();
     virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    void writeToGroupDef(GroupDefinition*) override;
 
 protected:
     int color;

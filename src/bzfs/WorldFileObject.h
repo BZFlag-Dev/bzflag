@@ -43,7 +43,7 @@ public:
     }
     virtual void writeToWorld(WorldInfo*) const;
     virtual void writeToManager() const;
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    virtual void writeToGroupDef(GroupDefinition*);
 
     virtual int getLineCount() const;
 

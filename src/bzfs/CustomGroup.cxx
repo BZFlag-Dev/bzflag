@@ -123,7 +123,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
+void CustomGroup::writeToGroupDef(GroupDefinition *grpdef)
 {
     // include the old style parameters
     MeshTransform xform;

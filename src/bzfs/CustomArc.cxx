@@ -137,7 +137,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomArc::writeToGroupDef(GroupDefinition *groupdef)
 {
     int i;
     const BzMaterial* mats[MaterialCount];

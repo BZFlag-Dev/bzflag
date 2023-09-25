@@ -29,7 +29,7 @@ public:
     CustomArc(bool boxStyle);
     ~CustomArc();
     virtual bool read(const char* cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    void writeToGroupDef(GroupDefinition*) override;
 
 private:
     void makePie(bool isCircle, float angle, float rot, float height,

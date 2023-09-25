@@ -45,7 +45,7 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomGate::writeToGroupDef(GroupDefinition *groupdef)
 {
     Teleporter* tele =
         new Teleporter(pos, rotation,

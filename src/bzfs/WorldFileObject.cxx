@@ -53,7 +53,7 @@ void WorldFileObject::writeToManager() const
 }
 
 
-void WorldFileObject::writeToGroupDef(GroupDefinition*) const
+void WorldFileObject::writeToGroupDef(GroupDefinition*)
 {
     std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
     return;

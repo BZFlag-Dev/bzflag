@@ -31,7 +31,7 @@ class CustomGate : public WorldFileObstacle
 public:
     CustomGate(const char* telename);
     virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    void writeToGroupDef(GroupDefinition*) override;
 
 protected:
     std::string telename;

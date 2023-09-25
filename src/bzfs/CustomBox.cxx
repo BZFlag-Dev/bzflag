@@ -299,7 +299,7 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[3])
 }
 
 
-void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomBox::writeToGroupDef(GroupDefinition *groupdef)
 {
     if (isOldBox && transform.isEmpty())
     {

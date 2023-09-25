@@ -111,7 +111,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomSphere::writeToGroupDef(GroupDefinition *groupdef)
 {
     int i;
     const BzMaterial* mats[MaterialCount];
