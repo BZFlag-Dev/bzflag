@@ -523,7 +523,8 @@ void            HUDRenderer::addMarker(float _heading, const float *_color )
 }
 
 
-void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
+void HUDRenderer::AddEnhancedNamedMarker(
+        const glm::vec3 &pos, const glm::vec4 &color,
         std::string name, bool friendly,
         float zShift)
 {
@@ -536,8 +537,10 @@ void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
     enhancedMarkers.push_back(newMarker);
 }
 
-void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
-                                    bool friendly, float zShift )
+void HUDRenderer::AddEnhancedMarker(
+        const glm::vec3 &pos, const glm::vec4 &color,
+        bool friendly,
+        float zShift)
 {
     EnhancedHUDMarker newMarker(pos, color);
     newMarker.pos.z += zShift;
@@ -545,10 +548,10 @@ void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
     enhancedMarkers.push_back(newMarker);
 }
 
-void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
+void HUDRenderer::AddLockOnMarker(const glm::vec3 &pos, std::string name,
                                   bool friendly, float zShift )
 {
-    const fvec4 color(0.75f, 0.125f, 0.125f, 1.0f);
+    const auto color = glm::vec4(0.75f, 0.125f, 0.125f, 1.0f);
     EnhancedHUDMarker newMarker(pos, color);
     newMarker.pos.z += zShift;
     newMarker.name = name;
@@ -1256,13 +1259,15 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
     map[0] -= halfWidth;
     map[1] -= halfHeight;
 
-    const fvec2 headingVec(sinf(heading * DEG2RADf),
-                           cosf(heading * DEG2RADf));
+    const auto headingVec = glm::vec2(
+            sinf(glm::radians(heading)),
+            cosf(glm::radians(heading)));
 
-    const fvec2 toPosVec((float)object[0] - viewPos[0],
-                         (float)object[1] - viewPos[1]);
+    const auto toPosVec = glm::vec2(
+            (float)object[0] - viewPos[0],
+            (float)object[1] - viewPos[1]);
 
-    if (fvec2::dot(toPosVec, headingVec) <= 1.0f /*0.866f*/)
+    if (glm::dot(toPosVec, headingVec) <= 1.0f /*0.866f*/)
     {
         if (NEAR_ZERO(map[0], ZERO_TOLERANCE))
         {
@@ -1376,13 +1381,15 @@ void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
     map[0] -= halfWidth;
     map[1] -= halfHeight;
 
-    const fvec2 headingVec(sinf(heading * DEG2RADf),
-                           cosf(heading * DEG2RADf));
+    const auto headingVec = glm::vec2(
+            sinf(glm::radians(heading)),
+            cosf(glm::radians(heading)));
 
-    const fvec2 toPosVec((float)object[0] - viewPos[0],
-                         (float)object[1] - viewPos[1]);
+    const auto toPosVec = glm::vec2(
+            (float)object[0] - viewPos[0],
+            (float)object[1] - viewPos[1]);
 
-    if (fvec2::dot(toPosVec, headingVec) <= 1.0f)
+    if (glm::dot(toPosVec, headingVec) <= 1.0f)
     {
         if (NEAR_ZERO(map[0], ZERO_TOLERANCE))
         {
@@ -1712,8 +1719,9 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
         // draw any waypoint markers
         for (int i = 0; i < (int)enhancedMarkers.size(); i++)
         {
-            drawWaypointMarker(enhancedMarkers[i].color, 0.45f,
-                               enhancedMarkers[i].pos, myTank->getPosition(),
+            drawWaypointMarker(glm::value_ptr(enhancedMarkers[i].color), 0.45f,
+                               glm::value_ptr(enhancedMarkers[i].pos),
+                               myTank->getPosition(),
                                enhancedMarkers[i].name, enhancedMarkers[i].friendly);
         }
 
@@ -1722,8 +1730,8 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
         // draw any lockon markers
         for (int i = 0; i < (int)lockOnMarkers.size(); i++)
         {
-            drawLockonMarker(lockOnMarkers[i].color, 0.45f,
-                             lockOnMarkers[i]. pos,myTank->getPosition(),
+            drawLockonMarker(glm::value_ptr(lockOnMarkers[i].color), 0.45f,
+                             glm::value_ptr(lockOnMarkers[i].pos), myTank->getPosition(),
                              lockOnMarkers[i].name, lockOnMarkers[i].friendly);
         }
 
