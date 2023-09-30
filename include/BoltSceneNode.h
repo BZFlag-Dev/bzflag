@@ -20,6 +20,9 @@
 // Inherits from
 #include "SceneNode.h"
 
+// System headers
+#include <glm/vec4.hpp>
+
 // Common headers
 #include "OpenGLLight.h"
 
@@ -108,7 +111,7 @@ private:
     float       size;
     float       velocity[3];
     GLfloat     color[4];
-    fvec4       teamColor;
+    glm::vec4   teamColor;
     OpenGLLight     light;
     OpenGLGState    gstate;
     OpenGLGState    colorblindGState;

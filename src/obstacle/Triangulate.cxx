@@ -11,48 +11,25 @@
  */
 
 
-// top dog
-#include "common.h"
-
 // implementation header
 #include "Triangulate.h"
 
 // system headers
 #include <string.h>
 #include <vector>
-
-// common headers
-#include "vectors.h"
-
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/mixed_product.hpp>
+#include <glm/gtx/vector_query.hpp>
 
 // triangulation parameters
-static afvec3 Normal; // FIXME, uNormal, vNormal;
+static glm::vec3 Normal; // FIXME, uNormal, vNormal;
 //static afvec2* MVertsSpace = NULL;
 static const float* const *Verts = NULL;
 static int Count = 0;
 static int* WorkSet = NULL;
 
 
-static bool vec3norm(afvec3 v)
-{
-    const float len = sqrtf(vec3dot(v, v));
-    if (len < 1.0e-6f)
-    {
-        v[0] = v[1] = v[2] = 0.0f;
-        return false;
-    }
-    else
-    {
-        const float scale = 1.0f / len;
-        v[0] *= scale;
-        v[1] *= scale;
-        v[2] *= scale;
-    }
-    return true;
-}
-
-
-static inline bool makeNormal()
+static inline void makeNormal()
 {
     // Newell method
     Normal[0] = Normal[1] = Normal[2] = 0.0f;
@@ -66,7 +43,12 @@ static inline bool makeNormal()
     }
 
     // normalize
-    return vec3norm(Normal);
+    if (glm::isNull(Normal, 1.0e-6f)) {
+        Normal = glm::vec3(0.0f);
+        return;
+    }
+
+    Normal = glm::normalize(Normal);
 }
 
 
@@ -76,14 +58,11 @@ static inline bool isConvex(int w0, int w1, int w2)
     const int v0 = WorkSet[w0];
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
-    afvec3 e0, e1;
-    vec3sub(e0, Verts[v1], Verts[v0]);
-    vec3sub(e1, Verts[v2], Verts[v1]);
-    afvec3 cross;
-    vec3cross(cross, e0, e1);
-    if (vec3dot(cross, Normal) <= 0.0f)
-        return false;
-    return true;
+    auto vert0 = glm::make_vec3(Verts[v0]);
+    auto vert1 = glm::make_vec3(Verts[v1]);
+    auto vert2 = glm::make_vec3(Verts[v2]);
+    auto dotcross = glm::mixedProduct(vert1 - vert0, vert2 - vert1, Normal);
+    return dotcross > 0.0f;
 }
 
 
@@ -94,24 +73,28 @@ static inline bool isFaceClear(int w0, int w1, int w2)
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
 
+    auto vert0 = glm::make_vec3(Verts[v0]);
+    auto vert1 = glm::make_vec3(Verts[v1]);
+    auto vert2 = glm::make_vec3(Verts[v2]);
+
     // setup the edges
-    afvec3 edges[3];
-    vec3sub(edges[0], Verts[v1], Verts[v0]);
-    vec3sub(edges[1], Verts[v2], Verts[v1]);
-    vec3sub(edges[2], Verts[v0], Verts[v2]);
+    glm::vec3 edges[3];
+    edges[0] = vert1 - vert0;
+    edges[1] = vert2 - vert1;
+    edges[2] = vert0 - vert2;
 
     // get the triangle normal
-    afvec3 normal;
-    vec3cross(normal, edges[0], edges[1]);
+    auto normal = glm::cross(edges[0], edges[1]);
 
     // setup the planes
-    float planes[3][4];
-    vec3cross(planes[0], edges[0], normal);
-    vec3cross(planes[1], edges[1], normal);
-    vec3cross(planes[2], edges[2], normal);
-    planes[0][3] = -vec3dot(planes[0], Verts[v0]);
-    planes[1][3] = -vec3dot(planes[1], Verts[v1]);
-    planes[2][3] = -vec3dot(planes[2], Verts[v2]);
+    glm::vec3 planes[3];
+    float planesW[3];
+    planes[0] = glm::cross(edges[0], normal);
+    planes[1] = glm::cross(edges[1], normal);
+    planes[2] = glm::cross(edges[2], normal);
+    planesW[0] = -glm::dot(planes[0], vert0);
+    planesW[1] = -glm::dot(planes[1], vert1);
+    planesW[2] = -glm::dot(planes[2], vert2);
 
     for (int w = 0; w < Count; w++)
     {
@@ -120,9 +103,10 @@ static inline bool isFaceClear(int w0, int w1, int w2)
             continue; // FIXME: lazy
         }
         const int v = WorkSet[w];
+        auto vertV = glm::make_vec3(Verts[v]);
         for (i = 0; i < 3; i++)
         {
-            const float dist = vec3dot(planes[i], Verts[v]) + planes[i][3];
+            const float dist = glm::dot(planes[i], vertV) + planesW[i];
             if (dist > 0.0f)
             {
                 break; // this point is clear
@@ -140,12 +124,12 @@ static inline float getDot(int w0, int w1, int w2)
     const int v0 = WorkSet[w0];
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
-    afvec3 e0, e1;
-    vec3sub(e0, Verts[v1], Verts[v0]);
-    vec3sub(e1, Verts[v2], Verts[v1]);
-    vec3norm(e0);
-    vec3norm(e1);
-    return vec3dot(e0, e1);
+
+    auto vert0 = glm::make_vec3(Verts[v0]);
+    auto vert1 = glm::make_vec3(Verts[v1]);
+    auto vert2 = glm::make_vec3(Verts[v2]);
+
+    return glm::dot(glm::normalize(vert1 - vert0), glm::normalize(vert2 - vert1));
 }
 
 

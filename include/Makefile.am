@@ -144,8 +144,6 @@ noinst_HEADERS =			\
 	messages.h			\
 	multicast.h			\
 	network.h			\
-	vectors.h			\
-	vectors_old.h			\
 	version.h			\
 	win32.h
 

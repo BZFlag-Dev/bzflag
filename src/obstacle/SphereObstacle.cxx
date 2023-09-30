@@ -16,6 +16,7 @@
 // System headers
 #include <math.h>
 #include <assert.h>
+#include <glm/geometric.hpp>
 
 // Common headers
 #include "global.h"
@@ -113,7 +114,8 @@ MeshObstacle* SphereObstacle::makeMesh()
 {
     MeshObstacle* mesh;
     int i, j, q;
-    float sz[3], texsz[2];
+    glm::vec3 sz;
+    float texsz[2];
     const float minSize = 1.0e-6f; // cheezy / lazy
     int factor = 2;
 
@@ -150,12 +152,12 @@ MeshObstacle* SphereObstacle::makeMesh()
 
     // setup the coordinates
     std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> vertices;
-    std::vector<cfvec3> normals;
-    std::vector<cfvec2> texcoords;
-    cfvec3 v, n;
-    cfvec2 t;
+    std::vector<glm::vec3> checkPoints;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texcoords;
+    glm::vec3 v, n;
+    glm::vec2 t;
 
     // add the checkpoint (one is sufficient)
     v[0] = pos[0];
@@ -206,7 +208,7 @@ MeshObstacle* SphereObstacle::makeMesh()
             h_angle = h_angle + getRotation();
             float v_angle = (float)((M_PI / 2.0) *
                                     (divisions - i - 1) / (divisions));
-            float unit[3];
+            glm::vec3 unit;
             unit[0] = cosf(h_angle) * cosf(v_angle);
             unit[1] = sinf(h_angle) * cosf(v_angle);
             unit[2] = sinf(v_angle);
@@ -218,13 +220,7 @@ MeshObstacle* SphereObstacle::makeMesh()
             // normal
             if (useNormals)
             {
-                n[0] = unit[0] / sz[0];
-                n[1] = unit[1] / sz[1];
-                n[2] = unit[2] / sz[2];
-                const float len = 1.0f / sqrtf(vec3dot(n.data, n.data));
-                n[0] = n[0] * len;
-                n[1] = n[1] * len;
-                n[2] = n[2] * len;
+                n = glm::normalize(unit / sz);
                 normals.push_back(n);
             }
             // texcoord

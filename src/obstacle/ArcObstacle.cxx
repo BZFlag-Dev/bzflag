@@ -219,12 +219,12 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
     // setup the coordinates
     std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> vertices;
-    std::vector<cfvec3> normals;
-    std::vector<cfvec2> texcoords;
-    cfvec3 v, n;
-    cfvec2 t;
+    std::vector<glm::vec3> checkPoints;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texcoords;
+    glm::vec3 v, n;
+    glm::vec2 t;
 
     // add the checkpoint (one is sufficient)
     if (isCircle)
@@ -401,12 +401,12 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
 
     // setup the coordinates
     std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> vertices;
-    std::vector<cfvec3> normals;
-    std::vector<cfvec2> texcoords;
-    cfvec3 v, n;
-    cfvec2 t;
+    std::vector<glm::vec3> checkPoints;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texcoords;
+    glm::vec3 v, n;
+    glm::vec2 t;
 
     // add the checkpoints (very wasteful)
     v[0] = pos[0];

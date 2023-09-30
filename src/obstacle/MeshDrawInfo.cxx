@@ -23,6 +23,7 @@
 #include <sstream>
 #include <iostream>
 #include <ctype.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "Pack.h"
@@ -883,9 +884,9 @@ bool MeshDrawInfo::parse(std::istream& input)
     std::vector<Corner> pCorners;
     std::vector<DrawLod> pLods;
     std::vector<DrawLod> pRadarLods;
-    std::vector<cfvec3> pVerts;
-    std::vector<cfvec3> pNorms;
-    std::vector<cfvec2> pTxcds;
+    std::vector<glm::vec3> pVerts;
+    std::vector<glm::vec3> pNorms;
+    std::vector<glm::vec2> pTxcds;
 
     setupDrawModeMap();
     finishLine(input); // flush the rest of the "drawInfo" line
@@ -974,7 +975,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "vertex") == 0)
         {
-            cfvec3 v;
+            glm::vec3 v;
             if ((parms >> v[0]) && (parms >> v[1]) && (parms >> v[2]))
                 pVerts.push_back(v);
             else
@@ -985,7 +986,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "normal") == 0)
         {
-            cfvec3 n;
+            glm::vec3 n;
             if ((parms >> n[0]) && (parms >> n[1]) && (parms >> n[2]))
                 pNorms.push_back(n);
             else
@@ -996,7 +997,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "texcoord") == 0)
         {
-            cfvec2 t;
+            glm::vec2 t;
             if ((parms >> t[0]) && (parms >> t[1]))
                 pTxcds.push_back(t);
             else
@@ -1053,7 +1054,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         rawVertCount = pVerts.size();
         rawVerts = new afvec3[rawVertCount];
         for (i = 0; i < rawVertCount; i++)
-            memcpy(rawVerts[i], pVerts[i].data, sizeof(afvec3));
+            memcpy(rawVerts[i], glm::value_ptr(pVerts[i]), sizeof(afvec3));
     }
     // make raw norms
     if (!pNorms.empty())
@@ -1061,7 +1062,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         rawNormCount = pNorms.size();
         rawNorms = new afvec3[rawNormCount];
         for (i = 0; i < rawNormCount; i++)
-            memcpy(rawNorms[i], pNorms[i].data, sizeof(afvec3));
+            memcpy(rawNorms[i], glm::value_ptr(pNorms[i]), sizeof(afvec3));
     }
     // make raw texcoords
     if (!pTxcds.empty())
@@ -1069,7 +1070,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         rawTxcdCount = pTxcds.size();
         rawTxcds = new afvec2[rawTxcdCount];
         for (i = 0; i < rawTxcdCount; i++)
-            memcpy(rawTxcds[i], pTxcds[i].data, sizeof(afvec2));
+            memcpy(rawTxcds[i], glm::value_ptr(pTxcds[i]), sizeof(afvec2));
     }
 
     // ask for all display lists

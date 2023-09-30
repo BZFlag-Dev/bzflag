@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 // implementation header
 #include "MeshTransform.h"
 
@@ -374,6 +372,20 @@ void MeshTransform::Tool::modifyVertex(float v[3]) const
     t[1] = (v[0] * vm[1][0]) + (v[1] * vm[1][1]) + (v[2] * vm[1][2]) + vm[1][3];
     t[2] = (v[0] * vm[2][0]) + (v[1] * vm[2][1]) + (v[2] * vm[2][2]) + vm[2][3];
     memcpy(v, t, sizeof(float[3]));
+}
+
+
+void MeshTransform::Tool::modifyVertex(glm::vec3 &v) const
+{
+    if (empty)
+        return;
+
+    glm::vec3 t;
+    const float (*vm)[4] = vertexMatrix;
+    t[0] = (v[0] * vm[0][0]) + (v[1] * vm[0][1]) + (v[2] * vm[0][2]) + vm[0][3];
+    t[1] = (v[0] * vm[1][0]) + (v[1] * vm[1][1]) + (v[2] * vm[1][2]) + vm[1][3];
+    t[2] = (v[0] * vm[2][0]) + (v[1] * vm[2][1]) + (v[2] * vm[2][2]) + vm[2][3];
+    v = t;
 }
 
 
