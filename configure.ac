@@ -171,6 +171,8 @@ if test x$enable_robots != xno; then
     AC_DEFINE(ROBOT, 1, [Enabling Robots])
 fi
 
+AC_ARG_ENABLE(avx2,     [  --enable-avx2          turn on simd])
+
 # debugging and profiling
 AC_ARG_ENABLE(debug,     [  --enable-debug          turn on debugging])
 AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
@@ -432,6 +434,8 @@ AC_CHECK_HEADERS( \
 	values.h \
 )
 
+AC_DEFINE(GLM_FORCE_AVX2, 1, [ Enable avx2 if available])
+
 if test "x$enable_UPnP" = "xyes"; then
     AC_CHECK_HEADERS(
 	[miniupnpc/miniupnpc.h],
@@ -687,6 +691,9 @@ case $host_os in
 	     pc)
                FLAGS=-mtune=native
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+               if test x$enable_avx2 = xyes ; then
+	          CONF_CXXFLAGS="$CONF_CXXFLAGS -mavx2";
+               fi
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
 	     ppc)
