@@ -196,6 +196,9 @@ AC_ARG_ENABLE(ubsan,     [  --enable-ubsan          undefined behaviour sanitize
 # do we want the bzflag  client?
 AC_ARG_ENABLE(client, [  --disable-client        server-only build])
 
+AC_ARG_ENABLE([avx2], [AS_HELP_STRING([--enable-avx2],[enable glm use of avx2])])
+AC_ARG_ENABLE([fma],  [AS_HELP_STRING([--enable-fma],[enable glm use of fma])])
+
 # enable UPnP for server
 AC_ARG_ENABLE(UPnP,       [  --enable-UPnP           Use UPnP for server],
 	      , [enable_UPnP=no])
@@ -443,6 +446,14 @@ AC_CHECK_HEADERS( \
 	unistd.h \
 	values.h \
 )
+
+if test "x$enable_avx2" = "xyes"; then
+        AC_DEFINE(GLM_FORCE_AVX2, 1, [ Enable avx2 in glm])
+        AC_DEFINE(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES, 1, [ Align gentypes])
+fi
+if test "x$enable_fma" = "xyes"; then
+        AC_DEFINE(GLM_FORCE_FMA, 1, [ Enable fma in glm])
+fi
 
 if test "x$enable_UPnP" = "xyes"; then
     AC_CHECK_HEADERS(

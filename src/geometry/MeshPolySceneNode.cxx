@@ -38,17 +38,16 @@ MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _node,
                                       const std::vector<glm::vec3>& _vertices,
                                       const std::vector<glm::vec3>& _normals,
                                       const std::vector<glm::vec2>& _texcoords,
-                                      const GLfloat* _normal) :
-    vertices(_vertices), normals(_normals), texcoords(_texcoords)
+    const glm::vec4 &_plane) :
+    plane(_plane), vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
     sceneNode = _node;
-    normal = _normal;
     style = 0;
     return;
 }
 
 
-const GLfloat*  MeshPolySceneNode::Geometry::getPosition() const
+const glm::vec3 &MeshPolySceneNode::Geometry::getPosition() const
 {
     return sceneNode->getSphere();
 }
@@ -119,7 +118,7 @@ void MeshPolySceneNode::Geometry::render()
     }
     else
     {
-        glNormal3fv(normal);
+        glNormal3fv(plane);
         if (style >= 2)
             drawVT();
         else
@@ -143,7 +142,7 @@ void MeshPolySceneNode::Geometry::renderShadow()
 // MeshPolySceneNode
 //
 
-MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
+MeshPolySceneNode::MeshPolySceneNode(const glm::vec4 &_plane,
                                      bool _noRadar, bool _noShadow,
                                      const std::vector<glm::vec3>& vertices,
                                      const std::vector<glm::vec3>& normals,
@@ -220,6 +219,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     for (const auto &v : vertices)
         center += v;
     center /= static_cast<float>(count);
+    setCenter(center);
 
     float maxRadiusSq = 0.0f;
     for (const auto &v : vertices)
@@ -228,9 +228,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
         if (rSq > maxRadiusSq)
             maxRadiusSq = rSq;
     }
-
-    const GLfloat mySphere[4] = { center.x, center.y, center.z, maxRadiusSq };
-    setSphere(mySphere);
+    setRadius(maxRadiusSq);
 
     // record extents info
     for (const auto &v : vertices)
@@ -243,9 +241,8 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
-    const GLfloat* eye = frustum.getEye();
-    if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-            plane[3]) <= 0.0f)
+    const auto eye = glm::vec4(frustum.getEye(), 1.0f);
+    if (glm::dot(eye, plane) <= 0.0f)
         return true;
 
     // if the Visibility culler tells us that we're
@@ -269,13 +266,13 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
 
     return testPolygonInAxisBox(
             getVertexCount(),
-            reinterpret_cast<const float (*)[3]>(getVertices()),
+            getVertices(),
             plane,
             exts);
 }
 
 
-int MeshPolySceneNode::split(const float* splitPlane,
+int MeshPolySceneNode::split(const glm::vec4 &splitPlane,
                              SceneNode*& front, SceneNode*& back) const
 {
     if (!node.normals.empty())
@@ -291,8 +288,8 @@ int MeshPolySceneNode::split(const float* splitPlane,
 void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     node.setStyle(getStyle());
-    const GLfloat* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol[3] != 0.0f))
+    const auto dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->a != 0.0f))
         renderer.addRenderNode(&node, getWallGState());
     return;
 }
@@ -302,8 +299,8 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
     if (!noShadow)
     {
-        const GLfloat* dyncol = getDynamicColor();
-        if ((dyncol == NULL) || (dyncol[3] != 0.0f))
+        const auto dyncol = getDynamicColor();
+        if ((dyncol == NULL) || (dyncol->a != 0.0f))
             renderer.addShadowNode(&node);
     }
     return;
@@ -318,7 +315,7 @@ void MeshPolySceneNode::renderRadar()
 }
 
 
-int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
+int MeshPolySceneNode::splitWallVTN(const glm::vec4 &splitPlane,
                                     const std::vector<glm::vec3>& vertices,
                                     const std::vector<glm::vec3>& normals,
                                     const std::vector<glm::vec2>& texcoords,
@@ -329,7 +326,7 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
     const float fudgeFactor = 0.001f;
     const unsigned char BACK_SIDE = (1 << 0);
     const unsigned char FRONT_SIDE = (1 << 1);
-    const glm::vec3 planeNorm = glm::make_vec3(splitPlane);
+    const glm::vec3 planeNorm = glm::vec3(splitPlane);
 
     // arrays for tracking each vertex's side
     // and distance from the splitting plane
@@ -355,27 +352,29 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
     int bothCount = 0;
     int backCount = 0;
     int frontCount = 0;
-    for (i = 0; i < count; i++)
+    unsigned char *tmpArray = array;
+    float *tmpDists  = dists;
+    for (const auto &v : vertices)
     {
-        const float d = glm::dot(vertices[i], planeNorm) + splitPlane[3];
+        const float d = glm::dot(v, planeNorm) + splitPlane[3];
         if (d < -fudgeFactor)
         {
-            array[i] = BACK_SIDE;
+            *tmpArray++ = BACK_SIDE;
             backCount++;
         }
         else if (d > fudgeFactor)
         {
-            array[i] = FRONT_SIDE;
+            *tmpArray++ = FRONT_SIDE;
             frontCount++;
         }
         else
         {
-            array[i] = (BACK_SIDE | FRONT_SIDE);
+            *tmpArray++ = BACK_SIDE | FRONT_SIDE;
             bothCount++;
             backCount++;
             frontCount++;
         }
-        dists[i] = d; // save for later
+        *tmpDists++ = d; // save for later
     }
 
     // see if we need to split
@@ -501,9 +500,9 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
     }
 
     // make new nodes
-    front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+    front = new MeshPolySceneNode(*getPlane(), noRadar, noShadow,
                                   vertexFront, normalFront, uvFront);
-    back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+    back = new MeshPolySceneNode(*getPlane(), noRadar, noShadow,
                                  vertexBack, normalBack, uvBack);
 
     // free the arrays, if required
@@ -548,7 +547,7 @@ void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
 }
 
 
-int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
+int MeshPolySceneNode::splitWallVT(const glm::vec4 &splitPlane,
                                    const std::vector<glm::vec3>& vertices,
                                    const std::vector<glm::vec2>& texcoords,
                                    SceneNode*& front, SceneNode*& back) const
@@ -585,27 +584,29 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
     int backCount = 0;
     int frontCount = 0;
 
-    for (i = 0; i < count; i++)
+    unsigned char *tmpArray = array;
+    float *tmpDists  = dists;
+    for (const auto &v : vertices)
     {
-        const float d = glm::dot(vertices[i], planeNorm) + splitPlane[3];
+        const float d = glm::dot(v, planeNorm) + splitPlane[3];
         if (d < -fudgeFactor)
         {
-            array[i] = BACK_SIDE;
+            *tmpArray++ = BACK_SIDE;
             backCount++;
         }
         else if (d > fudgeFactor)
         {
-            array[i] = FRONT_SIDE;
+            *tmpArray++ = FRONT_SIDE;
             frontCount++;
         }
         else
         {
-            array[i] = (BACK_SIDE | FRONT_SIDE);
+            *tmpArray++ = BACK_SIDE | FRONT_SIDE;
             bothCount++;
             backCount++;
             frontCount++;
         }
-        dists[i] = d; // save for later
+        *tmpDists++ = d; // save for later
     }
 
     // see if we need to split
@@ -723,9 +724,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
     }
 
     // make new nodes
-    front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+    front = new MeshPolySceneNode(*getPlane(), noRadar, noShadow,
                                   vertexFront, normalFront, uvFront);
-    back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+    back = new MeshPolySceneNode(*getPlane(), noRadar, noShadow,
                                  vertexBack, normalBack, uvBack);
 
     // free the arrays, if required

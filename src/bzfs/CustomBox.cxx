@@ -19,6 +19,7 @@
 #include <math.h>
 #include <sstream>
 #include <vector>
+#include <glm/geometric.hpp>
 
 /* common implementation headers */
 #include "BoxBuilding.h"
@@ -284,10 +285,10 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[3])
     glm::vec3 vx{ 1.0f, -1.0f, 0.0f};
     glm::vec3 vy{-1.0f,  1.0f, 0.0f};
     glm::vec3 vz{-1.0f, -1.0f, 1.0f};
-    xformTool.modifyVertex(glm::value_ptr(vo));
-    xformTool.modifyVertex(glm::value_ptr(vx));
-    xformTool.modifyVertex(glm::value_ptr(vy));
-    xformTool.modifyVertex(glm::value_ptr(vz));
+    xformTool.modifyVertex(vo);
+    xformTool.modifyVertex(vx);
+    xformTool.modifyVertex(vy);
+    xformTool.modifyVertex(vz);
     lengths[0] = glm::distance(vx, vo);
     lengths[1] = glm::distance(vy, vo);
     lengths[2] = glm::distance(vz, vo);
@@ -311,7 +312,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef)
 
     // setup the transform
     MeshTransform xform;
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const auto zAxis = glm::vec3(0.0f, 0.0f, 1.0f);
     xform.addScale(size);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);

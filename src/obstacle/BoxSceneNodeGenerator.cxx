@@ -10,7 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
 #include "BoxSceneNodeGenerator.h"
+
+// Common headers
 #include "WallSceneNode.h"
 #include "BoxBuilding.h"
 #include "QuadWallSceneNode.h"

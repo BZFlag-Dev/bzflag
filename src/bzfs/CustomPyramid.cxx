@@ -19,6 +19,7 @@
 #include <math.h>
 #include <sstream>
 #include <vector>
+#include <glm/geometric.hpp>
 
 /* common implementation headers */
 #include "PyramidBuilding.h"
@@ -290,14 +291,14 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
     glm::vec3 vxn(-1.0f,  0.0f, 0.0f);
     glm::vec3 vyp( 0.0f,  1.0f, 0.0f);
     glm::vec3 vyn( 0.0f, -1.0f, 0.0f);
-    xformTool.modifyVertex(glm::value_ptr(vo));
-    xformTool.modifyVertex(glm::value_ptr(vx));
-    xformTool.modifyVertex(glm::value_ptr(vy));
-    xformTool.modifyVertex(glm::value_ptr(vt));
-    xformTool.modifyVertex(glm::value_ptr(vxp));
-    xformTool.modifyVertex(glm::value_ptr(vxn));
-    xformTool.modifyVertex(glm::value_ptr(vyp));
-    xformTool.modifyVertex(glm::value_ptr(vyn));
+    xformTool.modifyVertex(vo);
+    xformTool.modifyVertex(vx);
+    xformTool.modifyVertex(vy);
+    xformTool.modifyVertex(vt);
+    xformTool.modifyVertex(vxp);
+    xformTool.modifyVertex(vxn);
+    xformTool.modifyVertex(vyp);
+    xformTool.modifyVertex(vyn);
     lengths[0] = glm::distance(vx,  vo);
     lengths[1] = glm::distance(vy,  vo);
     lengths[2] = glm::distance(vxp, vt);
@@ -327,13 +328,13 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
     MeshTransform xform;
     if (flipz || (size[2] < 0.0f))
     {
-        const float flipScale[3] = {1.0f, 1.0f, -1.0f};
-        const float flipShift[3] = {0.0f, 0.0f, +1.0f};
+        const auto flipScale = glm::vec3(1.0f, 1.0f, -1.0f);
+        const auto flipShift = glm::vec3(0.0f, 0.0f, +1.0f);
         xform.addScale(flipScale);
         xform.addShift(flipShift);
     }
 
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const auto zAxis = glm::vec3(0.0f, 0.0f, 1.0f);
     xform.addScale(size);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);
@@ -352,9 +353,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
     // add the vertex coordinates
     std::vector<glm::vec3> verts =
     {
-        {-1.0f, -1.0f, 0.0f}, {+1.0f, -1.0f, 0.0f},
-        {+1.0f, +1.0f, 0.0f}, {-1.0f, +1.0f, 0.0f},
-        {+0.0f, +0.0f, 1.0f}
+        glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(+1.0f, -1.0f, 0.0f),
+        glm::vec3(+1.0f, +1.0f, 0.0f), glm::vec3(-1.0f, +1.0f, 0.0f),
+        glm::vec3(+0.0f, +0.0f, 1.0f)
     };
 
     std::vector<glm::vec3> norms;

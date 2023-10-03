@@ -76,30 +76,27 @@ public:
     bool isValid() const override;
 
     float intersect(const Ray&) const override;
-    void getNormal(const float* p, float* n) const override;
-    void get3DNormal(const float* p, float* n) const override;
+    void getNormal(const glm::vec3 &p, glm::vec3 &n) const override;
+    void get3DNormal(const glm::vec3 &p, glm::vec3 &n) const override;
 
-    bool inCylinder(const float* p, float radius, float height) const override;
-    bool inBox(const float* p, float angle,
+    bool inCylinder(const glm::vec3 &p, float radius, float height) const override;
+    bool inBox(const glm::vec3 &p, float angle,
                float halfWidth, float halfBreadth, float height) const override;
-    bool inMovingBox(const float* oldP, float oldAngle,
-                     const float *newP, float newAngle,
+    bool inMovingBox(const glm::vec3 &oldP, float oldAngle,
+                     const glm::vec3 &newP, float newAngle,
                      float halfWidth, float halfBreadth, float height) const override;
-    bool isCrossing(const float* p, float angle,
-                    float halfWidth, float halfBreadth, float height,
-                    float* plane) const override;
     SortPriority getSortPriority() const override
     {
         return SortPriority::MeshObstacle;
     }
 
-    bool getHitNormal(const float* pos1, float azimuth1,
-                      const float* pos2, float azimuth2,
+    bool getHitNormal(const glm::vec3 &pos1, float azimuth1,
+                      const glm::vec3 &pos2, float azimuth2,
                       float halfWidth, float halfBreadth,
-                      float height, float* normal) const override;
+                      float height, glm::vec3 &normal) const override;
 
-    bool containsPoint(const float point[3]) const;
-    bool containsPointNoOctree(const float point[3]) const;
+    bool containsPoint(const glm::vec3 &point) const;
+    bool containsPointNoOctree(const glm::vec3 &point) const;
 
     const char *getCheckTypes() const;
     const glm::vec3 *getCheckPoints() const;
@@ -112,7 +109,6 @@ public:
     int getTexcoordCount() const;
     int getFaceCount() const;
     MeshFace* getFace(int face) const;
-    const float* getPosition() const;
     bool useSmoothBounce() const;
     bool noClusters() const;
 
@@ -210,11 +206,6 @@ inline int MeshObstacle::getFaceCount() const
 inline MeshFace* MeshObstacle::getFace(int face) const
 {
     return faces[face];
-}
-
-inline const float* MeshObstacle::getPosition() const
-{
-    return pos;
 }
 
 inline bool MeshObstacle::useSmoothBounce() const

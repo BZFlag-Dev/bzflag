@@ -51,27 +51,27 @@ public:
     bool isFlatTop() const override;
 
     float intersect(const Ray&) const override;
-    void getNormal(const float* p, float* n) const override;
-    void get3DNormal(const float* p, float* n) const override;
+    void getNormal(const glm::vec3 &p, glm::vec3 &n) const override;
+    void get3DNormal(const glm::vec3 &p, glm::vec3 &n) const override;
 
-    bool inCylinder(const float* p, float radius, float height) const override;
-    bool inBox(const float* p, float angle,
+    bool inCylinder(const glm::vec3 &p, float radius, float height) const override;
+    bool inBox(const glm::vec3 &p, float angle,
                float halfWidth, float halfBreadth, float height) const override;
-    bool inMovingBox(const float* oldP, float oldAngle,
-                     const float *newP, float newAngle,
+    bool inMovingBox(const glm::vec3 &oldP, float oldAngle,
+                     const glm::vec3 &newP, float newAngle,
                      float halfWidth, float halfBreadth, float height) const override;
-    bool isCrossing(const float* p, float angle,
+    bool isCrossing(const glm::vec3 &p, float angle,
                     float halfWidth, float halfBreadth, float height,
-                    float* plane) const override;
+                    glm::vec4 *plane) const override;
     SortPriority getSortPriority() const override
     {
         return SortPriority::MeshFace;
     }
 
-    bool getHitNormal(const float* pos1, float azimuth1,
-                      const float* pos2, float azimuth2,
+    bool getHitNormal(const glm::vec3 &pos1, float azimuth1,
+                      const glm::vec3 &pos2, float azimuth2,
                       float halfWidth, float halfBreadth,
-                      float height, float* normal) const override;
+                      float height, glm::vec3 &normal) const override;
 
     MeshObstacle* getMesh() const;
     int getVertexCount() const;
@@ -80,7 +80,7 @@ public:
     const glm::vec3& getVertex(int index) const;
     const glm::vec3& getNormal(int index) const;
     const glm::vec2& getTexcoord(int index) const;
-    const float* getPlane() const;
+    const glm::vec4 &getPlane() const;
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
     bool noClusters() const;
@@ -188,9 +188,9 @@ inline int MeshFace::getPhysicsDriver() const
     return phydrv;
 }
 
-inline const float* MeshFace::getPlane() const
+inline const glm::vec4 &MeshFace::getPlane() const
 {
-    return glm::value_ptr(plane);
+    return plane;
 }
 
 inline int MeshFace::getVertexCount() const

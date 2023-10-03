@@ -15,9 +15,9 @@
 
 // system headers
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common headers
-#include "bzfgl.h"
 #include "bzfio.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
@@ -27,9 +27,6 @@
 #include "SceneRenderer.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
-
-
-#define INVALID_GL_ID 0xffffffff
 
 
 //============================================================================//
@@ -121,8 +118,8 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
     if (dyncol != NULL)
     {
-        const float* c = dyncol->getColor();
-        colorPtr = new glm::vec4(glm::make_vec4(c));
+        const glm::vec4* c = dyncol->getColor();
+        colorPtr = new glm::vec4(*c);
         colorAlpha = dyncol->canHaveAlpha(); // override
     }
     else

@@ -84,8 +84,8 @@ private:
     {
         const BzMaterial* bzmat;
         OpenGLGState gstate;
-        GLfloat color[4];
-        const GLfloat* colorPtr;
+        glm::vec4 color;
+        const glm::vec4 *colorPtr;
         bool drawRadar;
         bool drawShadow;
         bool needsSorting;

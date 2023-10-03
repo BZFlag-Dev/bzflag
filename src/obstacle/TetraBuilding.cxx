@@ -15,6 +15,9 @@
 
 // System headers
 #include <math.h>
+#include <glm/vec3.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/mixed_product.hpp>
 
 // Common headers
 #include "global.h"
@@ -33,7 +36,7 @@ const char* TetraBuilding::typeName = "TetraBuilding";
 
 
 TetraBuilding::TetraBuilding(const MeshTransform& xform,
-                             const float _vertices[4][3],
+                             const glm::vec3 _vertices[4],
                              const float _normals[4][3][3],
                              const float _texcoords[4][3][2],
                              const bool _useNormals[4],
@@ -42,7 +45,8 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
                              bool drive, bool shoot, bool rico)
 {
     // tetra specific parameters
-    memcpy (vertices, _vertices, sizeof(vertices));
+    for (int i = 0; i < 4; i++)
+        vertices[i] = _vertices[i];
     memcpy (normals, _normals, sizeof(normals));
     memcpy (texcoords, _texcoords, sizeof(texcoords));
     memcpy (useNormals, _useNormals, sizeof(useNormals));
@@ -130,10 +134,10 @@ MeshObstacle* TetraBuilding::makeMesh()
 void TetraBuilding::checkVertexOrder()
 {
     // make sure the the planes are facing outwards
-    const glm::vec3 v0 = glm::make_vec3(vertices[0]);
-    const glm::vec3 e0 = glm::make_vec3(vertices[1]) - v0;
-    const glm::vec3 e1 = glm::make_vec3(vertices[2]) - v0;
-    const glm::vec3 e2 = glm::make_vec3(vertices[3]) - v0;
+    const glm::vec3 v0 = vertices[0];
+    const glm::vec3 e0 = vertices[1] - v0;
+    const glm::vec3 e1 = vertices[2] - v0;
+    const glm::vec3 e2 = vertices[3] - v0;
     const glm::vec3 cross = glm::cross(e0, e1);
 
     const float dot = glm::dot(cross, e2);
@@ -360,7 +364,7 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
     // write the vertex information
     for (i = 0; i < 4; i++)
     {
-        const float* vertex = vertices[i];
+        const auto &vertex = vertices[i];
         out << indent << "\tvertex " << vertex[0] << " " << vertex[1] << " "
             << vertex[2] << std::endl;
         if (useNormals[i])

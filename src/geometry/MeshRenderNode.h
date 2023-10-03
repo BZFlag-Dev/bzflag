@@ -18,6 +18,7 @@
 
 // System headers
 #include <glm/vec3.hpp>
+#include <glm/fwd.hpp>
 
 // common implementation headers
 #include "bzfgl.h"
@@ -32,11 +33,11 @@ class OpaqueRenderNode : public RenderNode
 public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
                      GLfloat *xformMatrix, bool normalize,
-                     const GLfloat* color, int lod, int set,
+                     const glm::vec4 *color, int lod, int set,
                      const Extents* exts, int triangles);
     void render() override final;
     void renderShadow() override final;
-    const GLfloat* getPosition() const override;
+    const glm::vec3 &getPosition() const override;
 private:
     void drawV() const;
     void drawVN() const;
@@ -47,7 +48,7 @@ private:
     GLfloat* xformMatrix;
     bool normalize;
     int lod, set;
-    const GLfloat* color;
+    const glm::vec4 *color;
     const Extents* exts;
     int triangles;
 };
@@ -58,10 +59,10 @@ class AlphaGroupRenderNode final : public OpaqueRenderNode
 public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
                          GLfloat *xformMatrix, bool normalize,
-                         const GLfloat* color, int lod, int set,
+                         const glm::vec4 *color, int lod, int set,
                          const Extents* exts, glm::vec3 pos,
                          int triangles);
-    const GLfloat* getPosition() const override;
+    const glm::vec3 &getPosition() const override;
     void setPosition(glm::vec3 pos);
 private:
     glm::vec3 pos;

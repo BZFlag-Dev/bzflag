@@ -22,12 +22,13 @@
 
 // System headers
 #include <string>
+#include <glm/vec4.hpp>
 
 class WallObstacle final : public Obstacle
 {
 public:
     WallObstacle();
-    WallObstacle(const float* pos, float rotation,
+    WallObstacle(const glm::vec3 &pos, float rotation,
                  float breadth, float height, bool ricochet);
     ~WallObstacle();
 
@@ -35,21 +36,21 @@ public:
     static const char*  getClassName(); // const
 
     float       intersect(const Ray&) const override;
-    void        getNormal(const float* p, float* n) const override;
+    void        getNormal(const glm::vec3 &p, glm::vec3 &n) const override;
 
-    bool        inCylinder(const float* p, float radius, float height) const override;
-    bool        inBox(const float* p, float angle,
+    bool        inCylinder(const glm::vec3 &p, float radius, float height) const override;
+    bool        inBox(const glm::vec3 &p, float angle,
                       float halfWidth, float halfBreadth, float height) const override;
-    bool        inMovingBox(const float* oldP, float oldAngle,
-                            const float *newP, float newAngle,
+    bool        inMovingBox(const glm::vec3 &oldP, float oldAngle,
+                            const glm::vec3 &newP, float newAngle,
                             float halfWidth, float halfBreadth, float height) const override;
 
     bool        getHitNormal(
-        const float* pos1, float azimuth1,
-        const float* pos2, float azimuth2,
+        const glm::vec3 &pos1, float azimuth1,
+        const glm::vec3 &pos2, float azimuth2,
         float halfWidth, float halfBreadth,
         float height,
-        float* normal) const override;
+        glm::vec3 &normal) const override;
 
     int packSize() const override;
     void *pack(void*) const override;
@@ -63,7 +64,7 @@ private:
     void finalize();
 
 private:
-    float       plane[4];
+    glm::vec4 plane;
     static const char*  typeName;
 };
 

@@ -44,7 +44,7 @@ public:
 
     ConeObstacle() = default;
     ConeObstacle(const MeshTransform& transform,
-                 const float* _pos, const float* _size,
+                 const glm::vec3 &_pos, const glm::vec3 &_size,
                  float _rotation, float _angle,
                  const float _texsize[2], bool _useNormals,
                  int _divisions, const BzMaterial* mats[MaterialCount],

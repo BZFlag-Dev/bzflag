@@ -15,6 +15,7 @@
 
 // common headers
 #include "bzfgl.h"
+#include "OpenGLAPI.h"
 #include "OpenGLGState.h"
 #include "MeshDrawInfo.h"
 #include "bzfio.h" // for DEBUGx()
@@ -92,18 +93,14 @@ void MeshDrawMgr::executeSet(int lod, int set, bool useNormals, bool useTexcoord
         glCallList(list);
     else
     {
-        auto vertices  = reinterpret_cast<GLfloat const*>(drawInfo->getVertices());
-        auto normals   = reinterpret_cast<GLfloat const*>(drawInfo->getNormals());
-        auto texcoords = reinterpret_cast<GLfloat const*>(drawInfo->getTexcoords());
-
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
+        glVertexPointer(drawInfo->getVertices());
 
         if (useNormals)
-            glNormalPointer(GL_FLOAT, 0, normals);
+            glNormalPointer(drawInfo->getNormals());
         else
             glDisableClientState(GL_NORMAL_ARRAY);
         if (useTexcoords)
-            glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+            glTexCoordPointer(drawInfo->getTexcoords());
         else
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -137,9 +134,7 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
         glCallList(list);
     else
     {
-        auto vertices = reinterpret_cast<GLfloat const *>(drawInfo->getVertices());
-
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
+        glVertexPointer(drawInfo->getVertices());
         rawExecuteCommands(lod, set);
     }
 
@@ -168,15 +163,11 @@ void MeshDrawMgr::makeLists()
         }
     };
 
-    auto vertices  = reinterpret_cast<GLfloat const*>(drawInfo->getVertices());
-    auto normals   = reinterpret_cast<GLfloat const*>(drawInfo->getNormals());
-    auto texcoords = reinterpret_cast<GLfloat const*>(drawInfo->getTexcoords());
-
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glVertexPointer(drawInfo->getVertices());
     glEnableClientState(GL_VERTEX_ARRAY);
-    glNormalPointer(GL_FLOAT, 0, normals);
+    glNormalPointer(drawInfo->getNormals());
     glEnableClientState(GL_NORMAL_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+    glTexCoordPointer(drawInfo->getTexcoords());
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     auto lod = 0;

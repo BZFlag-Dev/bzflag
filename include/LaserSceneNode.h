@@ -26,8 +26,8 @@
 class LaserSceneNode final : public SceneNode
 {
 public:
-    LaserSceneNode(const GLfloat pos[3],
-                   const GLfloat forward[3]);
+    LaserSceneNode(const glm::vec3 &pos,
+                   const glm::vec3 &forward);
     ~LaserSceneNode();
 
     void        setTexture(const int);
@@ -51,12 +51,12 @@ protected:
         LaserRenderNode(const LaserSceneNode*);
         ~LaserRenderNode();
         void        render() override;
-        const GLfloat* getPosition() const override;
+        const glm::vec3 &getPosition() const override;
     private:
         void renderFlatLaser();
         void renderGeoLaser();
         const LaserSceneNode* sceneNode;
-        static GLfloat  geom[6][2];
+        static glm::vec2 geom[6];
     };
     glm::vec4 color;
     glm::vec4 centerColor;

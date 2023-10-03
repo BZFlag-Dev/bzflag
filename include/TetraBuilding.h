@@ -34,7 +34,7 @@ public:
 
     TetraBuilding() = default;
     TetraBuilding(const MeshTransform& transform,
-                  const float vertices[4][3], const float normals[4][3][3],
+                  const glm::vec3 vertices[4], const float normals[4][3][3],
                   const float texCoords[4][3][2], const bool useNormals[4],
                   const bool useTexCoords[4], const BzMaterial* materials[4],
                   bool drive = false, bool shoot = false, bool ricochet = false);
@@ -63,7 +63,7 @@ private:
     static const char*  typeName;
 
     MeshTransform transform;
-    float vertices[4][3];
+    glm::vec3 vertices[4];
     float normals[4][3][3];
     float texcoords[4][3][2];
     bool useNormals[4];

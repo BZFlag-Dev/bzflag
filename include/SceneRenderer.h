@@ -102,7 +102,9 @@ public:
 
     void      setExposed();
 
-    void      getGroundUV(const float p[2], float uv[2]) const;
+    void      clearRadar(float opacity);
+
+    void      getGroundUV(const glm::vec2 &p, glm::vec2 &uv) const;
 
     bool      getBlank() const;
     bool      getInvert() const;
@@ -121,7 +123,7 @@ public:
     void      addFlareLight(const float* pos, const float* color);
 
     // temporarily turn off non-applicable lights for big meshes
-    void      disableLights(const float mins[3], const float maxs[3]);
+    void      disableLights(const glm::vec3 &mins, const glm::vec3 &maxs);
     void      reenableLights();
 
     void      setupSun(); // setup sun lighting params
@@ -129,11 +131,10 @@ public:
 
     void      setTimeOfDay(double julianDay);
 
-    const GLfloat*    getSunColor() const;
-    const GLfloat*    getSunScaledColor() const;
+    const glm::vec3 &getSunColor() const;
+    const glm::vec3 &getSunScaledColor() const;
     GLfloat       getSunBrightness() const;
-    const GLfloat*    getSunDirection() const;
-    const GLfloat*    getAmbientColor() const;
+    const glm::vec3 *getSunDirection() const;
     const GLfloat*    getCelestialTransform() const;
 
     SceneDatabase*    getSceneDatabase() const;
@@ -162,7 +163,7 @@ public:
     {
         return fogColor;
     }
-    void      setFogColor( float *color)
+    void setFogColor(glm::vec4 color)
     {
         fogColor = glm::make_vec4(color);
     }
@@ -217,11 +218,10 @@ private:
     OpenGLLight       theSun;
     bool          sunOrMoonUp;
     GLfloat       sunDirection[3];    // or moon
-    GLfloat       sunColor[4];
-    GLfloat       sunScaledColor[4];
+    glm::vec3     sunColor;
+    glm::vec3     sunScaledColor;
     GLfloat       celestialTransform[4][4];
     GLfloat       sunBrightness;
-    GLfloat       ambientColor[4];
     SceneDatabase*    scene;
     BackgroundRenderer*   background;
     int           triangleCount;
@@ -312,12 +312,12 @@ inline const OpenGLLight&   SceneRenderer::getLight(int index) const
     return *(lights[index]);
 }
 
-inline const GLfloat*       SceneRenderer::getSunColor() const
+inline const glm::vec3 &SceneRenderer::getSunColor() const
 {
     return sunColor;
 }
 
-inline const GLfloat*       SceneRenderer::getSunScaledColor() const
+inline const glm::vec3 &SceneRenderer::getSunScaledColor() const
 {
     return sunScaledColor;
 }
@@ -325,11 +325,6 @@ inline const GLfloat*       SceneRenderer::getSunScaledColor() const
 inline GLfloat          SceneRenderer::getSunBrightness() const
 {
     return sunBrightness;
-}
-
-inline const GLfloat*       SceneRenderer::getAmbientColor() const
-{
-    return ambientColor;
 }
 
 inline const GLfloat*       SceneRenderer::getCelestialTransform() const

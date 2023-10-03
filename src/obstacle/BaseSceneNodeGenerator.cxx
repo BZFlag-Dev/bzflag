@@ -86,31 +86,22 @@ WallSceneNode*  BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepea
 
         }
     }
-    GLfloat color[4];
+    glm::vec4 color;
     switch (base->getTeam())
     {
     case 1:
-        color[0] = 0.7f;
-        color[1] = 0.0f;
-        color[2] = 0.0f;
+        color = glm::vec4(0.7f, 0.0f, 0.0f, 1.0f);
         break;
     case 2:
-        color[0] = 0.0f;
-        color[1] = 0.7f;
-        color[2] = 0.0f;
+        color = glm::vec4(0.0f, 0.7f, 0.0f, 1.0f);
         break;
     case 3:
-        color[0] = 0.0f;
-        color[1] = 0.0f;
-        color[2] = 0.7f;
+        color = glm::vec4(0.0f, 0.0f, 0.7f, 1.0f);
         break;
     case 4:
-        color[0] = 0.7f;
-        color[1] = 0.0f;
-        color[2] = 0.7f;
+        color = glm::vec4(0.7f, 0.0f, 0.7f, 1.0f);
         break;
     }
-    color[3] = 1.0;
 
     const glm::vec3 sEdge = sCorner - bPoint;
     const glm::vec3 tEdge = tCorner - bPoint;

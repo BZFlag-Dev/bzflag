@@ -16,6 +16,7 @@
 // System headers
 #include <string.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/vec3.hpp>
 
 // Common headers
 #include "network.h"

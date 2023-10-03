@@ -30,9 +30,9 @@ public:
     void writeToWorld(WorldInfo*) const override;
     void *pack(void *buf) const;
 protected:
-    float pos[3];
+    glm::vec3 pos;
     float rotation;
-    float size[3];
+    glm::vec3 size;
     MeshTransform transform;
 };
 

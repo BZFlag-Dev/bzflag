@@ -23,6 +23,9 @@
 #include <sstream>
 #include <iostream>
 #include <ctype.h>
+#include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "Pack.h"
@@ -95,7 +98,8 @@ MeshDrawInfo::MeshDrawInfo(const MeshDrawInfo* di,
 
     // copy extents and sphere  (xform applied later)
     extents = di->extents;
-    memcpy(sphere, di->sphere, sizeof(float[4]));
+    position = di->position;
+    radius2  = di->radius2;
 
     // counts
     cornerCount = di->cornerCount;
@@ -169,7 +173,8 @@ void MeshDrawInfo::init()
     drawMgr = NULL;
 
     extents.reset();
-    sphere[0] = sphere[1] = sphere[2] = sphere[3] = +MAXFLOAT;
+    position = glm::vec3(+MAXFLOAT);
+    radius2  = +MAXFLOAT;
 
     cornerCount = 0;
     corners = NULL;
@@ -309,10 +314,10 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
     const glm::vec3* verts = hasRaw ? rawVerts.data() : mesh->getVertices();
 
     Extents tmpExts;
-    const bool calcCenter = (sphere[0] == +MAXFLOAT) &&
-                            (sphere[1] == +MAXFLOAT) &&
-                            (sphere[2] == +MAXFLOAT);
-    const bool calcRadius = (sphere[3] == +MAXFLOAT);
+    const bool calcCenter = (position[0] == +MAXFLOAT) &&
+                            (position[1] == +MAXFLOAT) &&
+                            (position[2] == +MAXFLOAT);
+    const bool calcRadius = (radius2 == +MAXFLOAT);
     const bool calcExtents = (extents.mins[0] == tmpExts.mins[0]) &&
                              (extents.mins[1] == tmpExts.mins[1]) &&
                              (extents.mins[2] == tmpExts.mins[2]) &&
@@ -342,7 +347,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
                     minZ = p[2];
                 if (p[2] > maxZ)
                     maxZ = p[2];
-                const float distSqr = (p[0] * p[0]) + (p[1] * p[1]);
+                const float distSqr = glm::length2(glm::vec2(p));
                 if (distSqr > maxDistSqr)
                     maxDistSqr = distSqr;
             }
@@ -361,18 +366,10 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 
     // calculate the sphere params?
     if (calcCenter)
-    {
-        sphere[0] = 0.5f * (extents.maxs[0] + extents.mins[0]);
-        sphere[1] = 0.5f * (extents.maxs[1] + extents.mins[1]);
-        sphere[2] = 0.5f * (extents.maxs[2] + extents.mins[2]);
-    }
+        position = 0.5f * (extents.maxs + extents.mins);
     if (calcRadius)
-    {
-        const float dx = extents.maxs[0] - extents.mins[0];
-        const float dy = extents.maxs[1] - extents.mins[1];
-        const float dz = extents.maxs[2] - extents.mins[2];
-        sphere[3] = 0.25f * (dx*dx + dy*dy + dz*dz); // radius squared
-    }
+        // radius squared
+        radius2 = 0.25f * glm::distance2(extents.maxs, extents.mins);
 
     // calculate the DrawSet spheres?
     for (int lod = 0; lod < lodCount; lod++)
@@ -381,10 +378,10 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
         for (int set = 0; set < drawLod.count; set++)
         {
             DrawSet& drawSet = drawLod.sets[set];
-            const bool calcSetCenter = (drawSet.sphere[0] == +MAXFLOAT) &&
-                                       (drawSet.sphere[1] == +MAXFLOAT) &&
-                                       (drawSet.sphere[2] == +MAXFLOAT);
-            const bool calcSetRadius = (drawSet.sphere[3] == +MAXFLOAT);
+            const bool calcSetCenter = (drawSet.position[0] == +MAXFLOAT) &&
+                                       (drawSet.position[1] == +MAXFLOAT) &&
+                                       (drawSet.position[2] == +MAXFLOAT);
+            const bool calcSetRadius = (drawSet.radius2 == +MAXFLOAT);
             if (calcSetCenter || calcSetRadius)
             {
                 Extents exts;
@@ -415,18 +412,10 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
                     }
                 }
                 if (calcSetCenter)
-                {
-                    drawSet.sphere[0] = 0.5f * (exts.maxs[0] + exts.mins[0]);
-                    drawSet.sphere[1] = 0.5f * (exts.maxs[1] + exts.mins[1]);
-                    drawSet.sphere[2] = 0.5f * (exts.maxs[2] + exts.mins[2]);
-                }
+                    drawSet.position = 0.5f * (exts.maxs + exts.mins);
                 if (calcSetRadius)
-                {
-                    const float dx = exts.maxs[0] - exts.mins[0];
-                    const float dy = exts.maxs[1] - exts.mins[1];
-                    const float dz = exts.maxs[2] - exts.mins[2];
-                    drawSet.sphere[3] = 0.25f * (dx*dx + dy*dy + dz*dz); // radius squared
-                }
+                    drawSet.radius2 = 0.25f
+                                      * glm::distance2(exts.maxs, exts.mins); // radius squared
             }
         }
     }
@@ -742,8 +731,8 @@ static bool parseDrawSet(std::istream& input, DrawSet& set, int& lines)
             set.wantList = true;
         else if (strcasecmp(label.c_str(), "center") == 0)
         {
-            if (!(parms >> set.sphere[0]) || !(parms >> set.sphere[1]) ||
-                    !(parms >> set.sphere[2]))
+            if (!(parms >> set.position[0]) || !(parms >> set.position[1]) ||
+                    !(parms >> set.position[2]))
             {
                 success = false;
                 logDebugMessage(0,"Bad center\n");
@@ -751,8 +740,8 @@ static bool parseDrawSet(std::istream& input, DrawSet& set, int& lines)
         }
         else if (strcasecmp(label.c_str(), "sphere") == 0)
         {
-            if (!(parms >> set.sphere[0]) || !(parms >> set.sphere[1]) ||
-                    !(parms >> set.sphere[2]) || !(parms >> set.sphere[3]))
+            if (!(parms >> set.position[0]) || !(parms >> set.position[1]) ||
+                    !(parms >> set.position[2]) || !(parms >> set.radius2))
             {
                 success = false;
                 logDebugMessage(0,"Bad sphere\n");
@@ -912,8 +901,8 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "center") == 0)
         {
-            if (!(parms >> sphere[0]) || !(parms >> sphere[1]) ||
-                    !(parms >> sphere[2]))
+            if (!(parms >> position[0]) || !(parms >> position[1]) ||
+                    !(parms >> position[2]))
             {
                 success = false;
                 logDebugMessage(0,"Bad center\n");
@@ -921,8 +910,8 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "sphere") == 0)
         {
-            if (!(parms >> sphere[0]) || !(parms >> sphere[1]) ||
-                    !(parms >> sphere[2]) || !(parms >> sphere[3]))
+            if (!(parms >> position[0]) || !(parms >> position[1]) ||
+                    !(parms >> position[2]) || !(parms >> radius2))
             {
                 success = false;
                 logDebugMessage(0,"Bad sphere\n");
@@ -1092,10 +1081,10 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
         << extents.maxs[0] << " "
         << extents.maxs[1] << " "
         << extents.maxs[2] << std::endl;
-    out << indent << "  sphere " << sphere[0] << " "
-        << sphere[1] << " "
-        << sphere[2] << " "
-        << sphere[3] << std::endl;
+    out << indent << "  sphere " << position[0] << " "
+        << position[1] << " "
+        << position[2] << " "
+        << radius2 << std::endl;
 
     if (animInfo != NULL)
     {
@@ -1148,10 +1137,10 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
             out << std::endl;
             if (set.wantList)
                 out << indent << "      dlist" << std::endl;
-            out << indent << "      sphere " << set.sphere[0] << " "
-                << set.sphere[1] << " "
-                << set.sphere[2] << " "
-                << set.sphere[3] << std::endl;
+            out << indent << "      sphere " << set.position[0] << " "
+                << set.position[1] << " "
+                << set.position[2] << " "
+                << set.radius2 << std::endl;
             const int cmdCount = set.count;
             for (int k = 0; k < cmdCount; k++)
             {
@@ -1342,8 +1331,8 @@ void* MeshDrawInfo::pack(void* buf) const
         buf = radarLods[i].pack(buf);
 
     // sphere and extents
-    buf = nboPackVector(buf, sphere);
-    buf = nboPackFloat(buf, sphere[3]);
+    buf = nboPackVector(buf, position);
+    buf = nboPackFloat(buf, radius2);
     buf = nboPackVector(buf, extents.mins);
     buf = nboPackVector(buf, extents.maxs);
 
@@ -1426,8 +1415,8 @@ const void* MeshDrawInfo::unpack(const void* buf)
         buf = radarLods[i].unpack(buf);
 
     // sphere and extents
-    buf = nboUnpackVector(buf, sphere);
-    buf = nboUnpackFloat(buf, sphere[3]);
+    buf = nboUnpackVector(buf, position);
+    buf = nboUnpackFloat(buf, radius2);
     buf = nboUnpackVector(buf, extents.mins);
     buf = nboUnpackVector(buf, extents.maxs);
 
@@ -1657,7 +1646,8 @@ DrawSet::DrawSet()
     cmds = NULL;
     material = NULL;
     wantList = false;
-    sphere[0] = sphere[1] = sphere[2] = sphere[3] = +MAXFLOAT;
+    position = glm::vec3(+MAXFLOAT);
+    radius2  = +MAXFLOAT;
     return;
 }
 
@@ -1696,8 +1686,8 @@ void* DrawSet::pack(void* buf) const
     buf = nboPackInt(buf, matindex);
 
     // sphere
-    buf = nboPackVector(buf, sphere);
-    buf = nboPackFloat(buf, sphere[3]);
+    buf = nboPackVector(buf, position);
+    buf = nboPackFloat(buf, radius2);
 
     // state bits
     uint8_t state = 0;
@@ -1722,8 +1712,8 @@ const void* DrawSet::unpack(const void* buf)
     material = MATERIALMGR.getMaterial(s32);
 
     // sphere
-    buf = nboUnpackVector(buf, sphere);
-    buf = nboUnpackFloat(buf, sphere[3]);
+    buf = nboUnpackVector(buf, position);
+    buf = nboUnpackFloat(buf, radius2);
 
     // state bits
     uint8_t state;

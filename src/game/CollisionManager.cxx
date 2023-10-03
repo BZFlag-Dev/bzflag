@@ -188,19 +188,19 @@ const ObsList* CollisionManager::axisBoxTest (const Extents& exts)
 }
 
 
-const ObsList* CollisionManager::cylinderTest (const float *pos,
+const ObsList* CollisionManager::cylinderTest (const glm::vec3 &pos,
         float radius, float height) const
 {
     if (root == NULL)
         return &EmptyList;
 
-    float tmpMins[3], tmpMaxs[3];
-    tmpMins[0] = pos[0] - radius;
-    tmpMins[1] = pos[1] - radius;
-    tmpMins[2] = pos[2];
-    tmpMaxs[0] = pos[0] + radius;
-    tmpMaxs[1] = pos[1] + radius;
-    tmpMaxs[2] = pos[2] + height;
+    auto tmpMins = pos;
+    auto tmpMaxs = pos;
+    tmpMins[0] -= radius;
+    tmpMins[1] -= radius;
+    tmpMaxs[0] += radius;
+    tmpMaxs[1] += radius;
+    tmpMaxs[2] += height;
 
     FullPad.count = 0;
 
@@ -217,7 +217,7 @@ const ObsList* CollisionManager::cylinderTest (const float *pos,
 }
 
 
-const ObsList* CollisionManager::boxTest (const float* pos, float UNUSED(angle),
+const ObsList* CollisionManager::boxTest (const glm::vec3 &pos, float UNUSED(angle),
         float dx, float dy, float dz) const
 {
     float radius = sqrtf (dx*dx + dy*dy);
@@ -225,14 +225,12 @@ const ObsList* CollisionManager::boxTest (const float* pos, float UNUSED(angle),
 }
 
 
-const ObsList* CollisionManager::movingBoxTest (const float* oldPos, float UNUSED(oldAngle),
-        const float* pos, float UNUSED(angle),
+const ObsList* CollisionManager::movingBoxTest (const glm::vec3 &oldPos, float UNUSED(oldAngle),
+        const glm::vec3 &pos, float UNUSED(angle),
         float dx, float dy, float dz) const
 {
-    float newpos[3];
-
     // adjust the Z parameters for the motion
-    memcpy (newpos, pos, sizeof(float[3]));
+    auto newpos = pos;
     if (oldPos[2] < pos[2])
     {
         newpos[2] = oldPos[2];
@@ -533,7 +531,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
     testExts.addMargin(testFudge);
 
     // setup some test parameters
-    float pos[3];
+    glm::vec3 pos;
     pos[0] = 0.5f * (testExts.maxs[0] + testExts.mins[0]);
     pos[1] = 0.5f * (testExts.maxs[1] + testExts.mins[1]);
     pos[2] = testExts.mins[2];
@@ -541,7 +539,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
     size[0] = 0.5f * (testExts.maxs[0] - testExts.mins[0]);
     size[1] = 0.5f * (testExts.maxs[1] - testExts.mins[1]);
     size[2] = (testExts.maxs[2] - testExts.mins[2]);
-    float point[3];
+    glm::vec3 point;
     point[0] = pos[0];
     point[1] = pos[1];
     point[2] = 0.5f * (testExts.maxs[2] + testExts.mins[2]);
@@ -646,15 +644,13 @@ ColDetNode::~ColDetNode()
 void ColDetNode::makeChildren ()
 {
     int side[3];    // the axis sides  (0 or 1)
-    float center[3];
     Extents exts;
 
     // setup the center point
-    for (int i = 0; i < 3; i++)
-        center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
+    auto center = 0.5f * (extents.maxs + extents.mins);
 
     childCount = 0;
-    const float* extentSet[3] = { extents.mins, center, extents.maxs };
+    const glm::vec3 extentSet[3] = { extents.mins, center, extents.maxs };
 
     for (side[0] = 0; side[0] < 2; side[0]++)
     {
@@ -863,8 +859,8 @@ void ColDetNode::tallyStats()
 void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
     int x, y, z, c;
-    float points[5][3];
-    const float* exts[2] = { extents.mins, extents.maxs };
+    glm::vec3 points[5];
+    const glm::vec3 exts[2] = { extents.mins, extents.maxs };
 
     // pick a color
     int hasMeshObs = 0;
@@ -889,7 +885,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
             points[c][1] = exts[y][1];
             points[c][2] = exts[z][2];
         }
-        memcpy (points[4], points[0], sizeof (points[4]));
+        points[4] = points[0];
         drawLinesFunc (5, points, color);
     }
 

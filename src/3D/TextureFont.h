@@ -33,7 +33,9 @@ public:
     }
 
     void filter(bool dofilter) override;
-    void drawString(float scale, GLfloat color[4], const char *str, int len) override;
+    void drawString(float scale,
+                    const glm::vec3 &color, float alpha,
+                    const char *str, int len) override;
 
     void free() override;
 

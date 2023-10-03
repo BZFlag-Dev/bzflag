@@ -11,39 +11,23 @@
  */
 
 
-// top dog
-#include "common.h"
-
 // implementation header
 #include "Triangulate.h"
 
 // system headers
 #include <string.h>
 #include <vector>
-#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/mixed_product.hpp>
+#include <glm/gtx/vector_query.hpp>
 
 // triangulation parameters
 static glm::vec3 Normal; // FIXME, uNormal, vNormal;
 static const glm::vec3* const *Verts = nullptr;
 static int Count = 0;
 static int* WorkSet = NULL;
-
-
-static void vec3norm(glm::vec3& v)
-{
-    const float len = glm::length(v);
-    if (len < 1.0e-6f)
-    {
-        v = glm::vec3(0.0f);
-        return;
-    }
-    else
-    {
-        const float scale = 1.0f / len;
-        v *= scale;
-    }
-}
 
 
 static inline void makeNormal()
@@ -61,9 +45,13 @@ static inline void makeNormal()
     }
 
     // normalize
-    vec3norm(normal);
+    if (glm::isNull(Normal, 1.0e-6f))
+    {
+        Normal = glm::vec3(0.0f);
+        return;
+    }
 
-    Normal = normal;
+    Normal = glm::normalize(Normal);
 }
 
 
@@ -78,7 +66,7 @@ static inline bool isConvex(int w0, int w1, int w2)
     const glm::vec3& p2 = *Verts[v2];
     glm::vec3 e0 = p1 - p0;
     glm::vec3 e1 = p2 - p1;
-    if (glm::dot(glm::cross(e0, e1), Normal) <= 0.0f)
+    if (glm::mixedProduct(e0, e1, Normal) <= 0.0f)
         return false;
     return true;
 }
@@ -141,12 +129,12 @@ static inline float getDot(int w0, int w1, int w2)
     const int v0 = WorkSet[w0];
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
-    glm::vec3 e0 = *Verts[v1] - *Verts[v0];
-    glm::vec3 e1 = *Verts[v2] - *Verts[v1];
 
-    vec3norm(e0);
-    vec3norm(e1);
-    return glm::dot(e0, e1);
+    auto &vert0 = *Verts[v0];
+    auto &vert1 = *Verts[v1];
+    auto &vert2 = *Verts[v2];
+
+    return glm::dot(glm::normalize(vert1 - vert0), glm::normalize(vert2 - vert1));
 }
 
 

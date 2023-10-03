@@ -13,6 +13,10 @@
 /* interface header */
 #include "CustomMesh.h"
 
+// System headers
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 /* bzfs implementation headers */
 #include "CustomMeshFace.h"
 #include "ParseMaterial.h"
@@ -194,7 +198,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef)
         xform.addScale(size);
     if (rotation != 0.0f)
     {
-        const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+        const auto zAxis = glm::vec3(0.0f, 0.0f, 1.0f);
         xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     }
     if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f))

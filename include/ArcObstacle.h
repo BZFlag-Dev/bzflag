@@ -46,7 +46,7 @@ public:
 
     ArcObstacle() = default;
     ArcObstacle(const MeshTransform& transform,
-                const float* _pos, const float* _size,
+                const glm::vec3 &_pos, const glm::vec3 &_size,
                 float _rotation, float _angle, float _ratio,
                 const float _texsize[4], bool _useNormals,
                 int _divisions, const BzMaterial* mats[MaterialCount],

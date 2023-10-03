@@ -79,46 +79,49 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     if (xformTool == NULL)
     {
         extents = drawInfo->getExtents();
-        setSphere(drawInfo->getSphere());
+        setCenter(drawInfo->getPosition());
+        setRadius(drawInfo->getRadius2());
     }
     else
     {
         // sloppy way to recalculate the transformed extents
         glm::vec3 c[8];
-        c[0][0] = c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
-        c[7][0] = c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
-        c[0][1] = c[1][1] = c[5][1] = c[4][1] = diExts.mins[1];
-        c[7][1] = c[6][1] = c[2][1] = c[3][1] = diExts.maxs[1];
-        c[0][2] = c[1][2] = c[2][2] = c[3][2] = diExts.mins[2];
-        c[7][2] = c[6][2] = c[5][2] = c[4][2] = diExts.maxs[2];
+        c[0] = diExts.mins;
+        c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
+        c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
+        c[1][1] = c[5][1] = c[4][1] = diExts.mins[1];
+        c[6][1] = c[2][1] = c[3][1] = diExts.maxs[1];
+        c[1][2] = c[2][2] = c[3][2] = diExts.mins[2];
+        c[6][2] = c[5][2] = c[4][2] = diExts.maxs[2];
+        c[7] = diExts.maxs;
         extents.reset();
         for (auto& v : c)
         {
-            xformTool->modifyVertex(glm::value_ptr(v));
+            xformTool->modifyVertex(v);
             extents.expandToPoint(v);
         }
         // lengthPerPixel adjustment
         lengthAdj = +MAXFLOAT;
+        const auto &s = c[0]; // all mins
         for (int a = 0; a < 3; a++)
         {
             const float oldWidth = diExts.maxs[a] - diExts.mins[a];
-            const glm::vec3& s = c[0]; // all mins
+            if (oldWidth <= 0.0f)
+                continue;
             // mins, except: c[1] -> max[0], c[3] -> max[1], c[5] -> max[2]
             const glm::vec3& e = c[(a * 2) + 1];
             const float newWidth = glm::distance(s, e);
-            if (oldWidth > 0.0f)
-            {
-                const float scale = (newWidth / oldWidth);
-                if (scale < lengthAdj)
-                    lengthAdj = scale;
-            }
+            const float scale = (newWidth / oldWidth);
+            if (scale < lengthAdj)
+                lengthAdj = scale;
         }
         // adjust the sphere
-        float mySphere[4];
-        memcpy(mySphere, drawInfo->getSphere(), sizeof(float[4]));
-        xformTool->modifyVertex(mySphere);
-        mySphere[3] *= (lengthAdj * lengthAdj);
-        setSphere(mySphere);
+        auto myCenter = drawInfo->getPosition();
+        xformTool->modifyVertex(myCenter);
+        setCenter(myCenter);
+
+        float myRadius = drawInfo->getRadius2() * lengthAdj * lengthAdj;
+        setRadius(myRadius);
     }
 
     // setup lod/set nodes
@@ -185,12 +188,11 @@ MeshSceneNode::~MeshSceneNode()
 
 inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 {
-    const float* e = vf.getEye();
-    const float* s = getSphere();
-    const float* d = vf.getDirection();
-    const float dist = (d[0] * (s[0] - e[0])) +
-                       (d[1] * (s[1] - e[1])) +
-                       (d[2] * (s[2] - e[2]));
+    const auto &e = vf.getEye();
+    const auto &s = getSphere();
+    const auto r = s - e;
+    const auto d = glm::vec3(vf.getDirection());
+    const float dist = glm::dot(d, r);
     const float lengthPerPixel = dist * LodScale;
     for (int i = (lodCount - 1); i > 0; i--)
     {
@@ -230,13 +232,13 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
             SetNode& set = lod.sets[i];
             if (set.meshMat.animRepos)
             {
-                const float* s = drawLods[level].sets[i].sphere;
+                const auto &s = drawLods[level].sets[i].position;
                 glm::vec3 pos;
                 pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
                 pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
                 pos[2] = s[2];
                 if (xformTool != NULL)
-                    xformTool->modifyVertex(glm::value_ptr(pos));
+                    xformTool->modifyVertex(pos);
                 ((AlphaGroupRenderNode*)set.node)->setPosition(pos);
             }
         }
@@ -245,7 +247,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     for (int i = 0; i < lod.count; i++)
     {
         SetNode& set = lod.sets[i];
-        if (set.meshMat.colorPtr[3] != 0.0f)
+        if (set.meshMat.colorPtr->a != 0.0f)
             renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
 
@@ -262,7 +264,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
     {
         SetNode& set = lod.sets[i];
         const MeshMaterial& mat = set.meshMat;
-        if (mat.drawShadow && (mat.colorPtr[3] != 0.0f))
+        if (mat.drawShadow && (mat.colorPtr->a != 0.0f))
             renderer.addShadowNode(set.node);
     }
     return;
@@ -348,15 +350,15 @@ void MeshSceneNode::notifyStyleChange()
             }
             else
             {
-                glm::vec3 setPos = glm::make_vec3(drawSet.sphere);
+                auto setPos = drawSet.position;
                 if (xformTool != NULL)
-                    xformTool->modifyVertex(glm::value_ptr(setPos));
+                    xformTool->modifyVertex(setPos);
                 setNode.node =
                     new AlphaGroupRenderNode(drawMgr, xformPtr, normalize,
                                              mat.colorPtr, lod, set, extPtr, setPos,
                                              drawSet.triangleCount);
-                if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
-                        (fabsf(drawSet.sphere[1]) > 0.001f) &&
+                if ((fabsf(drawSet.position.x) > 0.001f) &&
+                        (fabsf(drawSet.position.y) > 0.001f) &&
                         (mat.color[3] != 0.0f) &&
                         (drawInfo->getAnimationInfo() != NULL))
                 {
@@ -398,7 +400,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     // get the references
     const BzMaterial*       bzmat = mat->bzmat;
     OpenGLGState&   gstate = mat->gstate;
-    GLfloat*      color = mat->color;
+    auto color = &mat->color;
 
     OpenGLGStateBuilder builder;
     TextureManager &tm = TextureManager::instance();
@@ -470,15 +472,15 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     // color
     if (useDiffuseColor)
     {
-        memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
-        colorAlpha = (color[3] != 1.0f);
+        *color = bzmat->getDiffuse();
+        colorAlpha = (color->a != 1.0f);
     }
     else
     {
         // set it to white, this should only happen when
         // we've gotten a user texture, and there's a
         // request to not use the material's diffuse color.
-        color[0] = color[1] = color[2] = color[3] = 1.0f;
+        *color = glm::vec4(1.0f);
     }
 
     // dynamic color
@@ -506,7 +508,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
             if (dyncol != NULL)
                 builder.setStipple(0.5f);
             else
-                builder.setStipple(color[3]);
+                builder.setStipple(color->a);
         }
     }
 
@@ -545,9 +547,10 @@ void MeshSceneNode::makeXFormList()
     {
         xformPtr = &xformMatrix[0][0];
         // oops, transpose
+        const auto &matrix = xformTool->getMatrix();
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
-                xformMatrix[i][j] = xformTool->getMatrix()[(j*4)+i];
+                xformMatrix[i][j] = matrix[j][i];
     }
     return;
 }

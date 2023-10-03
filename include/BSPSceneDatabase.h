@@ -22,6 +22,7 @@
 
 // system headers
 #include <vector>
+#include <glm/vec3.hpp>
 
 // common implementation headers
 #include "bzfgl.h"
@@ -82,7 +83,7 @@ private:
     Node*       root;
     int         depth;
     // the following members avoid passing parameters around
-    GLfloat     eye[3];
+    glm::vec3   eye;
     SceneRenderer*  renderer;
     const ViewFrustum*  frustum;
 

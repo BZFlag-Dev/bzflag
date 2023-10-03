@@ -16,6 +16,11 @@
 
 // System headers
 #include <math.h>
+#include <glm/vec3.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/geometric.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/vector_query.hpp>
 
 // Common headers
 #include "MeshObstacle.h"
@@ -130,7 +135,7 @@ static bool translucentMaterial(const BzMaterial* mat)
 
 static bool groundClippedFace(const MeshFace* face)
 {
-    const float* plane = face->getPlane();
+    const auto &plane = face->getPlane();
     if (plane[2] < -0.9f)
     {
         // plane is facing downwards
@@ -440,7 +445,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     //       could use the ambient color for non-lighted,and diffuse
     //       for lighted
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
-    const GLfloat* dc = NULL;
+    const glm::vec4 *dc = NULL;
     if (dyncol != NULL)
         dc = dyncol->getColor();
     node->setDynamicColor(dc);
@@ -483,7 +488,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     // we'll just set it to the middle value.
     if (dyncol)
     {
-        const float color[4] = { 1.0f, 1.0f, 1.0f, 0.5f }; // alpha value != 1.0f
+        const auto color = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f); // alpha value != 1.0f
         if (dyncol->canHaveAlpha())
         {
             node->setColor(color); // trigger transparency check
@@ -499,42 +504,34 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 }
 
 
-bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
+void MeshSceneNodeGenerator::makeTexcoords(const glm::vec4 &plane,
         const std::vector<glm::vec3>& vertices,
         std::vector<glm::vec2>& texcoords)
 {
-    const glm::vec3 v0 = glm::make_vec3(vertices[0]);
-    const glm::vec3 v1 = glm::make_vec3(vertices[1]);
-    const glm::vec3 planeNormal = glm::make_vec3(plane);
+    const auto v0 = vertices[0];
+    const auto v1 = vertices[1];
 
     glm::vec3 x = v1 - v0;
-    glm::vec3 y = glm::cross(planeNormal, x);
+    if (glm::isNull(x, 1.0e-6f))
+        return;
+    x = glm::normalize(x);
 
-    float len = glm::dot(x, x);
-    if (len > 0.0f)
-        x *= glm::inversesqrt(len);
-    else
-        return false;
-
-    len = glm::dot(y, y);
-    if (len > 0.0f)
-        y *= glm::inversesqrt(len);
-    else
-        return false;
+    auto y = glm::cross(glm::vec3(plane), x);
+    if (glm::isNull(y, 1.0e-6f))
+        return;
+    y = glm::normalize(y);
 
     const float uvScale = 8.0f;
 
-    texcoords[0][0] = 0.0f;
-    texcoords[0][1] = 0.0f;
+    texcoords[0] = glm::vec2(0.0f);
     const int count = vertices.size();
     for (int i = 1; i < count; i++)
     {
         const glm::vec3 delta = vertices[i] - v0;
-        texcoords[i][0] = glm::dot(delta, x) / uvScale;
-        texcoords[i][1] = glm::dot(delta, y) / uvScale;
+        auto deltax = glm::dot(delta, x);
+        auto deltay = glm::dot(delta, y);
+        texcoords[i] = glm::vec2(deltax, deltay) / uvScale;
     }
-
-    return true;
 }
 
 

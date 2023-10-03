@@ -38,7 +38,7 @@ public:
     class DeathParams
     {
     public:
-        DeathParams(float param, glm::vec4 c): part()
+        DeathParams( float param, const glm::vec4 &c): part()
         {
             scale = glm::vec3(1.0f);
             explodeParam = param;
@@ -66,7 +66,7 @@ public:
     TankIDLSceneNode(const TankSceneNode*);
     ~TankIDLSceneNode();
 
-    void        move(const GLfloat plane[4]);
+    void        move(const glm::vec4 &plane);
 
     void        notifyStyleChange() override;
     void        addRenderNodes(SceneRenderer&) override;
@@ -86,35 +86,59 @@ public:
         IDLRenderNode(const TankIDLSceneNode*);
         ~IDLRenderNode();
         void        render() override;
-        const GLfloat* getPosition() const override;
+        const glm::vec3 &getPosition() const override;
     private:
         const TankIDLSceneNode* sceneNode;
         static const int    idlFaces[][5];
-        static const GLfloat    idlVertex[][3];
+        static const glm::vec3 idlVertex[];
     };
     friend class IDLRenderNode;
 
 private:
     const TankSceneNode *tank;
-    GLfloat     plane[4];
+    glm::vec4       plane;
     OpenGLGState    gstate;
     IDLRenderNode   renderNode;
 };
 
-class TankSceneNode final : public SceneNode
+class alignas(32) TankSceneNode final : public SceneNode
 {
     friend class TankIDLSceneNode;
     friend class TankIDLSceneNode::IDLRenderNode;
 public:
-    TankSceneNode(const GLfloat pos[3],
-                  const GLfloat forward[3]);
+    TankSceneNode(const glm::vec3 &pos,
+                  const glm::vec3 &forward);
     ~TankSceneNode();
 
-    void        move(const GLfloat pos[3], const GLfloat forward[3]);
+    void* operator new(std::size_t size)
+    {
+        void* ptr = nullptr;
+        // Align to 32 bytes
+#if defined(_MSC_VER) || defined(__MINGW32__)
+        ptr = _aligned_malloc(size, 32);
+#else
+        if (posix_memalign(&ptr, 32, size) != 0)
+            ptr = nullptr;
+#endif
+
+        if (!ptr) throw std::bad_alloc();
+        return ptr;
+    }
+
+    void operator delete(void* ptr)
+    {
+#if defined(_MSC_VER) || defined(__MINGW32__)
+        _aligned_free(ptr);
+#else
+        std::free(ptr);
+#endif
+    }
+
+    void move(const glm::vec3 &pos, const glm::vec3 &forward);
 
     void        setColor(GLfloat r, GLfloat g,
                          GLfloat b, GLfloat a = 1.0f);
-    void        setColor(const GLfloat* rgba);
+    void        setColor(const glm::vec4 &rgba);
     void        setMaterial(const OpenGLMaterial&);
     void        setTexture(const int);
     void        setJumpJetsTexture(const int);
@@ -124,9 +148,9 @@ public:
     void        setTiny();
     void        setNarrow();
     void        setThief();
-    void        setDimensions(const float size[3]);
+    void        setDimensions(const glm::vec3 &size);
 
-    void        setClipPlane(const float plane[4]);
+    void        setClipPlane(const glm::vec4 &plane);
     void        resetClipPlane();
     void        setExplodeFraction(float t);
     void        setJumpJets(float scale);
@@ -142,7 +166,7 @@ public:
     void        addShadowNodes(SceneRenderer&) override;
 
     bool        cullShadow(int planeCount,
-                           const float (*planes)[4]) const override;
+                           const glm::vec4 *planes) const override;
 
     void        addLight(SceneRenderer&) override;
 
@@ -175,7 +199,7 @@ protected:
         void        setTankSize(TankGeometryEnums::TankSize);
         void        sortOrder(bool above, bool towards, bool left);
         void        setNarrowWithDepth(bool narrow);
-        const GLfloat* getPosition() const override;
+        const glm::vec3 &getPosition() const override;
 
         void        render() override;
         void        renderPart(TankGeometryEnums::TankPart part);
@@ -193,7 +217,7 @@ protected:
         const TankSceneNode* sceneNode;
         TankGeometryEnums::TankLOD drawLOD;
         TankGeometryEnums::TankSize drawSize;
-        const GLfloat*  color;
+        const glm::vec4 *color;
         GLfloat     alpha;
         bool        isRadar;
         bool        isTreads;
@@ -204,14 +228,14 @@ protected:
         bool        isExploding;
         bool        narrowWithDepth;
         GLfloat     explodeFraction;
-        static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
+        static const glm::vec3 centerOfGravity[TankGeometryEnums::LastTankPart];
     };
     friend class TankRenderNode;
 
 private:
     GLfloat     azimuth, elevation;
     GLfloat     baseRadius;
-    float       dimensions[3]; // tank dimensions
+    glm::vec3   dimensions; // tank dimensions
     float       leftTreadOffset;
     float       rightTreadOffset;
     float       leftWheelOffset;
@@ -222,8 +246,8 @@ private:
     float       explodeFraction;
     bool        clip;
     bool        inTheCockpit;
-    GLfloat     color[4];
-    GLdouble        clipPlane[4];
+    glm::vec4   color;
+    glm::dvec4  clipPlane;
     OpenGLGState    gstate;
     OpenGLGState    treadState;
     OpenGLGState    lightsGState;
@@ -231,19 +255,19 @@ private:
     TankRenderNode  treadsRenderNode;
     TankRenderNode  shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    GLfloat     vel[TankGeometryEnums::LastTankPart][3];
-    GLfloat     spin[TankGeometryEnums::LastTankPart][4];
+    glm::vec3   vel[TankGeometryEnums::LastTankPart];
+    glm::vec4   spin[TankGeometryEnums::LastTankPart];
     bool        jumpJetsOn;
     GLfloat     jumpJetsScale;
     GLfloat     jumpJetsLengths[4];
-    GLfloat     jumpJetsPositions[4][3];
+    glm::vec3   jumpJetsPositions[4];
     OpenGLLight     jumpJetsRealLight;
     OpenGLLight     jumpJetsGroundLights[4];
     OpenGLGState    jumpJetsGState;
 
     static int      maxLevel;
     static const int    numLOD;
-    static GLfloat  jumpJetsModel[4][3];
+    static glm::vec3 jumpJetsModel[4];
 };
 
 

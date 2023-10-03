@@ -18,6 +18,7 @@
 
 /* system interface headers */
 #include <vector>
+#include <glm/vec3.hpp>
 
 /* common interface headers */
 #include "SceneDatabase.h"
@@ -36,7 +37,7 @@ public:
     ~GuidedMissileStrategy();
 
     void        update(float dt) override;
-    float       checkHit(const BaseLocalPlayer*, float[3]) const override;
+    float       checkHit(const BaseLocalPlayer*, glm::vec3 &) const override;
     void        sendUpdate(const FiringInfo&) const override;
     void        readUpdate(uint16_t, const void*) override;
     void        addShot(SceneDatabase*, bool colorblind) override;
@@ -53,7 +54,7 @@ private:
     int         renderTimes;
     float       azimuth;
     float       elevation;
-    float       nextPos[3];
+    glm::vec3   nextPos;
     BoltSceneNode*  ptSceneNode;
 
     float   puffTime,rootPuff;

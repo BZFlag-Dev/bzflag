@@ -62,6 +62,17 @@ inline void glSetFogColor(glm::vec4 fogColor)
 {
     glFogfv(GL_FOG_COLOR, glm::value_ptr(fogColor));
 };
+extern void glColor(const glm::vec3 &c, float alpha);
+extern void glVertex(const glm::vec2 &p, float z);
+extern void glNormal(const glm::vec2 &n);
+extern void glLoadMatrix(const glm::mat4 &m);
+extern void glMultMatrix(const glm::mat4 &m);
+extern glm::vec4 glGetFogColor();
+extern glm::ivec4 glGetViewport();
+extern void glVertexPointer(const glm::vec3 vertices[]);
+extern void glNormalPointer(const glm::vec3 normals[]);
+extern void glTexCoordPointer(const glm::vec2 texCoords[]);
+extern void glClipPlane(int id, const glm::dvec4 &plane);
 
 #endif // _OPENGLAPI_H
 

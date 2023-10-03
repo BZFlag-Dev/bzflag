@@ -42,7 +42,7 @@ protected:
         ~ShellRenderNode();
         void render() override;
         void renderShadow() override;
-        const GLfloat* getPosition() const override;
+        const glm::vec3 &getPosition() const override;
     public:
         const OpenGLGState* getGState() const;
     private:

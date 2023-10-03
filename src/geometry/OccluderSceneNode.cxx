@@ -26,14 +26,12 @@
 #include "ViewFrustum.h"
 
 
-OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
+OccluderSceneNode::OccluderSceneNode(const MeshFace* face) :
+    plane(face->getPlane())
 {
     int i;
 
     setOccluder(true);
-
-    // record plane info
-    memcpy(plane, face->getPlane(), sizeof(float[4]));
 
     // record extents info
     extents = face->getExtents();
@@ -50,6 +48,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
         pos += v;
     if (vertexCount > 0)
         pos /= static_cast<float>(vertexCount);
+    setCenter(pos);
 
     float maxRadiusSq = 0.0f;
     for (const auto& v : vertices)
@@ -58,24 +57,22 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
         if (rSq > maxRadiusSq)
             maxRadiusSq = rSq;
     }
-    GLfloat mySphere[4] = { pos.x, pos.y, pos.z, maxRadiusSq };
-    setSphere(mySphere);
+    setRadius(maxRadiusSq);
 
     return;
 }
 
 
-const GLfloat* OccluderSceneNode::getPlane() const
+const glm::vec4 *OccluderSceneNode::getPlane() const
 {
-    return plane;
+    return &plane;
 }
 
 bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
-    const GLfloat* eye = frustum.getEye();
-    if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-            plane[3]) <= 0.0f)
+    const auto eye = glm::vec4(frustum.getEye(), 1.0f);
+    if (glm::dot(eye, plane) <= 0.0f)
         return true;
 
     // if the Visibility culler tells us that we're
@@ -99,7 +96,7 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
 
     return testPolygonInAxisBox(
             static_cast<int>(vertices.size()),
-            reinterpret_cast<const float (*)[3]>(vertices.data()),
+            vertices.data(),
             plane,
             exts);
 }
@@ -124,9 +121,9 @@ int OccluderSceneNode::getVertexCount () const
     return vertices.size();
 }
 
-const GLfloat* OccluderSceneNode::getVertex (int vertex) const
+const glm::vec3 &OccluderSceneNode::getVertex (int vertex) const
 {
-    return glm::value_ptr(vertices[vertex]);
+    return vertices[vertex];
 }
 
 

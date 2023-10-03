@@ -26,8 +26,8 @@ class BaseBuilding final : public BoxBuilding
 
 public:
     BaseBuilding();
-    BaseBuilding(const float *pos, float rotation,
-                 const float *size, int _team, bool ricochet);
+    BaseBuilding(const glm::vec3 &pos, float rotation,
+                 const glm::vec3 &size, int _team, bool ricochet);
     ~BaseBuilding();
 
     Obstacle*   copyWithTransform(const MeshTransform&) const override;
@@ -35,13 +35,13 @@ public:
     const char*     getType() const override;
     static const char*  getClassName(); // const
 
-    bool        inCylinder(const float* p, float radius, float height) const override;
-    bool        inMovingBox(const float* oldP, float oldAngle,
-                            const float *newP, float newAngle,
+    bool        inCylinder(const glm::vec3 &p, float radius, float height) const override;
+    bool        inMovingBox(const glm::vec3 &oldP, float oldAngle,
+                            const glm::vec3 &newP, float newAngle,
                             float halfWidth, float halfBreadth, float height) const override;
-    bool        isCrossing(const float* p, float angle,
+    bool        isCrossing(const glm::vec3 &p, float angle,
                            float halfWidth, float halfBreadth, float height,
-                           float* plane) const override;
+                           glm::vec4 *plane) const override;
 
     int         getTeam() const;
 

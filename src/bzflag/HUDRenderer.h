@@ -18,7 +18,10 @@
 /* system interface headers */
 #include <vector>
 #include <string>
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 
 /* common interface headers */
 #include "TimeKeeper.h"
@@ -45,7 +48,7 @@ class HUDMarker
 {
 public:
     float     heading;
-    GLfloat       color[3];
+    glm::vec3 color;
 };
 typedef std::vector<HUDMarker> MarkerList;
 
@@ -98,7 +101,7 @@ public:
     void      setFlagHelp(FlagType* desc, float duration);
     void      initCracks();
     void      setCracks(bool showCracks);
-    void      addMarker(float heading, const float *color);
+    void      addMarker(float heading, const glm::vec3 &color);
     void      setRestartKeyLabel(const std::string&);
     void      setTimeLeft(uint32_t timeLeftInSeconds);
 
@@ -109,7 +112,7 @@ public:
     void      AddLockOnMarker(glm::vec3 pos, std::string name,
                               bool friendly = false, float zShift = 0.0f);
 
-    void      saveMatrixes(const float* mm, const float* pm);
+    void      saveMatrixes(const glm::mat4 &mm, const glm::mat4 &pm);
     void      setDim(bool);
 
     bool      getComposing() const;
@@ -124,7 +127,7 @@ public:
     ScoreboardRenderer *getScoreboard();
 
 protected:
-    void      hudColor3Afv(const float*, const float);
+    void      hudColor3Afv(const glm::vec3 &, const float);
     void      renderAlerts(void);
     void      renderStatus(void);
     void      renderCracks();
@@ -138,13 +141,13 @@ protected:
     void      renderTimes(void);
     void      renderShots(const Player*);
 
-    void      drawLockonMarker(float* color, float alpha, float* object, const float* viewPos, std::string name,
-                               bool friendly);
-    void      drawWaypointMarker(float* color, float alpha, float* object, const float* viewPos, std::string name,
-                                 bool friendly);
+    void      drawLockonMarker(const EnhancedHUDMarker &marker,
+                               const glm::vec2         &viewPos);
+    void      drawWaypointMarker(const EnhancedHUDMarker &marker,
+                                 const glm::vec2       &viewPos);
     void      drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
 
-    void      makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
+    void      makeCrack(glm::vec3 crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1], int n, int l, float a);
     std::string   makeHelpString(const char* help) const;
 
 private:
@@ -157,6 +160,8 @@ private:
     void      setLabelsFontSize(int width, int height);
     void      setOneToOnePrj();
     void      coverWhenBurrowed(const LocalPlayer &myTank);
+    glm::vec2 getMarkerCoordinate(const glm::vec3 &pos,
+                                  const glm::vec2 &viewPos);
 
     void      resize(bool firstTime);
     static void   resizeCallback(void*);
@@ -168,9 +173,9 @@ private:
     int           noMotionSize;
     int           maxMotionSize;
     float         headingOffset;
-    GLfloat       hudColor[3];
-    GLfloat       messageColor[3];
-    GLfloat       warningColor[3];
+    glm::vec3     hudColor;
+    glm::vec3     messageColor;
+    glm::vec3     warningColor;
 
     int       bigFontFace;
     float     bigFontSize;
@@ -226,7 +231,7 @@ private:
     FlashClock        alertClock[MaxAlerts];
     std::string       alertLabel[MaxAlerts];
     float     alertLabelWidth[MaxAlerts];
-    const GLfloat*    alertColor[MaxAlerts];
+    glm::vec3 alertColor[MaxAlerts];
 
     float     flagHelpY;
     FlashClock        flagHelpClock;
@@ -236,22 +241,21 @@ private:
     bool      showOptions;
     bool      showCompose;
 
-    GLfloat       cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1][2];
+    glm::vec3 cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1];
     TimeKeeper        crackStartTime;
     bool      showCracks;
 
     HUDuiTypeIn*  composeTypeIn;
 
-    double    modelMatrix[16];
-    double    projMatrix[16];
-    int       viewport[4];
+    glm::mat4  modelMatrix;
+    glm::mat4  projMatrix;
+    glm::ivec4 viewport;
 
     MarkerList        markers;
     EnhancedMarkerList    enhancedMarkers;
     EnhancedMarkerList    lockOnMarkers;
 
     static const float    altitudeOffset;
-    static const GLfloat black[3];
     static std::string    headingLabel[36];
     static std::string    restartLabelFormat;
     static std::string    resumeLabel;

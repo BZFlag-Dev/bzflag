@@ -16,6 +16,8 @@
 // system headers
 #include <assert.h>
 #include <math.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -35,9 +37,9 @@
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
                                       const std::vector<glm::vec3>& _vertex,
                                       const std::vector<glm::vec2>& _uv,
-                                      const GLfloat* _normal) :
+                                      const glm::vec4 &_plane) :
     wall(_wall),
-    normal(_normal),
+    plane(_plane),
     vertex(_vertex),
     uv(_uv)
 {
@@ -49,7 +51,7 @@ PolyWallSceneNode::Geometry::~Geometry()
     // do nothing
 }
 
-const GLfloat* PolyWallSceneNode::Geometry::getPosition() const
+const glm::vec3 &PolyWallSceneNode::Geometry::getPosition() const
 {
     return wall->getSphere();
 }
@@ -57,7 +59,7 @@ const GLfloat* PolyWallSceneNode::Geometry::getPosition() const
 void            PolyWallSceneNode::Geometry::render()
 {
     wall->setColor();
-    glNormal3fv(normal);
+    glNormal3fv(plane);
     if (style >= 2)
         drawVT();
     else
@@ -111,16 +113,12 @@ PolyWallSceneNode::PolyWallSceneNode(const std::vector<glm::vec3>& vertex,
         uEdge = vEdge;
         uLen = vLen;
     }
-    GLfloat myPlane[4];
-    myPlane[0] = norm.x;
-    myPlane[1] = norm.y;
-    myPlane[2] = norm.z;
-    myPlane[3] = -glm::dot(norm, vertex[0]);
+    auto myPlane = glm::vec4(norm, -glm::dot(norm, vertex[0]));
     setPlane(myPlane);
 
     // choose axis to ignore (the one with the largest normal component)
     int ignoreAxis;
-    const auto normal = plane;
+    const auto &normal = plane;
     if (fabsf(normal[0]) > fabsf(normal[1]))
         if (fabsf(normal[0]) > fabsf(normal[2]))
             ignoreAxis = 0;
@@ -177,6 +175,7 @@ PolyWallSceneNode::PolyWallSceneNode(const std::vector<glm::vec3>& vertex,
     for (i = 0; i < count; i++)
         center += vertex[i];
     center /= static_cast<float>(count);
+    setCenter(center);
 
     float radiusSq = 0.0f;
     for (i = 0; i < count; i++)
@@ -184,9 +183,7 @@ PolyWallSceneNode::PolyWallSceneNode(const std::vector<glm::vec3>& vertex,
         float r = glm::distance2(center, vertex[i]);
         if (r > radiusSq) radiusSq = r;
     }
-
-    GLfloat mySphere[4] = { center.x, center.y, center.z, radiusSq };
-    setSphere(mySphere);
+    setRadius(radiusSq);
 }
 
 PolyWallSceneNode::~PolyWallSceneNode()
@@ -195,7 +192,7 @@ PolyWallSceneNode::~PolyWallSceneNode()
     delete shadowNode;
 }
 
-int         PolyWallSceneNode::split(const float* _plane,
+int         PolyWallSceneNode::split(const glm::vec4 &_plane,
                                      SceneNode*& front, SceneNode*& back) const
 {
     return WallSceneNode::splitWall(_plane, node->vertex, node->uv, front, back);

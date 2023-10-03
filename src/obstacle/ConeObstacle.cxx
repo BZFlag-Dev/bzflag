@@ -15,6 +15,10 @@
 
 // System headers
 #include <math.h>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 // Common headers
 #include "global.h"
@@ -28,7 +32,7 @@ const char* ConeObstacle::typeName = "ConeObstacle";
 
 
 ConeObstacle::ConeObstacle(const MeshTransform& xform,
-                           const float* _pos, const float* _size,
+                           const glm::vec3 &_pos, const glm::vec3 &_size,
                            float _rotation, float _sweepAngle,
                            const float _texsize[2], bool _useNormals,
                            int _divisions,
@@ -90,10 +94,7 @@ MeshObstacle* ConeObstacle::makeMesh()
     const float minSize = 1.0e-6f; // cheezy / lazy
 
     // absolute the sizes
-    float sz[3];
-    sz[0] = fabsf(size[0]);
-    sz[1] = fabsf(size[1]);
-    sz[2] = fabsf(size[2]);
+    auto sz = glm::abs(size);
 
     // validity checking
     if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
@@ -144,22 +145,18 @@ MeshObstacle* ConeObstacle::makeMesh()
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> texcoords;
-    glm::vec3 v, n;
+    glm::vec3 n;
     glm::vec2 t;
 
+    auto v = pos;
     // add the checkpoint (one is sufficient)
-    if (isCircle)
-    {
-        v[0] = pos[0];
-        v[1] = pos[1];
-    }
-    else
+    if (!isCircle)
     {
         const float dir = r + (0.5f * a);
-        v[0] = pos[0] + (cosf(dir) * sz[0] * 0.25f);
-        v[1] = pos[1] + (sinf(dir) * sz[1] * 0.25f);
+        v[0] += cosf(dir) * sz[0] * 0.25f;
+        v[1] += sinf(dir) * sz[1] * 0.25f;
     }
-    v[2] = pos[2] + (0.5f * sz[2]);
+    v[2] += 0.5f * sz[2];
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -179,9 +176,9 @@ MeshObstacle* ConeObstacle::makeMesh()
             // vertices (around the edge)
             delta[0] = cos_val * sz[0];
             delta[1] = sin_val * sz[1];
-            v[0] = pos[0] + delta[0];
-            v[1] = pos[1] + delta[1];
-            v[2] = pos[2];
+            v = pos;
+            v[0] += delta[0];
+            v[1] += delta[1];
             vertices.push_back(v);
             // normals (around the edge)
             if (useNormals)
@@ -191,11 +188,9 @@ MeshObstacle* ConeObstacle::makeMesh()
                 n[1] = sin_val / sz[1];
                 n[2] = 1.0f / sz[2];
                 // normalize
-                float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
-                len = 1.0f / sqrtf(len);
-                n[0] *= len;
-                n[1] *= len;
-                n[2] *= len;
+                float len = glm::length2(n);
+                len = glm::inversesqrt(len);
+                n *= len;
                 normals.push_back(n);
             }
         }
@@ -217,21 +212,17 @@ MeshObstacle* ConeObstacle::makeMesh()
             n[1] = sinf(ang) / sz[1];
             n[2] = 1.0f / sz[2];
             // normalize
-            float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
-            len = 1.0f / sqrtf(len);
-            n[0] *= len;
-            n[1] *= len;
-            n[2] *= len;
+            float len = glm::length2(n);
+            len = glm::inversesqrt(len);
+            n *= len;
             normals.push_back(n);
         }
     }
 
     // the central coordinates
-    v[0] = pos[0];
-    v[1] = pos[1];
-    v[2] = pos[2];
+    v = pos;
     vertices.push_back(v); // bottom
-    v[2] = pos[2] + sz[2];
+    v[2] += sz[2];
     vertices.push_back(v); // top
     t[0] = texsz[0] * 0.5f;
     t[1] = texsz[1] * 0.5f;

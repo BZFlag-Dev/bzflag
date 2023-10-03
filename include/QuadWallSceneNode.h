@@ -37,14 +37,13 @@ public:
     QuadWallSceneNode(glm::vec3 base,
                       glm::vec3 sEdge,
                       glm::vec3 tEdge,
-                      float uOffset,
-                      float vOffset,
+                      glm::vec2 uvOffset,
                       float uRepeats,
                       float vRepeats,
                       bool makeLODs);
     ~QuadWallSceneNode();
 
-    int         split(const float*, SceneNode*&, SceneNode*&) const override;
+    int         split(const glm::vec4 &, SceneNode*&, SceneNode*&) const override;
 
     void        addRenderNodes(SceneRenderer&) override;
     void        addShadowNodes(SceneRenderer&) override;
@@ -54,7 +53,7 @@ public:
     bool        inAxisBox (const Extents& exts) const override;
 
     int         getVertexCount () const override;
-    const       GLfloat* getVertex (int vertex) const override;
+    const glm::vec3 &getVertex (int vertex) const override;
 
     void    getRenderNodes(std::vector<RenderSet>& rnodes) override;
 
@@ -62,8 +61,7 @@ private:
     void        init(glm::vec3 base,
                      glm::vec3 uEdge,
                      glm::vec3 vEdge,
-                     float uOffset,
-                     float vOffset,
+                     glm::vec2 uvOffset,
                      float uRepeats,
                      float vRepeats,
                      bool makeLODs, bool fixedUVs);
@@ -77,8 +75,8 @@ protected:
                  glm::vec3 base,
                  glm::vec3 uEdge,
                  glm::vec3 vEdge,
-                 const GLfloat* normal,
-                 float uOffset, float vOffset,
+                 glm::vec4 plane,
+                 glm::vec2 uvOffset,
                  float uRepeats, float vRepeats,
                  bool fixedUVs);
         ~Geometry();
@@ -88,8 +86,8 @@ protected:
         }
         void        render() override;
         void        renderShadow() override;
-        const GLfloat*  getVertex(int i) const;
-        const GLfloat* getPosition() const override;
+        const glm::vec3 &getVertex(int i) const;
+        const glm::vec3 &getPosition() const override;
     private:
         void        drawV() const;
         void        drawVT() const;
@@ -98,7 +96,7 @@ protected:
         int     style;
         int     ds, dt;
         int     dsq, dsr;
-        const GLfloat*  normal;
+        const glm::vec4 &plane;
     public:
         std::vector<glm::vec3> vertex;
         std::vector<glm::vec2> uv;

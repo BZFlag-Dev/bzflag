@@ -34,7 +34,7 @@
 
 OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
                                    GLfloat *_xformMatrix, bool _normalize,
-                                   const GLfloat* _color,
+                                   const glm::vec4 *_color,
                                    int _lod, int _set,
                                    const Extents* _exts, int tris)
 {
@@ -49,10 +49,10 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 }
 
 
-const GLfloat* OpaqueRenderNode::getPosition() const
+const auto nullVec3 = glm::vec3(0.0f);
+const glm::vec3 &OpaqueRenderNode::getPosition() const
 {
     // Better to not crash if called on sort
-    static GLfloat nullVec3[3];
     return nullVec3;
 }
 
@@ -63,7 +63,7 @@ void OpaqueRenderNode::render()
         RENDERER.disableLights(exts->mins, exts->maxs);
 
     // set the color
-    myColor4fv(color);
+    myColor4fv(*color);
 
     // do the transformation
     if (xformMatrix)
@@ -114,7 +114,7 @@ void OpaqueRenderNode::renderShadow()
 AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
         GLfloat *_xformMatrix,
         bool _normalize,
-        const GLfloat* _color,
+        const glm::vec4 *_color,
         int _lod, int _set,
         const Extents* _exts,
         glm::vec3 _pos,
@@ -126,9 +126,9 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
     return;
 }
 
-const GLfloat* AlphaGroupRenderNode::getPosition() const
+const glm::vec3 &AlphaGroupRenderNode::getPosition() const
 {
-    return glm::value_ptr(pos);
+    return pos;
 }
 
 void AlphaGroupRenderNode::setPosition(glm::vec3 _pos)

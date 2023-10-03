@@ -308,7 +308,8 @@ bool FlightLogic::Update ( Shot& shot)
 
 glm::vec3 FlightLogic::ProjectShotLocation(Shot& shot, double deltaT)
 {
-    const glm::vec3 vel = glm::make_vec3(shot.Info.shot.vel);
+    const glm::vec3& vel = shot.Info.shot.vel;
+
     glm::vec3 vec = shot.LastUpdatePosition + vel * (float)deltaT;
 
     return vec;

@@ -80,7 +80,9 @@ public:
     void setName(const std::string&);
     const std::string& getName() const;
 
-    const float* getSphere() const;
+    const glm::vec3 &getPosition() const;
+    float            getRadius2() const;
+
     const Extents& getExtents() const;
 
     int getLodCount() const;
@@ -126,7 +128,8 @@ private:
     MeshDrawMgr* drawMgr;
 
     Extents extents;
-    float sphere[4];
+    glm::vec3 position;
+    float     radius2;
 
     MaterialMap* matMap;
     MeshTransform::Tool* xformTool;
@@ -179,10 +182,17 @@ inline const std::string& MeshDrawInfo::getName() const
 {
     return name;
 }
-inline const float* MeshDrawInfo::getSphere() const
+
+inline const glm::vec3 &MeshDrawInfo::getPosition() const
 {
-    return sphere;
+    return position;
 }
+
+inline float MeshDrawInfo::getRadius2() const
+{
+    return radius2;
+}
+
 inline const Extents& MeshDrawInfo::getExtents() const
 {
     return extents;
@@ -309,7 +319,8 @@ public:
     DrawCmd* cmds;
     const BzMaterial* material;
     bool wantList;
-    float sphere[4];
+    glm::vec3 position;
+    float radius2;
     int triangleCount;
 };
 

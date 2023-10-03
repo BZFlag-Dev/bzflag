@@ -37,7 +37,7 @@ public:
     void updateShots(float dt);
 
 private:
-    bool doEndShot(int index, bool isHit, float* pos) override;
+    bool doEndShot(int index, bool isHit, glm::vec3 &pos) override;
 
 private:
     int numShots;

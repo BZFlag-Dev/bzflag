@@ -10,7 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
 #include "PyramidSceneNodeGenerator.h"
+
+// System headers
+#include <glm/gtc/type_ptr.hpp>
+
+// Common headers
 #include "PyramidBuilding.h"
 #include "bzfgl.h"
 #include "TriWallSceneNode.h"
@@ -123,9 +129,11 @@ WallSceneNode*      PyramidSceneNodeGenerator::getNextNode(
     const glm::vec3 tEdge = tCorner - base;
 
     if (isQuad == false)
-        return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+        return new TriWallSceneNode(
+                   base, sEdge, tEdge, uRepeats, vRepeats, lod);
     else
-        return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+        return new QuadWallSceneNode(
+                   base, sEdge, tEdge, uRepeats, vRepeats, lod);
 
 }
 

@@ -15,6 +15,8 @@
 
 // System interfaces
 #include <math.h>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 //Common interfaces
 #include "global.h"
@@ -29,7 +31,7 @@ const char* ArcObstacle::typeName = "ArcObstacle";
 
 
 ArcObstacle::ArcObstacle(const MeshTransform& xform,
-                         const float* _pos, const float* _size,
+                         const glm::vec3 &_pos, const glm::vec3 &_size,
                          float _rotation, float _sweepAngle, float _ratio,
                          const float _texsize[4], bool _useNormals,
                          int _divisions, const BzMaterial* mats[MaterialCount],
