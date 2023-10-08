@@ -13,6 +13,10 @@
 #ifndef ACCESS_LIST_H
 #define ACCESS_LIST_H
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <stdio.h>
 #include <string>
 #include <vector>

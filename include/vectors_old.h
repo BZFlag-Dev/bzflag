@@ -13,6 +13,10 @@
 #ifndef __VECTOR_MATH_H__
 #define __VECTOR_MATH_H__
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <string.h>
 
 // vectors implemented as arrays

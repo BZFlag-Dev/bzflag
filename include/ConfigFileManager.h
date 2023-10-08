@@ -13,8 +13,11 @@
 #ifndef BZF_CONFIG_FILE_MANAGER_H
 #define BZF_CONFIG_FILE_MANAGER_H
 
-#include <string>
+// Inherits from
 #include "Singleton.h"
+
+// System interfaces
+#include <string>
 
 #define CFGMGR (ConfigFileManager::instance())
 

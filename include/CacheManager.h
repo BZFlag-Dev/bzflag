@@ -13,6 +13,9 @@
 #ifndef CACHE_MANAGER_H
 #define CACHE_MANAGER_H
 
+// 1st
+#include "common.h"
+
 #include <time.h>
 #include <string>
 #include <vector>

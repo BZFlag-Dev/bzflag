@@ -13,6 +13,9 @@
 #ifndef __BZFSDL_H__
 #define __BZFSDL_H__
 
+// 1st
+#include "common.h"
+
 /** this file contains headers necessary for SDL */
 
 #ifdef HAVE_SDL2_SDL_H

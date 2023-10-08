@@ -17,9 +17,13 @@
 #ifndef BZF_ARC_OBSTACLE_H
 #define BZF_ARC_OBSTACLE_H
 
-#include "common.h"
-#include <string>
+// Inherits from
 #include "Obstacle.h"
+
+// System headers
+#include <string>
+
+// Common headers
 #include "MeshObstacle.h"
 #include "MeshTransform.h"
 #include "BzMaterial.h"

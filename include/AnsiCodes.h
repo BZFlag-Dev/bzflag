@@ -13,7 +13,13 @@
 #ifndef _ANSI_CODES_H_
 #define _ANSI_CODES_H_
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <string>
+
+// Common headers
 #include "TextUtils.h"
 
 // Escape character to begin ANSI codes

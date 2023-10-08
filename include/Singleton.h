@@ -13,6 +13,9 @@
 #ifndef __SINGLETON_H__
 #define __SINGLETON_H__
 
+// 1st
+#include "common.h"
+
 /* Singleton template class
  *
  * This template is based on an implementation suggested by Martin York in
@@ -29,6 +32,7 @@
  * The class will need to provide an accessible default constructor
  *
  */
+
 template < typename T >
 class Singleton
 {

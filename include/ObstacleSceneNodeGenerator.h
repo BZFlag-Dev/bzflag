@@ -13,6 +13,9 @@
 #ifndef __OBSTACLESCENENODEGENERATOR_H__
 #define __OBSTACLESCENENODEGENERATOR_H__
 
+//1st
+#include "common.h"
+
 class WallSceneNode;
 
 class ObstacleSceneNodeGenerator

@@ -13,7 +13,8 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
-#include "config.h"
+// 1st
+#include "common.h"
 
 #ifndef BZ_CONFIG_DIR_VERSION
 #define BZ_CONFIG_DIR_VERSION   "2.4"

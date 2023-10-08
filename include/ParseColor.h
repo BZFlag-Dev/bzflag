@@ -13,6 +13,8 @@
 #ifndef _PARSE_COLOR_H_
 #define _PARSE_COLOR_H_
 
+// 1st
+#include "common.h"
 
 #include <string>
 #include <iostream>

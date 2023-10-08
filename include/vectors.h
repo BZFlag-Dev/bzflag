@@ -13,7 +13,10 @@
 #ifndef VECTORS_H
 #define VECTORS_H
 
+// 1st
+#include "common.h"
 
+// System headers
 #include <math.h>
 #include <stdio.h>
 #include <string>

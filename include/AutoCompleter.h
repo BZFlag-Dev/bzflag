@@ -13,6 +13,10 @@
 #ifndef AUTOCOMPLETER_H
 #define AUTOCOMPLETER_H
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <string>
 #include <vector>
 

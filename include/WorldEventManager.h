@@ -21,10 +21,15 @@
 #ifndef WORLD_EVENT_MANAGER_H
 #define WORLD_EVENT_MANAGER_H
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <map>
 #include <vector>
 #include <algorithm>
 
+// Common headers
 #include "bzfsAPI.h"
 
 // event handler callback

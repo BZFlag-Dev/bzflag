@@ -12,9 +12,14 @@
 #ifndef _TEXTURE_MANAGER_H
 #define _TEXTURE_MANAGER_H
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <string>
 #include <map>
 
+// Common headers
 #include "OpenGLTexture.h"
 #include "Singleton.h"
 

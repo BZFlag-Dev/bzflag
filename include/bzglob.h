@@ -13,6 +13,9 @@
 #ifndef BZ_GLOB_H
 #define BZ_GLOB_H
 
+// 1st
+#include "common.h"
+
 #include <string>
 
 extern bool glob_match(const char* pattern, const char* string);

@@ -15,6 +15,9 @@
 #ifndef _BZFS_API_H_
 #define _BZFS_API_H_
 
+// 1st
+#include "common.h"
+
 /* system interface headers */
 #include <string>
 #include <cstring>
