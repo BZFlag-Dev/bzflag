@@ -852,10 +852,6 @@ void            ControlPanel::addMessage(const std::string& line,
     ControlPanelMessage item(line);
     item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
 
-#ifdef DEBUG
-    printf("%s\n", line.c_str());
-#endif
-
     int _maxScrollPages = BZDB.evalInt("scrollPages");
     if (_maxScrollPages <= 0)
     {
