@@ -71,13 +71,13 @@ public:
 
     /** search for some address in the cache.  this is a wrapper that
      * allows access to the maps find method */
-    SRV_STR_MAP::iterator find(const std::string &ServerAddress);
+    SRV_STR_MAP::iterator find(const std::string &namePort);
 
     /** add an entry to the cache list */
-    void          insert(const std::string &serverAddress, const ServerItem &info);
+    void          insert(const std::string &namePort, const ServerItem &info);
 
     /** is given server in cache and marked as favorite? */
-    bool        isFavorite(const std::string &serverAddress) const;
+    bool        isFavorite(const std::string &namePort) const;
 
 private:
     /** the full path of the file the cache is stored in **/

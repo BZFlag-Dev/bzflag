@@ -39,12 +39,20 @@ void            printError(const std::string &fmt, const std::vector<std::string
     std::string msg;
     Bundle *pBdl = BundleMgr::getCurrentBundle();
     if (!pBdl)
-        return;
-
-    if ((parms != NULL) && !parms->empty())
-        msg = pBdl->formatMessage(fmt, parms);
+    {
+        // FIXME: bzfs and bzadmin should init bundle
+        if ((parms != NULL) && !parms->empty())
+            msg = parms->front();
+        else
+            msg = fmt;
+    }
     else
-        msg = pBdl->getLocalString(fmt);
+    {
+        if ((parms != NULL) && !parms->empty())
+            msg = pBdl->formatMessage(fmt, parms);
+        else
+            msg = pBdl->getLocalString(fmt);
+    }
 
     if (errorCallback) (*errorCallback)(msg.c_str());
 #if defined(_WIN32)
@@ -54,7 +62,8 @@ void            printError(const std::string &fmt, const std::vector<std::string
         OutputDebugString("\n");
     }
 #else
-    else std::cerr << msg << std::endl;
+    else
+        logDebugMessage(0, "%s %s\n", fmt.c_str(), msg.c_str());
 #endif
 }
 

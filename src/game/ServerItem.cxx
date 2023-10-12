@@ -41,12 +41,6 @@ void ServerItem::writeToFile(std::ostream& out) const
     strncpy(&buffer[0],description.c_str(),copyLength);
     out.write(buffer,sizeof(buffer));
 
-    // write out name
-    memset(buffer,0,sizeof(buffer));
-    copyLength = int(name.size() < ServerListCache::max_string ? name.size(): ServerListCache::max_string);
-    strncpy(&buffer[0],name.c_str(),copyLength);
-    out.write(buffer,sizeof(buffer));
-
     // write out pingpacket
     ping.writeToFile(out);
 
@@ -68,12 +62,6 @@ bool ServerItem::readFromFile(std::istream& in, int subrevision)
     in.read(buffer,sizeof(buffer));
     if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
     description = buffer;
-
-    //read name
-    memset(buffer,0,sizeof(buffer));
-    in.read(buffer,sizeof(buffer));
-    if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
-    name = buffer;
 
     bool pingWorked = ping.readFromFile(in);
     if (!pingWorked) return false; // pingpacket failed to read
@@ -211,11 +199,6 @@ int ServerItem::getPlayerCount() const
     return curPlayer;
 }
 
-std::string ServerItem::getAddrName() const
-{
-    return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.addr.sin_port));
-}
-
 unsigned int ServerItem::getSortFactor() const
 {
     // if null ping we return a 0 player count
@@ -238,20 +221,6 @@ unsigned int ServerItem::getSortFactor() const
         value += randomSortWeight;
 
     return value;
-}
-
-
-void ServerItem::splitAddrTitle(std::string& addr, std::string& title) const
-{
-    addr = stripAnsiCodes(description);
-    title = "";
-    const std::string::size_type pos = addr.find_first_of(';');
-    if (pos == std::string::npos)
-        return;
-    const std::string::size_type tpos = pos + 2; // skip the ';' and ' '
-    if (addr.size() > tpos)
-        title = addr.substr(tpos);
-    addr.resize(pos);
 }
 
 

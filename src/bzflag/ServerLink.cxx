@@ -21,7 +21,7 @@
 #define UDEBUGMSG false
 #endif
 
-#define UDEBUG if (UDEBUGMSG) printf
+#define UDEBUG if (UDEBUGMSG) logDebugMessage
 
 // system headers
 #include <string.h>
@@ -88,7 +88,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*     ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port)
+ServerLink::ServerLink(Address& serverAddress)
 {
     int i;
 
@@ -113,18 +113,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
 
     // open connection to server.  first connect to given port.
     // don't wait too long.
-    int query = socket(AF_INET, SOCK_STREAM, 0);
+    int query = socket(serverAddress.getAddr()->sa_family, SOCK_STREAM, 0);
     if (query < 0) return;
 
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
-    addr.sin_addr = serverAddress;
-
-    UDEBUG("Remote %s\n", sockaddr2iptextport((const struct sockaddr *)&addr));
+    UDEBUG(4,"Remote %s\n", serverAddress.getIpTextPort().c_str());
 
     // for UDP, used later
-    memcpy((unsigned char *)&usendaddr, (unsigned char *)&addr, sizeof(addr));
+    memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in6));
 
     bool okay = true;
     int fdMax = query;
@@ -141,7 +136,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
         close(query);
         return;
     }
-    if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0)
+    if (connect(query, serverAddress.getAddr(), sizeof(struct sockaddr_in6)) < 0)
     {
         if (getErrno() != EINPROGRESS)
         {
@@ -176,8 +171,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
 
     // Initialize structure
     conn.query = query;
-    conn.addr = (CNCTType*)&addr;
-    conn.saddr = sizeof(addr);
+    conn.addr = serverAddress.getAddr();
+    conn.saddr = sizeof(struct sockaddr_in6);
 
     // Create event
     hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
@@ -382,15 +377,15 @@ ServerLink::~ServerLink()
 #if defined(NETWORK_STATS)
     const float dt = float(TimeKeeper::getCurrent() - startTime);
     logDebugMessage(1, "Server network statistics:\n");
-    logDebugMessage(1, "  elapsed time    : %f\n", dt);
-    logDebugMessage(1, "  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
-    logDebugMessage(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
+    logDebugMessage(1, "\telapsed time    : %f\n", dt);
+    logDebugMessage(1, "\tbytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+    logDebugMessage(1, "\tpackets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
     if (packetsSent != 0)
-        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-    logDebugMessage(1, "  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
-    logDebugMessage(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
+        logDebugMessage(1, "\tbytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+    logDebugMessage(1, "\tbytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+    logDebugMessage(1, "\tpackets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
     if (packetsReceived != 0)
-        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
+        logDebugMessage(1, "\tbytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
 #endif
 }
 
@@ -440,7 +435,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 #ifdef TESTLINK
         if ((random() % TESTQUALTIY) != 0)
 #endif
-            sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, &usendaddr, sizeof(usendaddr));
+            sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, (sockaddr *)&usendaddr, sizeof(usendaddr));
         // we don't care about errors yet
         return;
     }
@@ -581,7 +576,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
         {
             AddrLen recvlen = sizeof(urecvaddr);
             int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
-                             &urecvaddr, (socklen_t*)&recvlen);
+                             (sockaddr *)&urecvaddr, (socklen_t*)&recvlen);
             if (n > 0)
             {
                 udpLength = n;
@@ -601,7 +596,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, code);
             //      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
             //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-            UDEBUG("<** UDP Packet Code %x Len %x\n", code, len);
+            UDEBUG(5,"<** UDP Packet Code %x Len %x\n", code, len);
             if (len > udpLength)
             {
                 udpLength = 0;
@@ -612,7 +607,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
             udpLength -= len;
             return 1;
         }
-        //if (UDEBUGMSG) printError("Fallback to normal TCP receive");
+        //if (UDEBUGMSG) logDebugMessage(5,"Fallback to normal TCP receive");
         len = 0;
         code = MsgNull;
 
@@ -695,7 +690,7 @@ bool ServerLink::readEnter(std::string& reason,
     {
         if (this->read(code, len, msg, -1) < 0)
         {
-            reason = "Communication error joining game [No immediate respose].";
+            reason = "Communication error joining game [No immediate response].";
             return false;
         }
 
@@ -848,38 +843,36 @@ void ServerLink::sendUDPlinkRequest()
         return; // server does not support udp (future list server test)
 
     char msg[1];
-    unsigned short localPort;
     void* buf = msg;
 
-    struct sockaddr_in serv_addr;
+    struct sockaddr_in6 serv_addr;
+    serv_addr.sin6_family = usendaddr.sin6_family;
 
-    if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((urecvfd = socket(serv_addr.sin6_family, SOCK_DGRAM, 0)) < 0)
     {
+        nerror("socket() failed");
         return; // we cannot comply
     }
 
     AddrLen addr_len = sizeof(serv_addr);
     if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*)&addr_len) < 0)
     {
-        printError("Error: getsockname() failed, cannot get TCP port?");
+        nerror("Error: getsockname() failed, cannot get TCP port?");
         return;
     }
     if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) != 0)
     {
-        printError("Error: getsockname() failed, cannot get TCP port?");
+        nerror("Error: getsockname() failed, cannot get TCP port?");
         return;  // we cannot get udp connection, bail out
     }
 
-    localPort = ntohs(serv_addr.sin_port);
     memcpy((char *)&urecvaddr, (char *)&serv_addr, sizeof(serv_addr));
 
     if (debugLevel >= 1)
     {
         std::vector<std::string> args;
-        char lps[10];
-        sprintf(lps, "%d", localPort);
-        args.push_back(lps);
-        printError("Network: Created local UDP downlink port {1}", &args);
+        args.push_back(sockaddr2iptextport((const sockaddr *)&serv_addr));
+        printError("Network: Created local UDP downlink {1}", &args);
     }
 
     buf = nboPackUByte(buf, id);

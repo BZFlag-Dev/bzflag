@@ -198,14 +198,12 @@ bool ServerListFilter::check(const ServerItem& item) const
         return true;
 
     // pattern filters
-    std::string addr, desc;
-    item.splitAddrTitle(addr, desc);
-    if (!addrPat.check(addr))
+    if (!addrPat.check(item.name))
         return false;
-    if (!descPat.check(desc))
+    if (!descPat.check(item.description))
         return false;
-    if (!addrDescPat.check(addr) &&
-            !addrDescPat.check(desc))
+    if (!addrDescPat.check(item.name) &&
+            !addrDescPat.check(item.description))
         return false;
 
     const PingPacket& p = item.ping;

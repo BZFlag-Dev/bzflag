@@ -92,7 +92,7 @@ static bool doSpeedChecks = true;
 CmdLineOptions *clOptions;
 
 // server address to listen on
-struct sockaddr_in serverAddr;
+Address serverAddr;
 // well known service socket
 static int wksSocket;
 bool handlePings = true;
@@ -545,11 +545,7 @@ std::string GetPlayerIPAddress( int i)
     if (!playerData || !playerData->netHandler)
         return tmp;
 
-    unsigned int address = (unsigned int)playerData->netHandler->getIPAddress().s_addr;
-    unsigned char* a = (unsigned char*)&address;
-
-    tmp = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
-    return tmp;
+    return playerData->netHandler->getTargetIP();
 }
 
 void sendPlayerUpdate(GameKeeper::Player* player)
@@ -964,19 +960,18 @@ static bool serverStart()
 #ifdef SO_REUSEADDR
 #if defined(_WIN32)
     const BOOL optOn = TRUE;
+    const BOOL optOff = FALSE;
     BOOL opt;
 #else
     const int optOn = 1;
+    const int optOff = 0;
     int opt;
 #endif
 #endif
     maxFileDescriptor = 0;
 
-    serverAddr.sin_port = htons(clOptions->wksPort);
-    pingReply.serverId.addr = serverAddr;
-
     // open well known service port
-    wksSocket = socket(AF_INET, SOCK_STREAM, 0);
+    wksSocket = socket(serverAddr.getAddr()->sa_family, SOCK_STREAM, 0);
     if (wksSocket == -1)
     {
         nerror("couldn't make connect socket");
@@ -992,7 +987,19 @@ static bool serverStart()
         return false;
     }
 #endif
-    if (bind(wksSocket, (const struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1)
+    if (serverAddr.getAddr()->sa_family == AF_INET6)
+    {
+        /* for ipv6, accept connections for ipv4 as well */
+        opt = optOff;
+        if (setsockopt(wksSocket, IPPROTO_IPV6, IPV6_V6ONLY, (SSOType)&opt, sizeof(opt)) < 0)
+        {
+            nerror("serverStart: setsockopt IPV6_V6ONLY");
+            close(wksSocket);
+            return false;
+        }
+    }
+
+    if (bind(wksSocket, serverAddr.getAddr(), sizeof(struct sockaddr_in6)) == -1)
     {
         nerror("couldn't bind connect socket");
         close(wksSocket);
@@ -1337,7 +1344,7 @@ static void acceptClient()
 {
     // client (not a player yet) is requesting service.
     // accept incoming connection on our well known port
-    struct sockaddr_in clientAddr;
+    struct sockaddr_in6 clientAddr;
     AddrLen addr_len = sizeof(clientAddr);
     int fd = accept(wksSocket, (struct sockaddr*)&clientAddr, &addr_len);
     if (fd == -1)
@@ -1407,15 +1414,15 @@ static bool MakePlayer ( NetHandler *handler )
     if (playerIndex != 0xff)
     {
         logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex,
-                        sockaddr2iptextport(handler->getUADDR()), handler->getFD());
+                        handler->getTargetIP(), handler->getFD());
 
         if (playerIndex >= curMaxPlayers)
             curMaxPlayers = playerIndex+1;
     }
     else     // full? reject by closing socket
     {
-        logDebugMessage(1,"all slots occupied, rejecting accept() from %s:%d on %i\n",
-                        sockaddr2iptextport(handler->getUADDR()), handler->getFD());
+        logDebugMessage(1,"all slots occupied, rejecting accept() from %s on %i\n",
+                        handler->getTargetIP(), handler->getFD());
 
         // send back 0xff before closing
         send(handler->getFD(), (const char*)buffer, sizeof(buffer), 0);
@@ -1461,10 +1468,9 @@ void checkGameOn()
 }
 
 
-static void respondToPing(Address addr)
+static void respondToPing(void)
 {
     // reply with current game info
-    pingReply.sourceAddr = addr;
     // Total up rogue + rabbit + hunter teams
     pingReply.rogueCount = (uint8_t)team[0].team.size + (uint8_t)team[6].team.size + (uint8_t)team[7].team.size;
     pingReply.redCount = (uint8_t)team[1].team.size;
@@ -2217,8 +2223,8 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         const bool playerIsAntiBanned =  playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
 
         // check against the ip ban list
-        in_addr playerIP = playerData->netHandler->getIPAddress();
-        BanInfo info(playerIP);
+        Address playerIP(playerData->netHandler->getTaddr());
+        BanInfo info(&playerIP);
         if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP,&info))
         {
             std::string rejectionMessage;
@@ -4868,7 +4874,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         playerData->hasEntered = true;
         playerData->accessInfo.setName(playerData->player.getCallSign());
         std::string timeStamp = TimeKeeper::timestamp();
-        logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
+        logDebugMessage(1,"Player %s [%d] joined from %s at %s token \"%s\"\n",
                         playerData->player.getCallSign(),
                         t, handler->getTargetIP(), timeStamp.c_str(),
                         playerData->player.getToken());
@@ -6063,7 +6069,8 @@ void rescanForBans ( bool isOperator, const char* callsign, int playerID )
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-        if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getIPAddress()))
+        Address oAddr(otherPlayer->netHandler->getTaddr());
+        if (otherPlayer && !clOptions->acl.validate(oAddr))
         {
             // operators can override antiperms
             if (!isOperator)
@@ -6171,18 +6178,6 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
     peer.sendChunks.pop_front();
 }
 
-std::string getIPFromHandler (NetHandler* netHandler)
-{
-    unsigned int address = (unsigned int)netHandler->getIPAddress().s_addr;
-    unsigned char* a = (unsigned char*)&address;
-
-    static std::string strRet;
-
-    strRet = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
-
-    return strRet;
-}
-
 static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_set& UNUSED(read_set),
                                  fd_set& UNUSED(write_set))
 {
@@ -6253,7 +6248,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
                         return;
                     }
 
-                    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
+                    bz_AllowConnectionData_V1 data(netHandler->getTargetIP());
                     worldEventManager.callEvents(&data);
                     if (!data.allow)
                     {
@@ -6287,7 +6282,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
                     }
                     netHandler->flushData();
 
-                    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
+                    bz_AllowConnectionData_V1 data(netHandler->getTargetIP());
                     worldEventManager.callEvents(&data);
                     if (!data.allow)
                     {
@@ -6296,8 +6291,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
                         return;
                     }
 
-                    in_addr IP = netHandler->getIPAddress();
-                    BanInfo info(IP);
+                    Address IP = netHandler->getTaddr();
+                    BanInfo info(&IP);
                     if (!clOptions->acl.validate(IP, &info))
                     {
                         logDebugMessage(2,"Peer %s banned\n", netHandler->getTargetIP());
@@ -6380,8 +6375,7 @@ void UPnP::setIGD()
 #endif
     if (!devlist)
     {
-        std::cerr << "No UPnP device found"
-                  << std::endl;
+        logDebugMessage(1, "No UPnP device found\n");
         return;
     }
     // Select a good IGD (Internet Gateway Device)
@@ -6725,8 +6719,7 @@ int main(int argc, char **argv)
 
     if (clOptions->publicizeServer && clOptions->publicizedKey.empty())
     {
-        logDebugMessage(0,
-                        "\nWARNING: Publicly listed bzfs servers must register"
+        logDebugMessage(0,"\nWARNING: Publicly listed bzfs servers must register"
                         " using the '-publickey <key>'option.\n\n");
     }
 
@@ -6746,10 +6739,6 @@ int main(int argc, char **argv)
         }
     }
 #endif
-
-    // start listening and prepare world database
-    memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;
 
     if (!defineWorld())
     {
@@ -6870,11 +6859,12 @@ int main(int argc, char **argv)
             clOptions->wksPort = ntohs(service->s_port);
     }
 
+    if (clOptions->pingInterface == "")
+        clOptions->pingInterface = "::";
+    serverAddr = Address(joinNamePort(clOptions->pingInterface, clOptions->wksPort));
+
     if (clOptions->UPnP)
         bzUPnP.start();
-
-    if (clOptions->pingInterface != "")
-        serverAddr.sin_addr = Address::getHostAddress(clOptions->pingInterface);
 
     // my address to publish.  allow arguments to override (useful for
     // firewalls).  use my official hostname if it appears to be
@@ -6887,8 +6877,8 @@ int main(int argc, char **argv)
         std::string generatedPublicAddress = Address::getHostName();
         if (generatedPublicAddress.find('.') == std::string::npos)
         {
-            if (!Address(serverAddr.sin_addr).isAny() && !Address(serverAddr.sin_addr).isPrivate())
-                generatedPublicAddress = Address(serverAddr.sin_addr).getDotNotation();
+            if (!serverAddr.isAny() && !serverAddr.isPrivate())
+                generatedPublicAddress = serverAddr.getIpTextPort();
             else
                 generatedPublicAddress = "";
         }
@@ -6923,13 +6913,10 @@ int main(int argc, char **argv)
     if (clOptions->rabbitSelection == RandomRabbitSelection)
         Score::setRandomRanking();
     // print networking info
-    logDebugMessage(1,"\tlistening on %s\n",
-                    sockaddr2iptextport((const struct sockaddr *)&serverAddr));
+    logDebugMessage(1,"\tlistening on %s\n", serverAddr.getIpTextPort().c_str());
     logDebugMessage(1,"\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
     // prep ping reply
-    pingReply.serverId.addr = serverAddr;
-    pingReply.serverId.number = 0;
     pingReply.gameType = clOptions->gameType;
     pingReply.gameOptions = clOptions->gameOptions;
     pingReply.maxPlayers = (uint8_t)maxRealPlayers;
@@ -7763,7 +7750,7 @@ int main(int argc, char **argv)
                 TimeKeeper receiveTime = TimeKeeper::getCurrent();
                 while (true)
                 {
-                    struct sockaddr_in uaddr;
+                    struct sockaddr_in6 uaddr;
                     unsigned char ubuf[MaxPacketLen];
                     bool     udpLinkRequest;
                     // interface to the UDP Receive routines
@@ -7777,7 +7764,7 @@ int main(int argc, char **argv)
                         // then ignore the ping.
                         if (handlePings)
                         {
-                            respondToPing(Address(uaddr));
+                            respondToPing();
                             pingReply.write(NetHandler::getUdpSocket(), &uaddr);
                         }
                         continue;

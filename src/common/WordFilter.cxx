@@ -20,6 +20,7 @@
 // implementation-specific headers
 #ifdef DEBUG
 #  include "TimeKeeper.h"
+#  include "bzfio.h"
 #endif
 
 
@@ -861,7 +862,7 @@ bool WordFilter::filter(char *input, const bool simple) const
         filtered = aggressiveFilter(input);
 #ifdef DEBUG
     TimeKeeper after = TimeKeeper::getCurrent();
-    std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
+    logDebugMessage(4,"Filter time elapsed %f seconds\n", after - before);
 #endif
     return filtered;
 }

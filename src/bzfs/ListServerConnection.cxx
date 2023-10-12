@@ -49,8 +49,9 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
     publiclyDisconnected = false;
 
-    if (clOptions->pingInterface != "")
-        setInterface(clOptions->pingInterface);
+    //FIXME: we might be listening on :: but still only have ipv4 connectivity
+    //if (clOptions->pingInterface != "")
+    //    setInterface(clOptions->pingInterface);
 
     publicizeAddress     = publicizedAddress;
     publicizeDescription = publicizedTitle;
@@ -223,7 +224,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
             */
             if (authReply)
             {
-                logDebugMessage(3,"Got: %s", base);
+                logDebugMessage(3,"Got: %s\n", base);
                 char *group = (char *)NULL;
 
                 // Isolate callsign from groups
@@ -350,7 +351,7 @@ void ListServerLink::sendQueuedMessages()
     queuedRequest = true;
     if (nextMessageType == ListServerLink::ADD)
     {
-        logDebugMessage(3,"Queuing ADD message to list server\n");
+        logDebugMessage(3,"Queuing ADD %s, players %i\n", publicizeAddress.c_str(), GameKeeper::Player::count());
 
         bz_ListServerUpdateEvent_V1 updateEvent;
         updateEvent.address = publicizeAddress;
@@ -365,7 +366,7 @@ void ListServerLink::sendQueuedMessages()
     }
     else if (nextMessageType == ListServerLink::REMOVE)
     {
-        logDebugMessage(3,"Queuing REMOVE message to list server\n");
+        logDebugMessage(3,"Queuing REMOVE %s\n", publicizeAddress.c_str());
         removeMe(publicizeAddress);
     }
     nextMessageType = ListServerLink::NONE;
@@ -409,8 +410,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
         playerData->_LSAState = GameKeeper::Player::checking;
         NetHandler* handler = playerData->netHandler.get();
         msg += TextUtils::url_encode(playerData->player.getCallSign());
-        Address addr = handler->getIPAddress();
-        if (!addr.isPrivate())
+        if (!handler->getTaddr()->isPrivate())
         {
             msg += "@";
             msg += handler->getTargetIP();

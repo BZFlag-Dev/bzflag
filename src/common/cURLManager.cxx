@@ -64,20 +64,20 @@ cURLManager::cURLManager()
 
     result = curl_easy_setopt(easyHandle, CURLOPT_NOSIGNAL, true);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_NOSIGNAL error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_NOSIGNAL error %d: %s\n", result, errorBuffer);
 
     result = curl_easy_setopt(easyHandle, CURLOPT_FOLLOWLOCATION, true);
     if (result != CURLE_OK)
-        logDebugMessage(1, "CURLOPT_FOLLOWLOCATION error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1, "CURLOPT_FOLLOWLOCATION error %d: %s\n", result, errorBuffer);
 
     result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION,
                               cURLManager::writeFunction);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_WRITEFUNCTION error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_WRITEFUNCTION error %d: %s\n", result, errorBuffer);
 
     result = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_WRITEDATA error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_WRITEDATA error %d: %s\n", result, errorBuffer);
 
     cURLMap[easyHandle] = this;
 }
@@ -121,14 +121,14 @@ void cURLManager::setTimeout(long timeout)
 
     result = curl_easy_setopt(easyHandle, CURLOPT_CONNECTTIMEOUT, timeout);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_CONNECTTIMEOUT error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_CONNECTTIMEOUT error %d: %s\n", result, errorBuffer);
     // anything under 1Kbyte/sec is junk
     result = curl_easy_setopt(easyHandle, CURLOPT_LOW_SPEED_LIMIT, 1024);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_LOW_SPEED_LIMIT error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_LOW_SPEED_LIMIT error %d: %s\n", result, errorBuffer);
     result = curl_easy_setopt(easyHandle, CURLOPT_LOW_SPEED_TIME, timeout);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_LOW_SPEED_TIME error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_LOW_SPEED_TIME error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setNoBody()
@@ -138,7 +138,7 @@ void cURLManager::setNoBody()
 
     result = curl_easy_setopt(easyHandle, CURLOPT_NOBODY, nobody);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_NOBODY error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_NOBODY error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setGetMode()
@@ -148,7 +148,7 @@ void cURLManager::setGetMode()
 
     result = curl_easy_setopt(easyHandle, CURLOPT_HTTPGET, get);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_GET error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_GET error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setPostMode(std::string _postData)
@@ -159,13 +159,13 @@ void cURLManager::setPostMode(std::string _postData)
 
     result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDS, postData.c_str());
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_POSTFIELD error %d: %s\n", result, errorBuffer);
     result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDSIZE, postData.size());
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_POSTFIELD error %d: %s\n", result, errorBuffer);
     result = curl_easy_setopt(easyHandle, CURLOPT_POST, 1);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_POST error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_POST error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setURL(const std::string &url)
@@ -180,10 +180,10 @@ void cURLManager::setURL(const std::string &url)
     {
         usedUrl = url;
         result = curl_easy_setopt(easyHandle, CURLOPT_URL, usedUrl.c_str());
-        logDebugMessage(2,"CURLOPT_URL is : %s\n", usedUrl.c_str());
+        logDebugMessage(2,"CURLOPT_URL: %s\n", usedUrl.c_str());
     }
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_URL error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_URL error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setURLwithNonce(const std::string &url)
@@ -208,7 +208,7 @@ void cURLManager::setProgressFunction(curl_xferinfo_callback func, const void* d
     else
         result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 1);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_SET_PROGRESS error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_SET_PROGRESS error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setRequestFileTime(bool request)
@@ -217,14 +217,14 @@ void cURLManager::setRequestFileTime(bool request)
     long     requestFileTime = request ? 1 : 0;
     result = curl_easy_setopt(easyHandle, CURLOPT_FILETIME, requestFileTime);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_FILETIME error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_FILETIME error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::addHandle()
 {
     CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
     if (result > CURLM_OK)
-        logDebugMessage(1,"Error while adding easy handle from libcurl %d : %s\n",
+        logDebugMessage(1,"Error while adding easy handle from libcurl %d: %s\n",
                         result, errorBuffer);
     added = true;
 }
@@ -235,7 +235,7 @@ void cURLManager::removeHandle()
         return;
     CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
     if (result != CURLM_OK)
-        logDebugMessage(1,"Error while removing easy handle from libcurl %d : %s\n",
+        logDebugMessage(1,"Error while removing easy handle from libcurl %d: %s\n",
                         result, errorBuffer);
     added = false;
 }
@@ -274,7 +274,7 @@ int cURLManager::fdset(fd_set &read, fd_set &write)
 
     result = curl_multi_fdset(multiHandle, &read, &write, &exc, &max_fd);
     if (result != CURLM_OK)
-        logDebugMessage(1,"Error while doing multi_fdset from libcurl %d : %s\n",
+        logDebugMessage(1,"Error while doing multi_fdset from libcurl %d: %s\n",
                         result, errorBuffer);
     return max_fd;
 }
@@ -294,7 +294,7 @@ bool cURLManager::perform()
             break;
     }
     if (result != CURLM_OK)
-        logDebugMessage(1,"Error while doing multi_perform from libcurl %d : %s\n",
+        logDebugMessage(1,"Error while doing multi_perform from libcurl %d: %s\n",
                         result, errorBuffer);
 
     int      msgs_in_queue;
@@ -322,7 +322,7 @@ bool cURLManager::perform()
 void cURLManager::infoComplete(CURLcode result)
 {
     if (result != CURLE_OK)
-        logDebugMessage(1,"File transfer terminated with error from libcurl %d : %s\n",
+        logDebugMessage(1,"File transfer terminated with error from libcurl %d: %s\n",
                         result, errorBuffer);
     removeHandle();
     finalization((char *)theData, theLen, result == CURLE_OK);
@@ -339,7 +339,7 @@ bool cURLManager::getFileTime(time_t &t)
     result = curl_easy_getinfo(easyHandle, CURLINFO_FILETIME, &filetime);
     if (result)
     {
-        logDebugMessage(1,"CURLINFO_FILETIME error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLINFO_FILETIME error %d: %s\n", result, errorBuffer);
         return false;
     }
     t = (time_t)filetime;
@@ -354,7 +354,7 @@ bool cURLManager::getFileSize(int &size)
     size = (int)mySize;
     if (result)
     {
-        logDebugMessage(1,"CURLINFO_SIZE_DOWNLOAD_T error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLINFO_SIZE_DOWNLOAD_T error %d: %s\n", result, errorBuffer);
         return false;
     }
     return true;
@@ -371,19 +371,19 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
                                   CURLOPT_TIMECONDITION,
                                   CURL_TIMECOND_NONE);
         if (result != CURLE_OK)
-            logDebugMessage(1,"CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
+            logDebugMessage(1,"CURLOPT_TIMECONDITION error %d: %s\n", result, errorBuffer);
         break;
     case ModifiedSince:
         result = curl_easy_setopt(easyHandle,
                                   CURLOPT_TIMECONDITION,
                                   CURL_TIMECOND_IFMODSINCE);
         if (result != CURLE_OK)
-            logDebugMessage(1,"CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
+            logDebugMessage(1,"CURLOPT_TIMECONDITION error %d: %s\n", result, errorBuffer);
         result = curl_easy_setopt(easyHandle,
                                   CURLOPT_TIMEVALUE,
                                   (long)t);
         if (result != CURLE_OK)
-            logDebugMessage(1,"CURLOPT_TIMEVALUE error %d : %s\n", result, errorBuffer);
+            logDebugMessage(1,"CURLOPT_TIMEVALUE error %d: %s\n", result, errorBuffer);
         break;
     default:
         break;
@@ -400,7 +400,7 @@ void cURLManager::setInterface(const std::string &_interfaceIP)
                               CURLOPT_INTERFACE,
                               interfaceIP.c_str());
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_SET_INTERFACE error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_SET_INTERFACE error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setUserAgent(const std::string &_userAgent)
@@ -413,7 +413,7 @@ void cURLManager::setUserAgent(const std::string &_userAgent)
                               CURLOPT_USERAGENT,
                               userAgent.c_str());
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_SET_USERAGENT error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLOPT_SET_USERAGENT error %d: %s\n", result, errorBuffer);
 }
 
 void cURLManager::setDNSCachingTime(long time)
@@ -424,7 +424,7 @@ void cURLManager::setDNSCachingTime(long time)
                               CURLOPT_DNS_CACHE_TIMEOUT,
                               (long)time);
     if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_SET_DNS_CACHE_TIMEOUT error %d : %s\n",
+        logDebugMessage(1,"CURLOPT_SET_DNS_CACHE_TIMEOUT error %d: %s\n",
                         result, errorBuffer);
 }
 

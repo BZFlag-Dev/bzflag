@@ -31,7 +31,7 @@
 // PingPacket
 //
 
-const int       PingPacket::PacketSize = ServerIdPLen + 52;
+const int       PingPacket::PacketSize = 52;
 
 PingPacket::PingPacket() : gameOptions(0), gameType(TeamFFA),
     maxShots(1),
@@ -62,7 +62,7 @@ PingPacket::~PingPacket()
     // do nothing
 }
 
-bool            PingPacket::read(int fd, struct sockaddr_in* addr)
+bool            PingPacket::read(int fd, struct sockaddr_in6* addr)
 {
     char buffer[PacketSize], serverVersion[9];
     uint16_t len, code;
@@ -93,7 +93,7 @@ bool            PingPacket::read(int fd, struct sockaddr_in* addr)
 }
 
 bool            PingPacket::write(int fd,
-                                  const struct sockaddr_in* addr) const
+                                  const struct sockaddr_in6* addr) const
 {
     char buffer[PacketSize] = {0};
     void* buf = buffer;
@@ -104,7 +104,7 @@ bool            PingPacket::write(int fd,
 }
 
 bool            PingPacket::isRequest(int fd,
-                                      struct sockaddr_in* addr)
+                                      struct sockaddr_in6* addr)
 {
     if (fd < 0) return false;
     char buffer[6];
@@ -118,7 +118,7 @@ bool            PingPacket::isRequest(int fd,
 }
 
 bool            PingPacket::sendRequest(int fd,
-                                        const struct sockaddr_in* addr)
+                                        const struct sockaddr_in6* addr)
 {
     if (fd < 0 || !addr) return false;
     char buffer[6];
@@ -132,8 +132,6 @@ bool            PingPacket::sendRequest(int fd,
 const void*     PingPacket::unpack(const void* buf, char* version)
 {
     buf = nboUnpackString(buf, version, 8);
-    buf = serverId.unpack(buf);
-    buf = sourceAddr.unpack(buf);
     buf = nboUnpackUShort(buf, gameType);
     buf = nboUnpackUShort(buf, gameOptions);
     buf = nboUnpackUShort(buf, maxShots);
@@ -161,8 +159,6 @@ const void*     PingPacket::unpack(const void* buf, char* version)
 void*           PingPacket::pack(void* buf, const char* version) const
 {
     buf = nboPackString(buf, version, 8);
-    buf = serverId.pack(buf);
-    buf = sourceAddr.pack(buf);
     buf = nboPackUShort(buf, gameType);
     buf = nboPackUShort(buf, gameOptions);
     buf = nboPackUShort(buf, maxShots);

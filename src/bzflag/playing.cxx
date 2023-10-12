@@ -1510,7 +1510,7 @@ static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
 }
 
 
-static void printIpInfo (const Player *_player, const Address& addr,
+static void printIpInfo (const Player *_player, Address& addr,
                          const std::string &note)
 {
     if (_player == NULL)
@@ -1525,7 +1525,7 @@ static void printIpInfo (const Player *_player, const Address& addr,
     {
         colorStr = ColorStrings[CyanColor]; // replay observers
     }
-    const std::string addrStr = addr.getDotNotation();
+    const std::string addrStr = addr.getIpTextPort();
     std::string message = ColorStrings[CyanColor]; // default color
     message += "IPINFO: ";
     if (BZDBCache::colorful) message += colorStr;
@@ -1563,7 +1563,7 @@ static bool removePlayer (PlayerId id)
     else
     {
         msg += " from ";
-        msg += addr.getDotNotation();
+        msg += addr.getIpTextPort();
         p->setIpAddress(addr);
         addMessage(p, msg);
         if (BZDB.evalInt("showips") > 1)
@@ -3410,7 +3410,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                     break;
                 }
             }
-            message += " from " + ip.getDotNotation();
+            message += " from " + ip.getIpTextPort();
             tank->setIpAddress(ip);
             addMessage(tank, message);
         }
@@ -4946,7 +4946,7 @@ static void     addRobots()
 
     for (i = 0, j = 0; i < numRobotTanks; i++)
     {
-        robotServer[j] = new ServerLink(serverNetworkAddress, startupInfo.serverPort);
+        robotServer[j] = new ServerLink(serverNetworkAddress);
         if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay)
         {
             delete robotServer[j];
@@ -5485,7 +5485,7 @@ static void joinInternetGame()
     ServerAccessList.reload();
     std::vector<std::string> nameAndIp;
     nameAndIp.push_back(startupInfo.serverName);
-    nameAndIp.push_back(serverNetworkAddress.getDotNotation());
+    nameAndIp.push_back(serverNetworkAddress.getIpText());
     if (!ServerAccessList.authorized(nameAndIp))
     {
         HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
@@ -5500,8 +5500,7 @@ static void joinInternetGame()
     }
 
     // open server
-    ServerLink* _serverLink = new ServerLink(serverNetworkAddress,
-            startupInfo.serverPort);
+    ServerLink* _serverLink = new ServerLink(serverNetworkAddress);
 
 #if defined(ROBOT)
     numRobots = 0;
@@ -7009,12 +7008,15 @@ static void     playingLoop()
             if (strcmp(startupInfo.token, "badtoken") == 0)
                 startupInfo.token[0] = '\0';
 
-            ares->queryHost(startupInfo.serverName);
+            ares->queryHost(startupInfo.serverName, TextUtils::itoa(startupInfo.serverPort).c_str());
             waitingDNS = true;
 
             // don't try again
             joinRequested = false;
         }
+
+        struct sockaddr_in6 hostAddr;
+        memset(&hostAddr, 0, sizeof(hostAddr));
 
         if (waitingDNS)
         {
@@ -7030,8 +7032,7 @@ static void     playingLoop()
                           &timeout);
             ares->process(&readers, &writers);
 
-            struct in_addr inAddress;
-            AresHandler::ResolutionStatus status = ares->getHostAddress(&inAddress);
+            AresHandler::ResolutionStatus status = ares->getHostAddr(&hostAddr);
             if (status == AresHandler::Failed)
             {
                 HUDDialogStack::get()->setFailedMessage("Server not found");
@@ -7040,7 +7041,7 @@ static void     playingLoop()
             else if (status == AresHandler::HbNSucceeded)
             {
                 // now try connecting
-                serverNetworkAddress = Address(inAddress);
+                serverNetworkAddress = Address(&hostAddr);
                 joinInternetGame();
                 waitingDNS = false;
             }

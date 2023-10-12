@@ -2312,7 +2312,7 @@ msgstr "<** UDP kod paketu %x Dlzka %x\n"
 msgid "Fallback to normal TCP receive"
 msgstr "Navrat k obycajnemu prijmu TCP"
 
-msgid "Communication error joining game [No immediate respose]."
+msgid "Communication error joining game [No immediate response]."
 msgstr "Chyba komunikacie pri pripajani sa k hre [Ziadna bezprostredna odpoved]."
 
 msgid "Server forced disconnection."

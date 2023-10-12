@@ -33,11 +33,11 @@
 #include "Pack.h"
 #include "Protocol.h"
 
-typedef struct in_addr  InAddr;         // shorthand
-
 // helpers
 char *sockaddr2iptext(const struct sockaddr *sa);
 char *sockaddr2iptextport(const struct sockaddr *sa);
+bool splitNamePort(std::string nameport, std::string &name, int &port);
+std::string joinNamePort(std::string name, int port);
 
 class Address
 {
@@ -45,17 +45,25 @@ public:
     Address();
     Address(const std::string&);
     Address(const Address&);
-    Address(const InAddr&);         // input in nbo
-    Address(const struct sockaddr_in&); // input in nbo
+    Address(const Address *);
+    Address(const struct sockaddr_in6*); // input in nbo
     ~Address();
     Address&        operator=(const Address&);
 
-    operator InAddr() const;
     bool        operator==(const Address&) const;
     bool        operator!=(const Address&) const;
     bool        operator<(Address const&) const;
+    bool        isMapped() const;
     bool        isAny() const;
     bool        isPrivate() const;
+    sockaddr *getAddr();
+    sockaddr_in *getAddr_in();
+    sockaddr_in6 *getAddr_in6();
+    /* return port in network order */
+    in_port_t getNPort() const;
+    std::string getIpText();
+    std::string getIpTextPort();
+
     std::string     getDotNotation() const;
     uint8_t     getIPVersion() const;
 
@@ -63,11 +71,12 @@ public:
     const void*     unpack(const void*);
 
     static Address  getHostAddress(const std::string &hostname = std::string(""));
-    static std::string  getHostByAddress(InAddr);
     static const std::string getHostName(const std::string &hostname = std::string(""));
 
 private:
-    std::vector <InAddr> addr;
+    struct sockaddr_in6 addr;
+    std::string iptext;
+    std::string iptextport;
 };
 
 // FIXME - enum maybe? put into namespace or class cage?
@@ -77,21 +86,6 @@ const PlayerId      ServerPlayer = 253;
 const PlayerId      AdminPlayers = 252;
 const PlayerId      FirstTeam = 251;
 const PlayerId      LastRealPlayer = FirstTeam - NumTeams;
-
-class ServerId
-{
-public:
-    void*       pack(void*) const;
-    const void*     unpack(const void*);
-
-    bool        operator==(const ServerId&) const;
-    bool        operator!=(const ServerId&) const;
-
-public:
-    // host and port in network byte order
-    struct sockaddr_in addr;
-    int16_t     number;         // local player number
-};
 
 #endif // BZF_INET_ADDR_H
 

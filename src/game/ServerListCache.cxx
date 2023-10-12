@@ -45,16 +45,16 @@ ServerListCache*  ServerListCache::get()
 }
 
 
-// insert a serverItem mapped by the serverAddress
-void ServerListCache::insert(const std::string &serverAddress, const ServerItem &info)
+// insert a serverItem mapped by namePort
+void ServerListCache::insert(const std::string &namePort, const ServerItem &info)
 {
-    serverCache.insert(SRV_STR_MAP::value_type(serverAddress,info));
+    serverCache.insert(SRV_STR_MAP::value_type(namePort,info));
 }
 
 
-ServerListCache::SRV_STR_MAP::iterator ServerListCache::find(const std::string &serverAddress)
+ServerListCache::SRV_STR_MAP::iterator ServerListCache::find(const std::string &namePort)
 {
-    return serverCache.find(serverAddress);
+    return serverCache.find(namePort);
 }
 
 
@@ -69,9 +69,9 @@ ServerListCache::SRV_STR_MAP::iterator ServerListCache::end()
     return serverCache.end();
 }
 
-bool ServerListCache::isFavorite(const std::string &serverAddress) const
+bool ServerListCache::isFavorite(const std::string &namePort) const
 {
-    SRV_STR_MAP::const_iterator i = serverCache.find(serverAddress);
+    SRV_STR_MAP::const_iterator i = serverCache.find(namePort);
     return i!=serverCache.end() && i->second.favorite;
 }
 
@@ -104,7 +104,6 @@ void            ServerListCache::saveCache()
     char buffer[max_string+1];
     for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); ++iter)
     {
-
         // skip items that are more than 30 days old, but always save favorites
         if (!iter->second.favorite && iter->second.getAgeMinutes() > 60*24*30)
             continue;
@@ -144,19 +143,18 @@ void            ServerListCache::loadCache()
         char buffer[max_string+1];
         while (inFile)
         {
-            std::string serverIndex;
             ServerItem info;
 
             inFile.read(buffer,sizeof(buffer)); //read the index of the map
             if ((size_t)inFile.gcount() < sizeof(buffer)) break; // failed to read entire string
-            serverIndex = buffer;
+            info.name = buffer;
 
             bool infoWorked = info.readFromFile(inFile, subrevision);
             // after a while it is doubtful that player counts are accurate
             if (info.getAgeMinutes() > (time_t)30) info.ping.zeroPlayerCounts();
             if (!infoWorked) break;
 
-            serverCache.insert(SRV_STR_MAP::value_type(serverIndex,info));
+            serverCache.insert(SRV_STR_MAP::value_type(info.name,info));
         }
         inFile.close();
     }

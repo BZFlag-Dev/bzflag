@@ -29,9 +29,8 @@
 /* common implementation headers */
 #include "ErrorHandler.h"
 
-
 int         openBroadcast(int port, const char* service,
-                          struct sockaddr_in* addr)
+                          struct sockaddr_in6* addr)
 {
 #if defined(_WIN32)
     const BOOL optOn = TRUE;
@@ -46,7 +45,6 @@ int         openBroadcast(int port, const char* service,
         printError("openBroadcast: Must supply a return address structure!");
         return -1;
     }
-    memset(addr, 0, sizeof(*addr));
 
     /* lookup service and check port */
     if (service)
@@ -76,17 +74,18 @@ int         openBroadcast(int port, const char* service,
         return -1;
     }
 
+    /* set address info */
+    // FIXME: if we get IPv6, try fc00::/8
+    memset(addr, 0, sizeof(*addr));
+    addr->sin6_family = AF_INET;
+
     /* open socket */
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    fd = socket(addr->sin6_family, SOCK_DGRAM, 0);
     if (fd < 0)
     {
         nerror("openBroadcast: socket");
         return -1;
     }
-
-    /* set address info */
-    addr->sin_family = AF_INET;
-    addr->sin_addr.s_addr = htonl(INADDR_ANY);
 
 #if defined(SO_REUSEPORT)
     /* set reuse port */
@@ -116,6 +115,13 @@ int         openBroadcast(int port, const char* service,
         return -1;
     }
 
+    sockaddr_in6 bcastaddr;
+    socklen_t bcastaddrlen = sizeof(bcastaddr);
+    if (getsockname(fd, (sockaddr *)&bcastaddr, &bcastaddrlen))
+        nerror("openBroadcast getsockname");
+    ;
+    logDebugMessage(5, "BCast bind: %s\n", sockaddr2iptextport((sockaddr *)&bcastaddr));
+
     /* make broadcast */
     if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST,
                    (SSOType)&optOn, sizeof(optOn)) < 0)
@@ -126,8 +132,8 @@ int         openBroadcast(int port, const char* service,
     }
 
     // address to send to is the broadcast address
-    addr->sin_addr.s_addr = INADDR_BROADCAST;
-    addr->sin_port = htons(port);
+    ((struct sockaddr_in *)addr)->sin_addr.s_addr = INADDR_BROADCAST;
+    ((struct sockaddr_in *)addr)->sin_port = htons(port);
 
 #if defined(__linux__)
     // linux doesn't seem to like INADDR_BROADCAST, but it's okay
@@ -166,13 +172,14 @@ int         openBroadcast(int port, const char* service,
         // if the address is the loopback broadcast address then skip it
         const sockaddr_in* ifbaddr = (const sockaddr_in*)
                                      &req[i].ifr_ifru.ifru_broadaddr;
+        // FIXME: handle IPv6
         if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu)
             continue;
         if (ifbaddr->sin_addr.s_addr == 0)
             continue;
 
         // got the broadcast address on the interface
-        addr->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
+        ((struct sockaddr_in *)addr)->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
         break;
     }
 
@@ -204,8 +211,9 @@ int         closeBroadcast(int fd)
 
 int         sendBroadcast(int fd, const void* buffer,
                           int bufferLength,
-                          const struct sockaddr_in* addr)
+                          const struct sockaddr_in6* addr)
 {
+    logDebugMessage(5, "BCast to: %s\n", sockaddr2iptextport((const struct sockaddr*)addr));
     return sendto(fd, (const char*)buffer, bufferLength, 0,
                   (const struct sockaddr*)addr, sizeof(*addr));
 }
@@ -228,13 +236,14 @@ int         sendBroadcast(int fd, const void* buffer,
 #endif //WIN32
 
 int         recvBroadcast(int fd, void* buffer, int bufferLength,
-                          struct sockaddr_in* addr)
+                          struct sockaddr_in6* addr)
 {
-    struct sockaddr_in from;
+    struct sockaddr_in6 from;
     AddrLen fromLength = sizeof(from);
 
     int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,
                              (struct sockaddr*)&from, (socklen_t*) &fromLength);
+    logDebugMessage(5, "BCast from: %s\n", sockaddr2iptextport((const struct sockaddr*)&from));
     if (byteCount < 0)
     {
         if (getErrno() == EWOULDBLOCK)

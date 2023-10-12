@@ -69,7 +69,7 @@ public:
     class Player
     {
     public:
-        Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd, tcpCallback _clientCallback);
+        Player(int _playerIndex, const struct sockaddr_in6 &clientAddr, int fd, tcpCallback _clientCallback);
         Player(int _playerIndex, NetHandler *handler, tcpCallback _clientCallback);
         Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
         ~Player();

@@ -64,6 +64,10 @@ extern "C" {
 
 }
 
+# ifndef s6_addr16
+#  define s6_addr16 u.Word
+# endif
+
 #else   // !defined(_WIN32)
 
 // unistd has close(). It is poor encapsulation the close() is called from
@@ -113,12 +117,20 @@ extern "C" {
     void          bzfherror(const char* msg);
 }
 
+# if defined(__APPLE__) && !defined(s6_addr16)
+#  define s6_addr16 __u6_addr.__u6_addr16
+# endif
+
 #endif /* defined(_WIN32) */
 
 // Can this happen?
 #if !defined(INADDR_NONE)
 #  define INADDR_NONE   ((in_addr_t)0xffffffff)
 #endif
+
+// Identifiers for IP address family that will be passed between server and client as a uint8_t
+#define BZF_INET 4
+#define BZF_INET6 6
 
 // for all platforms
 extern "C" {

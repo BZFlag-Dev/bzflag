@@ -52,12 +52,12 @@ void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsig
 }
 
 bool NetHandler::pendingUDP = false;
-bool NetHandler::initHandlers(struct sockaddr_in addr)
+bool NetHandler::initHandlers(Address addr)
 {
     // udp socket
     int n;
     // we open a udp socket on the same port if alsoUDP
-    if ((udpSocket = (int) socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((udpSocket = (int) socket(addr.getAddr()->sa_family, SOCK_DGRAM, 0)) < 0)
     {
         nerror("couldn't make udp connect socket");
         return false;
@@ -136,7 +136,7 @@ int NetHandler::getUdpSocket()
     return udpSocket;
 }
 
-int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
+int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
                            bool &udpLinkRequest)
 {
     AddrLen recvlen = sizeof(*uaddr);
@@ -145,13 +145,13 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     uint16_t code;
     while (true)
     {
-        n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0, (struct sockaddr *) uaddr,
-                     &recvlen);
+        n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0,
+                     (struct sockaddr *) uaddr, &recvlen);
         if ((n < 0) || (n >= 4))
             break;
     }
     // Error receiving data (or no data)
-    if (n < 0 || uaddr->sin_port < 1024)
+    if (n < 0 || uaddr->sin6_port < 1024)
         return -1;
 
     // read head
@@ -171,9 +171,11 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     int id(-1);     // player index of the matched player
     int pi;
     udpLinkRequest = false;
+    Address packetAddress(uaddr);
     for (pi = 0; pi < maxHandlers; pi++)
         if (netPlayer[pi] && !netPlayer[pi]->closed
-                && netPlayer[pi]->isMyUdpAddrPort(*uaddr))
+                && netPlayer[pi]->isMyUaddr(packetAddress) &&
+                netPlayer[pi]->uaddr.getNPort() == uaddr->sin6_port)
         {
             id = pi;
             break;
@@ -186,26 +188,25 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
         if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
                 && !netPlayer[index]->udpin)
         {
-            if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
-                        sizeof(uaddr->sin_addr)))
+            if (netPlayer[index]->uaddr == packetAddress)
             {
                 id = index;
-                if (uaddr->sin_port)
-                    netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
+                if (uaddr->sin6_port)
+                    netPlayer[index]->uaddr.getAddr_in6()->sin6_port = uaddr->sin6_port;
                 netPlayer[index]->udpin = true;
                 udpLinkRequest = true;
                 logDebugMessage(2,"Player slot %d inbound UDP up %s actual %d\n",
                                 index,
                                 sockaddr2iptextport((const struct sockaddr *)uaddr),
-                                ntohs(uaddr->sin_port));
+                                ntohs(uaddr->sin6_port));
             }
             else
             {
                 // sockaddr2nameport has a single buffer
-                logDebugMessage(2,"Player slot %d inbound UDP rejected %s",
+                logDebugMessage(2,"Player slot %d inbound UDP rejected %s\n",
                                 index,
                                 sockaddr2iptextport((const struct sockaddr *)&netPlayer[index]->uaddr));
-                logDebugMessage(2," different IP than %s\n",
+                logDebugMessage(2,"\tdifferent IP than %s\n",
                                 sockaddr2iptextport((const struct sockaddr *)uaddr));
 
             }
@@ -217,15 +218,14 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
         if (debugLevel < 4)
             return -1;
         // no match, discard packet
-        logDebugMessage(3,"uread() discard packet! %s choices p(l) h:p",
+        logDebugMessage(3,"uread() discard packet! %s choices p(l) h:p\n",
                         sockaddr2iptextport((const struct sockaddr *)uaddr));
         for (pi = 0; pi < maxHandlers; pi++)
         {
             if (netPlayer[pi] && !netPlayer[pi]->closed)
-                logDebugMessage(4," %d(%d-%d) %s", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
+                logDebugMessage(4,"\t%d(%d-%d) %s\n", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
                                 sockaddr2iptextport((const struct sockaddr *)uaddr));
         }
-        logDebugMessage(3,"\n");
     }
     else
     {
@@ -271,10 +271,10 @@ void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set)
 int NetHandler::udpSocket = -1;
 NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
-NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
+NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in6 &clientAddr,
                        int _playerIndex, int _fd)
-    : ares(new AresHandler(_playerIndex)), info(_info), taddr(clientAddr),
-      uaddr(clientAddr), playerIndex(_playerIndex), fd(_fd),
+    : ares(new AresHandler(_playerIndex)), info(_info), taddr(&clientAddr),
+      uaddr(&clientAddr), playerIndex(_playerIndex), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
       udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
@@ -306,17 +306,13 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
     ares->queryHostname((const struct sockaddr *) &clientAddr);
 }
 
-NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
-    : ares(0), info(0), playerIndex(-1), fd(_fd),
+NetHandler::NetHandler(const struct sockaddr_in6 &_clientAddr, int _fd)
+    : ares(0), info(0), taddr(&_clientAddr), uaddr(&_clientAddr), playerIndex(-1), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
       udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
       time(TimeKeeper::getCurrent())
 {
-    // store address information for player
-    memcpy(&taddr, &_clientAddr, sizeof(_clientAddr));
-    memcpy(&uaddr, &_clientAddr, sizeof(_clientAddr));
-
 #ifdef NETWORK_STATS
 
     // initialize the inbound/outbound counters to zero
@@ -750,18 +746,18 @@ void NetHandler::dumpMessageStats()
     for (direction = 0; direction <= 1; direction++)
     {
         total = 0;
-        logDebugMessage(1,"Player messages %s:", direction ? "out" : "in");
+        logDebugMessage(1,"Player messages %s\n", direction ? "out" : "in");
 
         for (MessageCountMap::iterator i = msg[direction].begin();
                 i != msg[direction].end(); ++i)
         {
-            logDebugMessage(1," %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
+            logDebugMessage(1,"\t%c%c:%u(%u)\n", i->first >> 8, i->first & 0xff,
                             i->second.count, i->second.maxSize);
             total += i->second.count;
         }
 
-        logDebugMessage(1," total:%u(%u) ", total, msgBytes[direction]);
-        logDebugMessage(1,"max msgs/bytes per second: %u/%u\n",
+        logDebugMessage(1,"\ttotal:%u(%u)\n", total, msgBytes[direction]);
+        logDebugMessage(1,"\tmax msgs/bytes per second: %u/%u\n",
                         perSecondMaxMsg[direction],
                         perSecondMaxBytes[direction]);
     }
@@ -813,10 +809,10 @@ void NetHandler::udpSend(const void *b, size_t l)
         pendingUDP = true;
 }
 
-bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr)
+/* compare IP portion of uaddr ONLY */
+bool NetHandler::isMyUaddr(const Address _uaddr)
 {
-    return udpin && (uaddr.sin_port == _uaddr.sin_port) &&
-           (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0);
+    return udpin && (uaddr == _uaddr);
 }
 
 const std::string NetHandler::getPlayerHostInfo()
@@ -842,7 +838,7 @@ const char* NetHandler::getTargetIP()
 
 int NetHandler::sizeOfIP()
 {
-    switch(taddr.sin_family)
+    switch(taddr.getAddr()->sa_family)
     {
     case AF_INET:
         // IPv4 is 1 byte for type and 4 bytes for IP = 5
@@ -856,7 +852,7 @@ int NetHandler::sizeOfIP()
 
 void *NetHandler::packAdminInfo(void *buf)
 {
-    buf = Address(taddr).pack(buf);
+    buf = taddr.pack(buf);
     return buf;
 }
 
@@ -877,11 +873,6 @@ int NetHandler::whoIsAtIP(const std::string& IP)
         }
     }
     return position;
-}
-
-in_addr NetHandler::getIPAddress()
-{
-    return uaddr.sin_addr;
 }
 
 const char *NetHandler::getHostname()

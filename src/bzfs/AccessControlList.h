@@ -29,15 +29,17 @@ struct BanInfo
     /** This constructor creates a new BanInfo with the address @c banAddr,
         the ban performer @c bannedBy, and the expiration time @c period
         minutes from now. */
-    BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, int period = 0,
+    BanInfo(const Address *banAddr, const char *_bannedBy = NULL, int period = 0,
             unsigned char _cidr = 32, bool isFromMaster = false )
     {
-        memcpy( &addr, &banAddr, sizeof( in_addr ));
+        addr = Address(banAddr[0]);
         cidr = _cidr;
 
+        /* FIXME:
         // Zero out the host bits
         if (cidr > 0 && cidr < 32)
             addr.s_addr &= htonl(0xFFFFFFFFu << (32 - cidr));
+        */
 
         if (_bannedBy)
             bannedBy = _bannedBy;
@@ -53,29 +55,86 @@ struct BanInfo
     /** BanInfos with same IP and CIDR are identical. */
     bool operator==(const BanInfo &rhs) const
     {
-        return addr.s_addr == rhs.addr.s_addr && cidr == rhs.cidr;
+        return addr == rhs.addr && cidr == rhs.cidr;
     }
     /** Only BanInfos with the same IP and CIDR are identical. */
     bool operator!=(const BanInfo &rhs) const
     {
-        return addr.s_addr != rhs.addr.s_addr || cidr != rhs.cidr;
+        return addr != rhs.addr || cidr != rhs.cidr;
     }
 
-    bool contains(const in_addr &checkAddr)
+    bool contains(Address &cAddr)
     {
         // CIDR of 0 matches everything
-        if (cidr < 1) return true;
-        // CIDR of 32 means it has to be an exact match
-        if (cidr >= 32 && addr.s_addr == checkAddr.s_addr) return true;
-        // Compare network bits
-        return !((addr.s_addr ^ checkAddr.s_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
+        if (cidr < 1)
+            return true;
+        // IPv4 CIDR of 32 means it has to be an exact match
+        if (cidr >= 32 && addr.getAddr()->sa_family == AF_INET)
+            return addr == cAddr;
+        // IPv6 CIDR of 128 means it has to be an exact match
+        if (cidr >= 128 && addr.getAddr()->sa_family == AF_INET6)
+            return addr == cAddr;
+        if (addr.getAddr()->sa_family == AF_INET &&
+                cAddr.getAddr()->sa_family == AF_INET)
+        {
+            // both ipv4, ipv4 cidr mask check
+            const sockaddr_in *ip4a = addr.getAddr_in();
+            const sockaddr_in *ip4b = cAddr.getAddr_in();
+            return !((ip4a->sin_addr.s_addr ^
+                      ip4b->sin_addr.s_addr) &
+                     htonl(0xFFFFFFFFu << (32 - cidr)));
+        }
+        if (addr.getAddr()->sa_family == AF_INET &&
+                cAddr.isMapped())
+        {
+            // cAddr is mapped ipv4 in ipv6
+            const sockaddr_in *ip4 = addr.getAddr_in();
+            // TODO: Check if this actually works
+            return !((((in_addr*)(cAddr.getAddr_in6()->sin6_addr.s6_addr + 12))->s_addr ^
+                      ip4->sin_addr.s_addr) &
+                     htonl(0xFFFFFFFFu << (32 - cidr)));
+        }
+        if (addr.isMapped() &&
+                cAddr.getAddr()->sa_family == AF_INET)
+        {
+            // addr is mapped ipv4 in ipv6
+            // This should never happen. Masks should be in native format
+            const sockaddr_in *ip4 = cAddr.getAddr_in();
+            // TODO: Check if this actually works
+            return !((((in_addr*)(addr.getAddr_in6()->sin6_addr.s6_addr + 12))->s_addr ^
+                      ip4->sin_addr.s_addr) &
+                     htonl(0xFFFFFFFFu << (32 - cidr)));
+        }
+        // both are IPv6
+        if (addr.getAddr()->sa_family == AF_INET6 &&
+                cAddr.getAddr()->sa_family == AF_INET6)
+        {
+            // cidr mask excluding last partial byte if any
+            if (cidr >= 8 && memcmp(
+                        &addr.getAddr_in6()->sin6_addr,
+                        &cAddr.getAddr_in6()->sin6_addr,
+                        cidr / 8 ))
+                return false;
+            // good up to the last byte, is that all?
+            if (!(cidr % 8))
+                return true;
+            // compare bits in the last byte
+            // TODO: Check if this actually works
+            return (((addr.getAddr_in6()->sin6_addr.s6_addr[cidr / 8] ^
+                      cAddr.getAddr_in6()->sin6_addr.s6_addr[cidr / 8]) &
+                     (uint8_t)(0xff << ((128 - cidr) % 8))) == 0);
+        }
+        logDebugMessage(5,"contains(%s) FIXME: did not test %s/%i\n",
+                        cAddr.getIpText().c_str(),
+                        addr.getIpText().c_str(), cidr);
+        return false;
     }
 
-    in_addr   addr;
-    unsigned char cidr;
-    TimeKeeper    banEnd;
-    std::string   bannedBy;   // Who did perform the ban
-    std::string   reason;     // reason for banning
+    Address     addr;
+    uint8_t    cidr;
+    TimeKeeper  banEnd;
+    std::string bannedBy;   // Who did perform the ban
+    std::string reason;     // reason for banning
     bool fromMaster;      // where the ban came from, local or master list.
 };
 
@@ -182,7 +241,7 @@ public:
     /** This function will add a ban for the address @c ipAddr with the given
         parameters. If that address already is banned the old ban will be
         replaced. */
-    void ban(in_addr &ipAddr, const char *bannedBy, int period = 0,
+    void ban(const Address *ipAddr, const char *bannedBy, int period = 0,
              unsigned char cidr = 32, const char *reason=NULL,
              bool fromMaster = false);
 
@@ -213,7 +272,7 @@ public:
     /** This function removes any ban for the address @c ipAddr.
         @returns @c true if there was a ban for that address, @c false if there
         wasn't. */
-    bool unban(in_addr &ipAddr, unsigned char cidr);
+    bool unban(const Address *ipAddr, unsigned char cidr);
 
     /** This function unbans any addresses given in @c ipList, which should be
         a comma separated string in the same format as in the ban() functions.
@@ -240,7 +299,7 @@ public:
     /** This function checks if an address is "valid" or not. Valid in this case
         means that it has not been banned.
         @returns @c true if the address is valid, @c false if not. */
-    bool validate(const in_addr &ipAddr, BanInfo *info = NULL);
+    bool validate(Address &ipAddr, BanInfo *info = NULL);
 
     /** This function checks that a hostname is "valid". In this case valid means
         "not banned".
@@ -253,7 +312,7 @@ public:
     bool idValidate(const char *idname, IdBanInfo *info = NULL);
 
     /** This function sends a textual list of the given IP ban to a player. */
-    void sendBan(PlayerId id, const BanInfo&);
+    void sendBan(PlayerId id, BanInfo&);
 
     /** This function sends a textual list of all IP bans to a player. */
     void sendBans(PlayerId id, const char* pattern);
@@ -285,7 +344,7 @@ public:
         presumably so it can be remerged */
     void purgeMasters(void);
 
-    std::string getBanMaskString(in_addr mask, unsigned char cidr);
+    std::string getBanMaskString(Address *mask, unsigned char cidr);
 
     std::vector<std::pair<std::string, std::string> > listMasterBans(void) const;
 
@@ -302,8 +361,8 @@ public:
 
 private:
     /** This function converts a <code>char*</code> containing an IP mask to an
-        @c in_addr. */
-    bool convert(std::string ip, in_addr &mask, unsigned char &cidr);
+        @c Address. */
+    bool convert(std::string ip, Address &mask, unsigned char &cidr);
 
     /** This function checks all bans to see if any of them have expired,
         and removes those who have. */

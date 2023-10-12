@@ -82,44 +82,25 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
 {
     if (aresFailed)
         return;
-
+    const sockaddr_in6 *ip6 = (const sockaddr_in6 *)clientAddr;
     status = HbAPending;
     // launch the asynchronous query to look up this hostname
-    ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,
-                       sizeof(in_addr), clientAddr->sa_family, staticCallback, (void *)this);
-    logDebugMessage(2,"Player [%d] submitted reverse resolve query\n", index);
-}
-
-void AresHandler::queryHost(const char *name)
-{
-    if (aresFailed)
-        return;
-    ares_cancel(aresChannel);
-
-    if (!name)
+    logDebugMessage(2,"Player [%d] submitting reverse resolve query\n", index);
+    if (clientAddr->sa_family == AF_INET6 && IN6_IS_ADDR_V4MAPPED(&ip6->sin6_addr))
     {
-        status = Failed;
-        return;
+        // lookup wrapped v4 in v6
+        const in_addr* clientV4Addr = (const in_addr*)(ip6->sin6_addr.s6_addr + 12);
+        ares_gethostbyaddr(aresChannel, clientV4Addr, sizeof(*clientV4Addr), AF_INET, staticHostCallback, (void *)this);
     }
-
-    if (inet_aton(name, &hostAddress) != 0)
-    {
-        status = HbNSucceeded;
-        return;
-    }
-
-    // launch the asynchronous query to look up this hostname
-    status = HbNPending;
-    ares_gethostbyname(aresChannel, name, AF_INET, staticCallback,
-                       (void *)this);
+    else
+        ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,
+                           sizeof(in_addr), clientAddr->sa_family, staticHostCallback, (void *)this);
 }
 
 #if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
-void AresHandler::staticCallback(void *arg, int callbackStatus,
-                                 int, struct hostent *hostent)
+void AresHandler::staticHostCallback(void *arg, int callbackStatus, int, hostent *hostent)
 #else
-void AresHandler::staticCallback(void *arg, int callbackStatus,
-                                 struct hostent *hostent)
+void AresHandler::staticHostCallback(void *arg, int callbackStatus, hostent *hostent)
 #endif
 {
     ((AresHandler *)arg)->callback(callbackStatus, hostent);
@@ -148,16 +129,67 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
     }
 }
 
+void AresHandler::queryHost(const char *name, const char *service)
+{
+    if (aresFailed)
+        return;
+    ares_cancel(aresChannel);
+
+    if (!name)
+    {
+        status = Failed;
+        return;
+    }
+
+    // launch the asynchronous query to look up this hostname
+    status = HbNPending;
+
+    struct ares_addrinfo_hints hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    ares_getaddrinfo(aresChannel, name, service, &hints, staticAddrInfoCallback, (void *)this);
+}
+
+void AresHandler::staticAddrInfoCallback(void *arg, int callbackStatus, int, ares_addrinfo *result)
+{
+    ((AresHandler *)arg)->callback(callbackStatus, result);
+}
+
+void AresHandler::callback(int callbackStatus, ares_addrinfo *result)
+{
+    if (callbackStatus == ARES_EDESTRUCTION)
+        return;
+    if (callbackStatus != ARES_SUCCESS)
+    {
+        logDebugMessage(1,"Player [%d] failed to resolve: error %d\n", index,
+                        callbackStatus);
+        status = Failed;
+    }
+    else if (status == HbNPending)
+    {
+        memcpy(&hostAddr, result->nodes->ai_addr, result->nodes->ai_addrlen);
+        ares_freeaddrinfo(result);
+        status = HbNSucceeded;
+    }
+}
+
 const char *AresHandler::getHostname()
 {
     return hostName.c_str();
 }
 
-AresHandler::ResolutionStatus AresHandler::getHostAddress(struct in_addr
-        *clientAddr)
+AresHandler::ResolutionStatus AresHandler::getHostAddress(in_addr *clientAddr)
 {
     if (status == HbNSucceeded)
         memcpy(clientAddr, &hostAddress, sizeof(hostAddress));
+    return status;
+}
+
+AresHandler::ResolutionStatus AresHandler::getHostAddr(sockaddr_in6 *_hostAddr)
+{
+    if (status == HbNSucceeded)
+        memcpy(_hostAddr, &hostAddr, sizeof(hostAddr));
     return status;
 }
 
