@@ -13,6 +13,9 @@
 #ifndef COLORS_H
 #define COLORS_H
 
+// 1st
+#include "common.h"
+
 enum ColorCode
 {
     Default = 0,

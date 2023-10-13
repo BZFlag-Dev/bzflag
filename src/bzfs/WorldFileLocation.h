@@ -12,6 +12,9 @@
 #ifndef __WORLDFILELOCATION_H__
 #define __WORLDFILELOCATION_H__
 
+// 1st
+#include "common.h"
+
 // system headers
 #include <iostream>
 

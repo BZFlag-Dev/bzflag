@@ -13,6 +13,8 @@
 #ifndef __MESH_UTILS_H__
 #define __MESH_UTILS_H__
 
+// 1st
+#include "common.h"
 
 /* system interface headers */
 #include <vector>

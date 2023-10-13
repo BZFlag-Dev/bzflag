@@ -12,6 +12,9 @@
 #ifndef __WORLDFILEOBSTACLE_H__
 #define __WORLDFILEOBSTACLE_H__
 
+// 1st
+#include "common.h"
+
 // system headers
 #include <iostream>
 

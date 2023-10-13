@@ -13,6 +13,8 @@
 #ifndef __DROP_GEOMETRY_H__
 #define __DROP_GEOMETRY_H__
 
+// 1st
+#include "common.h"
 
 class WorldInfo;
 

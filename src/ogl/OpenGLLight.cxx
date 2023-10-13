@@ -10,9 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
-#include "common.h"
+// Interface
 #include "OpenGLLight.h"
+
+// System headers
+#include <math.h>
+
+// Common headers
 #include "OpenGLGState.h"
 #include "ViewFrustum.h"
 

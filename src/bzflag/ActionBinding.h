@@ -13,12 +13,13 @@
 #ifndef BZF_ACTION_BINDING_H
 #define BZF_ACTION_BINDING_H
 
+// Inherits from
+#include "Singleton.h"
+
 // system includes
 #include <string>
 #include <map>
 
-// bzflag interface includes
-#include "Singleton.h"
 
 class ActionBinding : public Singleton<ActionBinding>
 {

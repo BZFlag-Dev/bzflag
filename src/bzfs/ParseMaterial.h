@@ -14,6 +14,9 @@
 #ifndef __PARSE_MATERIAL_H__
 #define __PARSE_MATERIAL_H__
 
+// 1st
+#include "common.h"
+
 /* system interface headers */
 #include <iostream>
 

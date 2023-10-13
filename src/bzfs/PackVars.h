@@ -13,6 +13,9 @@
 #ifndef __PACKVARS_H__
 #define __PACKVARS_H__
 
+// 1st
+#include "common.h"
+
 /* system interface headers */
 #include <string>
 

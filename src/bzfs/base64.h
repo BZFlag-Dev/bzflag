@@ -50,6 +50,10 @@
 #ifndef _BASE64_HPP
 #define _BASE64_HPP
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <algorithm>
 #include <string>
 #include <iterator>

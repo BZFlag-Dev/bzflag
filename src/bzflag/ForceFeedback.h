@@ -13,6 +13,9 @@
 #ifndef __FORCE_FEEDBACK_H__
 #define __FORCE_FEEDBACK_H__
 
+// 1st
+#include "common.h"
+
 /* All functions in this namespace start playing a force feedback
  * effect if we have a FF-enabled joystick connected and the user
  * has enabled force feedback.

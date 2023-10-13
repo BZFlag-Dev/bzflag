@@ -10,8 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
+// Interface
 #include "TeleporterSceneNodeGenerator.h"
+
+// System headers
+#include <math.h>
+
+// Common headers
 #include "Teleporter.h"
 #include "bzfgl.h"
 #include "QuadWallSceneNode.h"

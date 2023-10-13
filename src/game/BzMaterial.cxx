@@ -10,9 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "BzMaterial.h"
+
+// System headers
 #include <string.h>
 
-#include "BzMaterial.h"
+// Common headers
 #include "TextureMatrix.h"
 #include "DynamicColor.h"
 #include "Pack.h"

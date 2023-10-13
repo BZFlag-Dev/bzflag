@@ -13,8 +13,13 @@
 #ifndef PLAYERINFO_H
 #define PLAYERINFO_H
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <map>
 
+// Common headers
 #include "Address.h"
 #include "global.h"
 

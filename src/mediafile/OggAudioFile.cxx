@@ -10,9 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "OggAudioFile.h"
+
+// System headers
 #include <iostream>
 #include <fstream>
-#include "OggAudioFile.h"
 
 OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 {

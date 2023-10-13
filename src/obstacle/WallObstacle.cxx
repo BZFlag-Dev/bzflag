@@ -10,11 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "WallObstacle.h"
+
+// System headers
 #include <math.h>
-#include "common.h"
+
+// Common headers
 #include "global.h"
 #include "Pack.h"
-#include "WallObstacle.h"
 #include "Intersect.h"
 
 const char*     WallObstacle::typeName = "WallObstacle";

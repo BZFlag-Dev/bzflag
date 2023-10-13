@@ -10,10 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "TeamBases.h"
+
+// System headers
 #include <string.h>
 
+// Common headers
 #include "Protocol.h"
-#include "TeamBases.h"
 #include "Pack.h"
 #include "BZDBCache.h"
 

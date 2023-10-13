@@ -13,6 +13,9 @@
 #ifndef __TEAMBASES_H__
 #define __TEAMBASES_H__
 
+// 1st
+#include "common.h"
+
 /* system interface headers */
 #include <vector>
 #include <map>
