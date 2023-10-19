@@ -155,7 +155,7 @@ public:
     {
         return;
     }
-    const GLfloat* getPosition() const
+    const GLfloat* getPosition() const override
     {
         return te->pos;
     }

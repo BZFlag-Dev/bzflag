@@ -47,7 +47,9 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 
 const GLfloat* OpaqueRenderNode::getPosition() const
 {
-    return NULL;
+    // Better to not crash if called on sort
+    static GLfloat nullVec3[3];
+    return nullVec3;
 }
 
 void OpaqueRenderNode::render()

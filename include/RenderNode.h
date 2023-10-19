@@ -39,6 +39,7 @@ public:
     virtual void    render() = 0;
     virtual void    renderShadow();
     virtual void    renderRadar();
+    // Used for sorting objects by distance
     virtual const GLfloat* getPosition() const = 0;
 
     static int      getTriangleCount();
