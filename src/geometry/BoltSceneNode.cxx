@@ -641,7 +641,7 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float ti = theta[i];
                 const float fs = FlareSpread;
                 glBegin(GL_TRIANGLE_STRIP);
-                glVertex3fv(core[0]);
+                glVertex3f(0.0f,                0.0f,                0.0f);
                 glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
                 glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
                 glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
