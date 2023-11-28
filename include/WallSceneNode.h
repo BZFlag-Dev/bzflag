@@ -63,7 +63,6 @@ public:
     void        setNoCulling(bool);
     void        setNoSorting(bool);
     void        setAlphaThreshold(float);
-    void        setRadarColor(const float color[4]);
 
     void        setColor();
 
