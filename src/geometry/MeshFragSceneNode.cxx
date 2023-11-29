@@ -192,21 +192,6 @@ void MeshFragSceneNode::Geometry::render()
 }
 
 
-void MeshFragSceneNode::Geometry::renderRadar()
-{
-    const int triangles = sceneNode.arrayCount;
-    if (list != INVALID_GL_LIST_ID)
-        glCallList(list);
-    else
-    {
-        glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
-        glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
-    }
-    addTriangleCount(triangles);
-    return;
-}
-
-
 void MeshFragSceneNode::Geometry::renderShadow()
 {
     const int triangles = sceneNode.arrayCount;

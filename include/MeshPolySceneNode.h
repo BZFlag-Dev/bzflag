@@ -61,7 +61,6 @@ protected:
             style = _style;
         }
         void render();
-        void renderRadar();
         void renderShadow();
         const GLfloat* getVertex(int i) const;
         const GLfloat (*getVertices() const)[3];

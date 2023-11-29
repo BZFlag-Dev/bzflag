@@ -64,7 +64,6 @@ protected:
         void init();
         void setStyle(int style);
         void render() override;
-        void renderRadar() override;
         void renderShadow() override;
         const GLfloat* getPosition() const override;
 
