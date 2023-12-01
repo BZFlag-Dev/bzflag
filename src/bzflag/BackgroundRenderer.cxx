@@ -75,8 +75,8 @@ BackgroundRenderer::BackgroundRenderer() :
 {
     static bool init = false;
     OpenGLGStateBuilder gstate;
-    static const GLfloat  black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    static const GLfloat  white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const GLfloat  black[3] = { 0.0f, 0.0f, 0.0f };
+    static const GLfloat  white[3] = { 1.0f, 1.0f, 1.0f };
     OpenGLMaterial defaultMaterial(black, black, 0.0f);
     OpenGLMaterial rainMaterial(white, white, 0.0f);
 
@@ -305,7 +305,7 @@ void BackgroundRenderer::setupGroundMaterials()
         }
     }
 
-    static const GLfloat  black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static const GLfloat  black[3] = { 0.0f, 0.0f, 0.0f };
     OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
     OpenGLGStateBuilder gb;

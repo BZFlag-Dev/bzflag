@@ -37,8 +37,8 @@ class OpenGLMaterial
 {
 public:
     OpenGLMaterial();
-    OpenGLMaterial(const GLfloat* specularRGB,
-                   const GLfloat* emissiveRGB,
+    OpenGLMaterial(const GLfloat specularRGB[3],
+                   const GLfloat emissiveRGB[3],
                    GLfloat shininess = 0.0f);
     OpenGLMaterial(const OpenGLMaterial&);
     ~OpenGLMaterial();

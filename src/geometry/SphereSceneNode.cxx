@@ -240,8 +240,8 @@ SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
     OpenGLGStateBuilder builder(gstate);
     builder.setCulling(GL_BACK);
     builder.setShading(GL_SMOOTH);
-    const float spec[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-    const float emis[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    const float spec[3] = {1.0f, 1.0f, 1.0f};
+    const float emis[3] = {0.0f, 0.0f, 0.0f};
     OpenGLMaterial glmat(spec, emis, 64.0f);
     builder.setMaterial(glmat);
     gstate = builder.getState();

@@ -356,8 +356,8 @@ bool BzMaterial::operator==(const BzMaterial& m) const
     if ((dynamicColor != m.dynamicColor) ||
             (memcmp (ambient, m.ambient, sizeof(float[4])) != 0) ||
             (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
-            (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
-            (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
+            (memcmp (specular, m.specular, sizeof(float[3])) != 0) ||
+            (memcmp (emission, m.emission, sizeof(float[3])) != 0) ||
             (shininess != m.shininess) || (alphaThreshold != m.alphaThreshold) ||
             (occluder != m.occluder) || (groupAlpha != m.groupAlpha) ||
             (noRadar != m.noRadar) || (noShadow != m.noShadow) ||
@@ -740,15 +740,17 @@ void BzMaterial::setDiffuse(const float color[4])
     return;
 }
 
-void BzMaterial::setSpecular(const float color[4])
+void BzMaterial::setSpecular(const float color[3])
 {
-    memcpy (specular, color, sizeof(float[4]));
+    memcpy (specular, color, sizeof(float[3]));
+    specular[3] = 1.0f;
     return;
 }
 
-void BzMaterial::setEmission(const float color[4])
+void BzMaterial::setEmission(const float color[3])
 {
-    memcpy (emission, color, sizeof(float[4]));
+    memcpy (emission, color, sizeof(float[3]));
+    emission[3] = 1.0f;
     return;
 }
 
