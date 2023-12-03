@@ -4345,7 +4345,7 @@ void setLookAtMarker(void)
         markercolor = RogueTeam;
 
     hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
-                                Float3ToVec4(Team::getTankColor(markercolor)),
+                                Float3ToVec3(Team::getTankColor(markercolor)),
                                 label, isFriendly(bestTarget), 2.0f);
 }
 
@@ -6820,7 +6820,7 @@ static void     prepareTheHUD()
                     const float* flagPos = flag.position;
                     float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
                     hud->addMarker(heading, myTeamColor);
-                    hud->AddEnhancedMarker(Float3ToVec3(flagPos), Float3ToVec4(myTeamColor),
+                    hud->AddEnhancedMarker(Float3ToVec3(flagPos), Float3ToVec3(myTeamColor),
                                            false, BZDBCache::flagPoleSize * 2.0f);
                 }
             }
@@ -6831,9 +6831,9 @@ static void     prepareTheHUD()
             const GLfloat* antidotePos = myTank->getAntidoteLocation();
             float heading = atan2f(antidotePos[1] - myPos[1],
                                    antidotePos[0] - myPos[0]);
-            const float antidoteColor[] = {1.0f, 1.0f, 0.0f,1.0f};
+            const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
             hud->addMarker(heading, antidoteColor);
-            hud->AddEnhancedMarker(Float3ToVec3(antidotePos), Float4ToVec4(antidoteColor), false,
+            hud->AddEnhancedMarker(Float3ToVec3(antidotePos), Float3ToVec3(antidoteColor), false,
                                    BZDBCache::flagPoleSize * 2.0f);
         }
     }

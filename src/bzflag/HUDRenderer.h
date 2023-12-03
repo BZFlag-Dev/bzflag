@@ -54,16 +54,16 @@ class EnhancedHUDMarker
 public:
     EnhancedHUDMarker()
         : pos(0.0f, 0.0f, 0.0f)
-        , color(0.0f, 0.0f, 0.0f, 1.0f)
+        , color(0.0f, 0.0f, 0.0f)
         , friendly(false)
     {}
-    EnhancedHUDMarker(const fvec3& p, const fvec4& c)
+    EnhancedHUDMarker(const fvec3& p, const fvec3& c)
         : pos(p)
         , color(c)
         , friendly(false)
     {}
     fvec3 pos;
-    fvec4 color;
+    fvec3 color;
     std::string name;
     bool friendly;
 };
@@ -106,9 +106,9 @@ public:
     void      setRestartKeyLabel(const std::string&);
     void      setTimeLeft(uint32_t timeLeftInSeconds);
 
-    void      AddEnhancedMarker(const fvec3& pos, const fvec4& color,
+    void      AddEnhancedMarker(const fvec3& pos, const fvec3& color,
                                 bool friendly = false, float zShift = 0.0f);
-    void      AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color, std::string name,
+    void      AddEnhancedNamedMarker(const fvec3& pos, const fvec3& color, std::string name,
                                      bool friendly = false, float zShift = 0.0f);
     void      AddLockOnMarker(const fvec3& pos, std::string name,
                               bool friendly = false, float zShift = 0.0f);

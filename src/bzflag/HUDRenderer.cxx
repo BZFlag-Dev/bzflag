@@ -523,7 +523,7 @@ void            HUDRenderer::addMarker(float _heading, const float *_color )
 }
 
 
-void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
+void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec3& color,
         std::string name, bool friendly,
         float zShift)
 {
@@ -536,7 +536,7 @@ void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
     enhancedMarkers.push_back(newMarker);
 }
 
-void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
+void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec3& color,
                                     bool friendly, float zShift )
 {
     EnhancedHUDMarker newMarker(pos, color);
@@ -548,7 +548,7 @@ void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
 void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
                                   bool friendly, float zShift )
 {
-    const fvec4 color(0.75f, 0.125f, 0.125f, 1.0f);
+    const fvec3 color(0.75f, 0.125f, 0.125f);
     EnhancedHUDMarker newMarker(pos, color);
     newMarker.pos.z += zShift;
     newMarker.name = name;
