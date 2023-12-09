@@ -1244,10 +1244,8 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
 
     hudColor3Afv( color, alpha );
 
-    glPushMatrix();
     gluProject(o[0], o[1], o[2], modelMatrix, projMatrix,
                (GLint*)viewport, &map[0], &map[1], &map[2]);
-    glPopMatrix();
 
     float halfWidth = window.getWidth() * 0.5f;
     float halfHeight = window.getHeight() * 0.5f;
@@ -1364,10 +1362,8 @@ void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
 
     hudColor3Afv( color, alpha );
 
-    glPushMatrix();
     gluProject(o[0], o[1], o[2], modelMatrix,projMatrix,
                (GLint*)viewport, &map[0], &map[1], &map[2]);
-    glPopMatrix();
 
     float halfWidth = window.getWidth() * 0.5f;
     float halfHeight = window.getHeight() * 0.5f;
