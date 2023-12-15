@@ -67,7 +67,7 @@ protected:
         BillboardRenderNode(const BillboardSceneNode*);
         ~BillboardRenderNode();
         void        setColor(const GLfloat* rgba);
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
         void        setFrame(float u, float v);
         void        setFrameSize(float du, float dv);

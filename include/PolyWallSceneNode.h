@@ -49,7 +49,7 @@ protected:
         {
             style = _style;
         }
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
     private:
         void        drawV() const;

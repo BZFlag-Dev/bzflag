@@ -424,7 +424,7 @@ void TankSceneNode::setJumpJets(float scale)
 }
 
 
-void TankSceneNode::setClipPlane(const float _plane[])
+void TankSceneNode::setClipPlane(const float _plane[4])
 {
     clip = true;
     clipPlane[0] = GLdouble(_plane[0]);

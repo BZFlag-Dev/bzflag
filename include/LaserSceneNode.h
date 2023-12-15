@@ -17,7 +17,7 @@
 #ifndef BZF_LASER_SCENE_NODE_H
 #define BZF_LASER_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "SceneNode.h"
 
 class LaserSceneNode : public SceneNode
@@ -47,7 +47,7 @@ protected:
     public:
         LaserRenderNode(const LaserSceneNode*);
         ~LaserRenderNode();
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
     private:
         void renderFlatLaser();

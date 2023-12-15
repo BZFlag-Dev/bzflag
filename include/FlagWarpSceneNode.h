@@ -41,7 +41,7 @@ protected:
     public:
         FlagWarpRenderNode(const FlagWarpSceneNode*);
         ~FlagWarpRenderNode();
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
     private:
         const FlagWarpSceneNode* sceneNode;

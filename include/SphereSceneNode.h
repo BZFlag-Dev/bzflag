@@ -86,7 +86,7 @@ protected:
         SphereLodRenderNode(const SphereLodSceneNode*);
         ~SphereLodRenderNode();
         void setLod(int lod);
-        void render();
+        void render() override;
         const GLfloat* getPosition() const override;
 
     private:
@@ -144,7 +144,7 @@ public:
                            int theta, int phi);
         ~FragmentRenderNode();
         const GLfloat*  getVertex() const;
-        void        render();
+        void        render() override;
         const GLfloat*  getPosition() const override;
     private:
         const SphereBspSceneNode*   sceneNode;
@@ -190,7 +190,7 @@ protected:
         ~SphereBspRenderNode();
         void        setHighResolution(bool);
         void        setBaseIndex(int index);
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
     private:
         const SphereBspSceneNode* sceneNode;

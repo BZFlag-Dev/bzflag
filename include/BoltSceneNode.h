@@ -66,7 +66,7 @@ protected:
         ~BoltRenderNode();
         void        setColor(const GLfloat* rgba);
         void        setTextureColor(const GLfloat* rgba);
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
         void        setAnimation(int cu, int cv);
 

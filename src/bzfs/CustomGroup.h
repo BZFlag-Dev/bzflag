@@ -13,7 +13,8 @@
 #ifndef __CUSTOM_GROUP_H__
 #define __CUSTOM_GROUP_H__
 
-#include "common.h"
+// Inherits from
+#include "WorldFileObstacle.h"
 
 /* system interface headers */
 #include <string>
@@ -22,7 +23,6 @@
 
 /* local interface headers */
 #include "WorldInfo.h"
-#include "WorldFileObstacle.h"
 
 class GroupInstance;
 
@@ -31,7 +31,7 @@ class CustomGroup : public WorldFileObstacle
 public:
     CustomGroup(const std::string& groupdef);
     ~CustomGroup();
-    virtual bool read(const char *cmd, std::istream&);
+    bool read(const char *cmd, std::istream&) override;
     void writeToGroupDef(GroupDefinition*) override;
 
 protected:

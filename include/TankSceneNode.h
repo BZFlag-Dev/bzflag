@@ -17,8 +17,10 @@
 #ifndef BZF_TANK_SCENE_NODE_H
 #define BZF_TANK_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "SceneNode.h"
+
+// Common headers
 #include "OpenGLLight.h"
 #include "TankGeometryMgr.h"
 
@@ -79,7 +81,7 @@ public:
     public:
         IDLRenderNode(const TankIDLSceneNode*);
         ~IDLRenderNode();
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
     private:
         const TankIDLSceneNode* sceneNode;
@@ -171,7 +173,7 @@ protected:
         void        setNarrowWithDepth(bool narrow);
         const GLfloat* getPosition() const override;
 
-        void        render();
+        void        render() override;
         void        renderPart(TankGeometryEnums::TankPart part);
         void        renderParts();
         void        renderTopParts();

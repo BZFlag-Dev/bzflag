@@ -39,7 +39,7 @@ protected:
                              const float pos[3],
                              const float size[3], float rotation);
         ~EighthDBoxRenderNode();
-        void        render();
+        void        render() override;
         const GLfloat* getPosition() const override;
     private:
         const EighthDBoxSceneNode* sceneNode;

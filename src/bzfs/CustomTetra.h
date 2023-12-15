@@ -16,20 +16,20 @@
 /* interface header */
 #include "WorldFileObstacle.h"
 
-/* local interface header */
-#include "WorldInfo.h"
-
 /* system header */
 #include <string>
 
 /* common interface header */
 #include "BzMaterial.h"
 
+/* local interface header */
+#include "WorldInfo.h"
+
 class CustomTetra : public WorldFileObstacle
 {
 public:
     CustomTetra();
-    virtual bool read(const char *cmd, std::istream& input);
+    bool read(const char *cmd, std::istream& input) override;
     void writeToGroupDef(GroupDefinition*) override;
 
 private:

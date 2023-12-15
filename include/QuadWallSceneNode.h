@@ -82,8 +82,8 @@ protected:
         {
             style = _style;
         }
-        void        render();
-        void        renderShadow();
+        void        render() override;
+        void        renderShadow() override;
         const GLfloat*  getVertex(int i) const;
         const GLfloat* getPosition() const override;
     private:

@@ -42,7 +42,7 @@ protected:
             const EighthDimSceneNode*,
             int numPolygons);
         ~EighthDimRenderNode();
-        void        render();
+        void        render() override;
         void        setPolygon(int index, const GLfloat[3][3]);
         const GLfloat* getPosition() const override;
     private:

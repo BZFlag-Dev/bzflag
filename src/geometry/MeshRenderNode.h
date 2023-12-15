@@ -31,9 +31,9 @@ public:
                      GLfloat *xformMatrix, bool normalize,
                      const GLfloat* color, int lod, int set,
                      const Extents* exts, int triangles);
-    void render();
-    void renderRadar();
-    void renderShadow();
+    void render() override;
+    void renderRadar() override;
+    void renderShadow() override;
     const GLfloat* getPosition() const override;
 private:
     void drawV() const;

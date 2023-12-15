@@ -40,8 +40,8 @@ protected:
         ShellRenderNode(RenderNode *renderNode,
                         const OpenGLGState* gstate);
         ~ShellRenderNode();
-        void render();
-        void renderShadow()
+        void render() override;
+        void renderShadow() override
         {
             return;
         }

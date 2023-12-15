@@ -150,8 +150,8 @@ class TrackRenderNode : public RenderNode
 public:
     TrackRenderNode(const TrackEntry* te, TrackType type);
     ~TrackRenderNode();
-    void render();
-    void renderShadow()
+    void render() override;
+    void renderShadow() override
     {
         return;
     }

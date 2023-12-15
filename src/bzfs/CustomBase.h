@@ -13,8 +13,6 @@
 #ifndef __CUSTOMBASE_H__
 #define __CUSTOMBASE_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObstacle.h"
 
@@ -29,7 +27,7 @@ class CustomBase : public WorldFileObstacle
 {
 public:
     CustomBase();
-    virtual bool read(const char *cmd, std::istream&);
+    bool read(const char *cmd, std::istream&) override;
     void writeToGroupDef(GroupDefinition*) override;
 
 protected:

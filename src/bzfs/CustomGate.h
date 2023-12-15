@@ -13,8 +13,6 @@
 #ifndef __CUSTOMGATE_H__
 #define __CUSTOMGATE_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObstacle.h"
 
@@ -30,7 +28,7 @@ class CustomGate : public WorldFileObstacle
 {
 public:
     CustomGate(const char* telename);
-    virtual bool read(const char *cmd, std::istream&);
+    bool read(const char *cmd, std::istream&) override;
     void writeToGroupDef(GroupDefinition*) override;
 
 protected:

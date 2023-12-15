@@ -16,11 +16,11 @@
 /* interface header */
 #include "WorldFileObstacle.h"
 
-/* local interface headers */
-#include "WorldInfo.h"
-
 /* common interface headers */
 #include "BzMaterial.h"
+
+/* local interface headers */
+#include "WorldInfo.h"
 
 
 class CustomBox : public WorldFileObstacle
@@ -28,7 +28,7 @@ class CustomBox : public WorldFileObstacle
 public:
     CustomBox();
     ~CustomBox();
-    virtual bool read(const char* cmd, std::istream& input);
+    bool read(const char* cmd, std::istream& input) override;
     void writeToGroupDef(GroupDefinition*) override;
 
 private:
