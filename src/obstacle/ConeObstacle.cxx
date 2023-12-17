@@ -38,18 +38,12 @@ ConeObstacle::ConeObstacle(const MeshTransform& xform,
                            const float* _pos, const float* _size,
                            float _rotation, float _sweepAngle,
                            const float _texsize[2], bool _useNormals,
-                           int _divisions, const BzMaterial* mats[MaterialCount],
-                           int physics, bool bounce, bool drive, bool shoot, bool rico)
+                           int _divisions,
+                           const BzMaterial* mats[MaterialCount],
+                           int physics, bool bounce, bool drive, bool shoot,
+                           bool rico) :
+    Obstacle(_pos, _rotation, _size[0], _size[1], _size[2], drive, shoot, rico)
 {
-    // common obstace parameters
-    memcpy(pos, _pos, sizeof(pos));
-    memcpy(size, _size, sizeof(size));
-    angle = _rotation;
-    ZFlip = false;
-    driveThrough = drive;
-    shootThrough = shoot;
-    ricochet     = rico;
-
     // arc specific parameters
     transform = xform;
     divisions = _divisions;

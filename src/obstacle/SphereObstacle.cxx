@@ -38,18 +38,13 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
                                const float* _pos, const float* _size,
                                float _rotation, const float _texsize[2],
                                bool _useNormals, bool _hemisphere,
-                               int _divisions, const BzMaterial* mats[MaterialCount],
-                               int physics, bool bounce, bool drive, bool shoot, bool rico)
+                               int _divisions,
+                               const BzMaterial* mats[MaterialCount],
+                               int physics, bool bounce, bool drive,
+                               bool shoot, bool rico) :
+    Obstacle(_pos, _rotation, _size[0], _size[1], _size[2], drive, shoot,
+            rico)
 {
-    // common obstace parameters
-    memcpy(pos, _pos, sizeof(pos));
-    memcpy(size, _size, sizeof(size));
-    angle = _rotation;
-    ZFlip = false;
-    driveThrough = drive;
-    ricochet     = rico;
-    shootThrough = shoot;
-
     // arc specific parameters
     transform = xform;
     divisions = _divisions;
