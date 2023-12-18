@@ -43,7 +43,7 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
                                int physics, bool bounce, bool drive,
                                bool shoot, bool rico) :
     Obstacle(_pos, _rotation, _size[0], _size[1], _size[2], drive, shoot,
-            rico)
+             rico)
 {
     // arc specific parameters
     transform = xform;
