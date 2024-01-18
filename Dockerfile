@@ -1,12 +1,15 @@
 # Start the build image
-FROM alpine:3.18 as build
+FROM alpine:3 as build
+
+# A comma seperated list of extra plugins to compile
+ARG plugins=""
 
 # The configure argument is passed to the ./configure script
-ARG configure
+ARG configure=""
 
 # Update package list and upgrade, and install build dependencies
 RUN apk update && apk upgrade --no-cache && \
-    apk add autoconf automake c-ares-dev curl-dev g++ libtool make zlib
+    apk add --no-cache autoconf automake c-ares-dev curl-dev g++ libtool make zlib
 
 # Create and switch to a normal user for the build
 RUN adduser -S builder
@@ -22,6 +25,7 @@ RUN ./autogen.sh && \
     ./configure \
         --disable-bzadmin \
         --disable-client \
+        --enable-custom-plugins="$plugins" \
         $configure && \
     make -j$(nproc)
 
@@ -30,12 +34,12 @@ USER root
 RUN make install-strip
 
 # Start the final image
-FROM alpine:3.18
+FROM alpine:3
 
 # Update package list and upgrade, and install runtime dependencies. Add a user
 # and create a data directory owned by said user.
 RUN apk update && apk upgrade --no-cache && \
-    apk add c-ares libcurl libgcc libstdc++ zlib && \
+    apk add --no-cache c-ares libcurl libgcc libstdc++ zlib && \
     adduser -S bzfsd && \
     mkdir /data && chown bzfsd:nogroup /data
 
@@ -47,7 +51,6 @@ COPY --from=build /usr/local/lib/bzflag /usr/local/lib/bzflag
 # in as a volume.
 USER bzfsd
 WORKDIR /data
-VOLUME /data
 
 ENTRYPOINT [ "/usr/local/bin/bzfs" ]
 
