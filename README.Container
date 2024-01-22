@@ -1,0 +1,43 @@
+BZFlag Server Container
+=======================
+
+We provide a Dockerfile for those who wish to run BZFlag servers inside containers. Adding custom plugins or source code
+changes is easy as it copies the local source code into the build container. The example commands below will use the
+docker command, but should also work with the podman command.
+
+Building the container
+----------------------
+
+Building a stock BZFlag server container:
+  docker build . -t bzflag-server:latest
+
+Custom plugins placed in the plugins/ directory can be built by passing a comma separated list of directory names as a
+build argument:
+  docker build . -t bzflag-server:latest --build-arg plugins="UselessMine,mapchange"
+
+It is also possible to supply custom arguments to the configure script:
+  docker build . -t bzflag-server:latest --build-arg configure="--enable-debug --enable-custom-plugins-file=plugins.txt"
+
+
+Running a self-built image
+--------------------------
+
+Assume that the configuration, world, groupdb, etc for a given server are stored in a subdirectory of /srv/bzfs/, such
+as /srv/bzfs/5154. The configuration file is at /srv/bzfs/5154/config.
+
+Start a server that automatically starts when the system boots up (and restarts if bzfs exits or crashes):
+  docker run -d --restart unless-stopped -p 0.0.0.0:5154:5154/tcp -p 0.0.0.0:5154:5154/udp -v /srv/bzfs/5154:/data \
+    --name bzfs5154 bzflag-server:latest -conf config
+
+List running and stopped containers:
+  docker ps -a
+
+Stop a running server:
+  docker stop bzfs5154
+
+Start a stopped server:
+  docker start bzfs5154
+
+Remove a stopped server:
+  docker rm bzfs5154
+
