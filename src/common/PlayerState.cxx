@@ -78,7 +78,12 @@ void*   PlayerState::pack(void* buf, uint16_t& code)
 
         code = MsgPlayerUpdate;
 
-        buf = nboPackVector(buf, pos.val());
+        float tmp[3];
+        for (int i=0; i<3; i++)
+        {
+            tmp[i] = pos[i].val();
+        }
+        buf = nboPackVector(buf, tmp);
         buf = nboPackVector(buf, velocity);
         buf = nboPackFloat(buf, azimuth);
         buf = nboPackFloat(buf, angVel);

@@ -374,7 +374,11 @@ inline long Player::getOrder() const { return state.order; }
 
 inline short Player::getStatus() const { return state.status; }
 
-inline const float *Player::getPosition() const { return state.pos.val(); }
+//LARS
+// inline const float *Player::getPosition() const {
+//
+//     return state.pos.val();
+// }
 
 inline float Player::getAngle() const { return state.azimuth; }
 
