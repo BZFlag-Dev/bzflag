@@ -72,7 +72,7 @@ class Player {
     FlagType *getFlag() const;
     long getOrder() const;
     short getStatus() const;
-    const float *getPosition() const;
+    SplitFloat *getPosition();
     float getAngle() const;
     const float *getForward() const;
     const float *getVelocity() const;
@@ -374,11 +374,7 @@ inline long Player::getOrder() const { return state.order; }
 
 inline short Player::getStatus() const { return state.status; }
 
-//LARS
-// inline const float *Player::getPosition() const {
-//
-//     return state.pos.val();
-// }
+inline SplitFloat *Player::getPosition() { return state.pos; }
 
 inline float Player::getAngle() const { return state.azimuth; }
 

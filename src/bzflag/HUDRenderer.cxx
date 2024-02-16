@@ -897,8 +897,8 @@ void            HUDRenderer::renderStatus(void)
         Player *target = ROAM.getTargetTank();
         if (!target)
         {
-            const std::string pos = TextUtils::format("[%f %f %f]", myTank->getPosition()[0],
-                                    myTank->getPosition()[1], myTank->getPosition()[2]);
+            const std::string pos = TextUtils::format("[%f %f %f]", myTank->getPosition().val()[0],
+                                    myTank->getPosition().val()[1], myTank->getPosition().val()[2]);
             x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, pos);
             fm.drawString(x, (y - h), 0, majorFontFace, majorFontSize, pos);
         }
