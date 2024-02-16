@@ -78,7 +78,7 @@ void*   PlayerState::pack(void* buf, uint16_t& code)
 
         code = MsgPlayerUpdate;
 
-        buf = nboPackVector(buf, pos);
+        buf = nboPackVector(buf, pos.val());
         buf = nboPackVector(buf, velocity);
         buf = nboPackFloat(buf, azimuth);
         buf = nboPackFloat(buf, angVel);
@@ -92,7 +92,7 @@ void*   PlayerState::pack(void* buf, uint16_t& code)
 
         for (int i=0; i<3; i++)
         {
-            posShort[i] = (int16_t) ((pos[i] * smallScale) / smallMaxDist);
+            posShort[i] = (int16_t) ((pos[i].val() * smallScale) / smallMaxDist);
             velShort[i] = (int16_t) ((velocity[i] * smallScale) / smallMaxVel);
         }
 
@@ -155,7 +155,12 @@ const void* PlayerState::unpack(const void* buf, uint16_t code)
 
     if (code == MsgPlayerUpdate)
     {
-        buf = nboUnpackVector(buf, pos);
+        float tmp[3];
+        buf = nboUnpackVector(buf, tmp);
+        for (int i=0; i<3; i++)
+        {
+            pos[i] = tmp[i];
+        }
         buf = nboUnpackVector(buf, velocity);
         buf = nboUnpackFloat(buf, azimuth);
         buf = nboUnpackFloat(buf, angVel);
