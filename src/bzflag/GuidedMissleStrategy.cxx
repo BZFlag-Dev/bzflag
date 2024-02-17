@@ -179,7 +179,10 @@ void GuidedMissileStrategy::update(float dt)
     {
         // turn towards target
         // find desired direction
-        const float* targetPos = target->getPosition();
+        const float tmp[3] = { target->getPosition()[0].val(), target->getPosition()[1].val(), target->getPosition()[2].val()};
+        // for (int i = 0; i < 3; i++)
+        //     tmp[i] = target->getPosition()[i].val();
+        const float* targetPos = tmp;
         float desiredDir[3];
         desiredDir[0] = targetPos[0] - nextPos[0];
         desiredDir[1] = targetPos[1] - nextPos[1];

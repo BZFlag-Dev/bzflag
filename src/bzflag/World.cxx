@@ -886,7 +886,9 @@ void            World::updateFlag(int index, float dt)
             else
             {
                 float myWind[3];
-                getWind(myWind, flagPlayer->getPosition());
+
+                const float tmp[3] = { flagPlayer->getPosition()[0].val(), flagPlayer->getPosition()[1].val(), flagPlayer->getPosition()[2].val()};
+                getWind(myWind, tmp);
                 const float* vel = flagPlayer->getVelocity();
                 myWind[0] -= vel[0];
                 myWind[1] -= vel[1];

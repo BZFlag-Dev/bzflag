@@ -897,8 +897,8 @@ void            HUDRenderer::renderStatus(void)
         Player *target = ROAM.getTargetTank();
         if (!target)
         {
-            const std::string pos = TextUtils::format("[%f %f %f]", myTank->getPosition().val()[0],
-                                    myTank->getPosition().val()[1], myTank->getPosition().val()[2]);
+            const std::string pos = TextUtils::format("[%f %f %f]", myTank->getPosition()[0].val(),
+                                    myTank->getPosition()[1].val(), myTank->getPosition()[2].val());
             x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, pos);
             fm.drawString(x, (y - h), 0, majorFontFace, majorFontSize, pos);
         }
@@ -1712,8 +1712,9 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
         // draw any waypoint markers
         for (int i = 0; i < (int)enhancedMarkers.size(); i++)
         {
+            const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
             drawWaypointMarker(enhancedMarkers[i].color, 0.45f,
-                               enhancedMarkers[i].pos, myTank->getPosition(),
+                               enhancedMarkers[i].pos, tmp,
                                enhancedMarkers[i].name, enhancedMarkers[i].friendly);
         }
 
@@ -1722,8 +1723,9 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
         // draw any lockon markers
         for (int i = 0; i < (int)lockOnMarkers.size(); i++)
         {
+            const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
             drawLockonMarker(lockOnMarkers[i].color, 0.45f,
-                             lockOnMarkers[i]. pos,myTank->getPosition(),
+                             lockOnMarkers[i]. pos, tmp,
                              lockOnMarkers[i].name, lockOnMarkers[i].friendly);
         }
 

@@ -120,7 +120,8 @@ void            LocalPlayer::doUpdate(float dt)
         }
         if (TimeKeeper::getTick() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME))
         {
-            server->sendDropFlag(getPosition());
+            const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+            server->sendDropFlag(tmp);
             setStatus(getStatus() & ~PlayerState::FlagActive);
             pauseTime = TimeKeeper::getSunExplodeTime();
         }
@@ -164,7 +165,8 @@ void            LocalPlayer::doUpdate(float dt)
         if (flagShakingTime <= 0.0f)
         {
             flagShakingTime = 0.0f;
-            server->sendDropFlag(getPosition());
+            const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+            server->sendDropFlag(tmp);
         }
     }
 }
@@ -248,7 +250,8 @@ void            LocalPlayer::doUpdateMotion(float dt)
 
     // save old state
     const Location oldLocation = location;
-    const float* oldPosition = getPosition();
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+    const float* oldPosition = tmp;
     const float oldAzimuth = getAngle();
     const float oldAngVel = getAngularVelocity();
     const float* oldVelocity = getVelocity();
@@ -867,8 +870,10 @@ void            LocalPlayer::doUpdateMotion(float dt)
             ((flagAntidotePos[0] - newPos[0]) * (flagAntidotePos[0] - newPos[0])) +
             ((flagAntidotePos[1] - newPos[1]) * (flagAntidotePos[1] - newPos[1]));
         const float twoRads = getRadius() + BZDBCache::flagRadius;
-        if (dist < (twoRads * twoRads))
-            server->sendDropFlag(getPosition());
+        if (dist < (twoRads * twoRads)){
+            const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+            server->sendDropFlag(tmp);
+        }
     }
 
     if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding)))
@@ -979,7 +984,8 @@ static bool notInObstacleList(const Obstacle* obs,
 
 void LocalPlayer::collectInsideBuildings()
 {
-    const float* pos = getPosition();
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+    const float* pos = tmp;
     const float angle = getAngle();
     const float* dims = getDimensions();
 
@@ -1244,7 +1250,8 @@ bool            LocalPlayer::fireShot()
     if (firingInfo.flagType == Flags::ShockWave)
     {
         // move shot origin under tank and make it stationary
-        const float* pos = getPosition();
+        const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+        const float* pos = tmp;
         firingInfo.shot.pos[0] = pos[0];
         firingInfo.shot.pos[1] = pos[1];
         firingInfo.shot.pos[2] = pos[2];
@@ -1511,7 +1518,9 @@ void            LocalPlayer::explodeTank()
     if (location == Dead || location == Exploding) return;
     float gravity      = BZDBCache::gravity;
     float explodeTim   = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
-    setExplodePos(getPosition());
+
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+    setExplodePos(tmp);
     // Limiting max height increment to this value (the old default value)
     const float zMax  = 49.0f;
     setExplode(TimeKeeper::getTick());
@@ -1732,7 +1741,8 @@ void            LocalPlayer::changeScore(short deltaWins,
         if (flagShakingWins <= 0)
         {
             flagShakingWins = 0;
-            server->sendDropFlag(getPosition());
+            const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+            server->sendDropFlag(tmp);
         }
     }
 }

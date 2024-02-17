@@ -105,14 +105,16 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     if (id != ServerPlayer)
     {
         // make scene nodes
-        tankNode = new TankSceneNode(state.pos, forward);
+
+        const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
+        tankNode = new TankSceneNode(tmp, forward);
         tankIDLNode = new TankIDLSceneNode(tankNode);
         changeTeam(team);
         const float sphereRad = (1.5f * BZDBCache::tankRadius);
         if (RENDERER.useQuality() >= 2)
-            pausedSphere = new SphereLodSceneNode(state.pos, sphereRad);
+            pausedSphere = new SphereLodSceneNode(tmp, sphereRad);
         else
-            pausedSphere = new SphereBspSceneNode(state.pos, sphereRad);
+            pausedSphere = new SphereBspSceneNode(tmp, sphereRad);
         pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
     }
 
@@ -273,8 +275,9 @@ void Player::move(const float* _pos, float _azimuth)
     // compute teleporter proximity
     if (World::getWorld())
     {
+        const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
         teleporterProximity =
-            World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+            World::getWorld()->getProximity(tmp, BZDBCache::tankRadius);
     }
 }
 
@@ -577,6 +580,7 @@ bool Player::hitObstacleResizing()
 {
     const float* dims = dimensions;
 
+    const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
     // check walls
     const World* world = World::getWorld();
     if (world)
@@ -585,22 +589,23 @@ bool Player::hitObstacleResizing()
         for (unsigned int i = 0; i < walls.size(); i++)
         {
             const WallObstacle* wall = (const WallObstacle*) walls[i];
-            if (wall->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2]))
+
+            if (wall->inBox(tmp, getAngle(), dims[0], dims[1], dims[2]))
                 return true;
         }
     }
 
     // check everything else
     const ObsList* olist =
-        COLLISIONMGR.boxTest(getPosition(), getAngle(), dims[0], dims[1], dims[2]);
+        COLLISIONMGR.boxTest(tmp, getAngle(), dims[0], dims[1], dims[2]);
 
     for (int i = 0; i < olist->count; i++)
     {
         const Obstacle* obs = olist->list[i];
         const bool onTop = obs->isFlatTop() &&
-                           ((obs->getPosition()[2] + obs->getHeight()) <= getPosition()[2]);
+                           ((obs->getPosition()[2] + obs->getHeight()) <= tmp[2]);
         if (!obs->isDriveThrough() && !onTop &&
-                obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2]))
+                obs->inBox(tmp, getAngle(), dims[0], dims[1], dims[2]))
             return true;
     }
 
@@ -639,8 +644,9 @@ void Player::updateTranslucency(float dt)
     }
     else
     {
+        const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
         teleporterProximity =
-            World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+            World::getWorld()->getProximity(tmp, BZDBCache::tankRadius);
         teleAlpha = (1.0f - (0.75f * teleporterProximity));
 
         if (alpha == 0.0f)
@@ -879,7 +885,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     }
 
     // place the tank
-    tankNode->move(state.pos, forward);
+    const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
+    tankNode->move(tmp, forward);
 
     // only use dimensions if we aren't at steady state.
     // this is done because it's more expensive to use
@@ -941,13 +948,13 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
             GLfloat plane[4];
             const GLfloat a = atan2f(forward[1], forward[0]);
             const Obstacle* obstacle =
-                World::getWorld()->hitBuilding(state.pos, a,
+                World::getWorld()->hitBuilding(tmp, a,
                                                dimensions[0], dimensions[1],
                                                dimensions[2]);
-            if ((obstacle && obstacle->isCrossing(state.pos, a,
+            if ((obstacle && obstacle->isCrossing(tmp, a,
                                                   dimensions[0], dimensions[1],
                                                   dimensions[2], plane)) ||
-                    World::getWorld()->crossingTeleporter(state.pos, a,
+                    World::getWorld()->crossingTeleporter(tmp, a,
                             dimensions[0], dimensions[1],
                             dimensions[2], plane))
             {
@@ -963,13 +970,13 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
                     tankNode->setClipPlane(plane);
             }
         }
-        else if (getPosition()[2] < 0.0f)
+        else if (tmp[2] < 0.0f)
         {
             // this should only happen with Burrow flags
             tankNode->setClipPlane(groundPlane);
         } // isCrossingWall()
     }   // isAlive()
-    else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE))
+    else if (isExploding() && (tmp[2] > ZERO_TOLERANCE))
     {
         float t = float((TimeKeeper::getTick() - explodeTime) /
                         BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
@@ -1000,7 +1007,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     if (isAlive() && (isPaused() || isNotResponding()))
     {
-        pausedSphere->move(state.pos,
+        pausedSphere->move(tmp,
                            1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
         scene->addDynamicSphere(pausedSphere);
     }
@@ -1269,26 +1276,27 @@ bool Player::isDeadReckoningWrong() const
 
     // see if position and azimuth are close enough
     float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
-    if ((fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) ||
-            (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) ||
-            (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance))
+    const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
+    if ((fabsf(tmp[0] - predictedPos[0]) > positionTolerance) ||
+            (fabsf(tmp[1] - predictedPos[1]) > positionTolerance) ||
+            (fabsf(tmp[2] - predictedPos[2]) > positionTolerance))
     {
         if (debugLevel >= 4)
         {
-            if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance)
+            if (fabsf(tmp[0] - predictedPos[0]) > positionTolerance)
             {
-                printf ("state.pos[0] = %f, predictedPos[0] = %f\n",
-                        state.pos[0], predictedPos[0]);
+                printf ("tmp[0] = %f, predictedPos[0] = %f\n",
+                        tmp[0], predictedPos[0]);
             }
-            if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance)
+            if (fabsf(tmp[1] - predictedPos[1]) > positionTolerance)
             {
-                printf ("state.pos[1] = %f, predictedPos[1] = %f\n",
-                        state.pos[1], predictedPos[1]);
+                printf ("tmp[1] = %f, predictedPos[1] = %f\n",
+                        tmp[1], predictedPos[1]);
             }
-            if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance)
+            if (fabsf(tmp[2] - predictedPos[2]) > positionTolerance)
             {
-                printf ("state.pos[2] = %f, predictedPos[2] = %f\n",
-                        state.pos[2], predictedPos[2]);
+                printf ("tmp[2] = %f, predictedPos[2] = %f\n",
+                        tmp[2], predictedPos[2]);
             }
         }
         return true;
@@ -1339,6 +1347,7 @@ void Player::doDeadReckoning()
     }
 
     // setup remote players' landing sounds and graphics, and jumping sounds
+    const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
     if (isAlive())
     {
         // the importance level of the remote sounds
@@ -1355,17 +1364,17 @@ void Player::doDeadReckoning()
             setLandingSpeed(oldZSpeed);
 
             // make it "land"
-            EFFECTS.addLandEffect(getColor(),state.pos,state.azimuth);
+            EFFECTS.addLandEffect(getColor(),tmp,state.azimuth);
 
             // setup the sound
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f))
-                    playSound(SFX_LAND, state.pos, soundImportance, localSound);
+                    playSound(SFX_LAND, tmp, soundImportance, localSound);
                 else
                 {
                     // probably never gets played
-                    playSound(SFX_BURROW, state.pos, soundImportance, localSound);
+                    playSound(SFX_BURROW, tmp, soundImportance, localSound);
                 }
             }
         }
@@ -1376,11 +1385,11 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((state.sounds & PlayerState::JumpSound) != 0)
-                    playSound(SFX_JUMP, state.pos, soundImportance, localSound);
+                    playSound(SFX_JUMP, tmp, soundImportance, localSound);
                 if ((state.sounds & PlayerState::WingsSound) != 0)
-                    playSound(SFX_FLAP, state.pos, soundImportance, localSound);
+                    playSound(SFX_FLAP, tmp, soundImportance, localSound);
                 if ((state.sounds & PlayerState::BounceSound) != 0)
-                    playSound(SFX_BOUNCE, state.pos, soundImportance, localSound);
+                    playSound(SFX_BOUNCE, tmp, soundImportance, localSound);
             }
             state.sounds = PlayerState::NoSounds;
         }

@@ -69,7 +69,8 @@ void Plan::execute(float &, float &)
                         !remotePlayers[t]->isNotResponding())
                 {
 
-                    const float *tp = remotePlayers[t]->getPosition();
+                    const float tmp[3] = { remotePlayers[t]->getPosition()[0].val(), remotePlayers[t]->getPosition()[1].val(), remotePlayers[t]->getPosition()[2].val()};
+                    const float *tp = tmp;
                     float enemyPos[3];
 
                     //toss in some lag adjustment/future prediction - 300 millis
@@ -122,7 +123,8 @@ void Plan::execute(float &, float &)
                             && (myTank->getFlag() != Flags::SuperBullet))
                         continue;
 
-                    const float *tp = remotePlayers[t]->getPosition();
+                    const float tmp[3] = { remotePlayers[t]->getPosition()[0].val(), remotePlayers[t]->getPosition()[1].val(), remotePlayers[t]->getPosition()[2].val()};
+                    const float *tp = tmp;
                     float enemyPos[3];
                     //toss in some lag adjustment/future prediction - 300 millis
                     memcpy(enemyPos,tp,sizeof(enemyPos));
@@ -165,7 +167,9 @@ void Plan::execute(float &, float &)
 bool Plan::avoidBullet(float &rotation, float &speed)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    const float *pos = myTank->getPosition();
+
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    const float *pos = tmp;
 
     if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
         return false; // take our chances
@@ -231,7 +235,9 @@ bool Plan::avoidBullet(float &rotation, float &speed)
 ShotPath *Plan::findWorstBullet(float &minDistance)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    const float *pos = myTank->getPosition();
+
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    const float *pos = tmp;
     ShotPath *minPath = NULL;
 
     minDistance = Infinity;
@@ -503,7 +509,9 @@ Plan *HuntPlayerPlan::createSubPlan()
 {
     Player *pPlayer = lookupPlayer(playerID);
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    bool isObscured = TargetingUtils::isLocationObscured( myTank->getPosition(), pPlayer->getPosition());
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    const float tmp2[3] = { pPlayer->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    bool isObscured = TargetingUtils::isLocationObscured( tmp, tmp2);
     if (isObscured)
     {
         float pt[3];

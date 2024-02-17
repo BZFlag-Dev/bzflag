@@ -46,7 +46,11 @@ int BaseLocalPlayer::getSalt()
 void BaseLocalPlayer::update(float inputDT)
 {
     // save last position
-    const float* oldPosition = getPosition();
+    float tmp[3];
+    for (int i = 0; i < 3; i++) {
+        tmp[i] = getPosition()[i].val();
+    }
+    const float* oldPosition = tmp;
 
     // update by time step
     float dt = float(TimeKeeper::getTick() - lastTime);

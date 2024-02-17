@@ -347,7 +347,8 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt)
             target = LocalPlayer::getMyTank();
         if (target != NULL)
         {
-            trackPos = target->getPosition();
+            const float tmp[3] = { target->getPosition()[0].val(), target->getPosition()[1].val(), target->getPosition()[2].val()};
+            trackPos = tmp;
             tracking = true;
         }
     }

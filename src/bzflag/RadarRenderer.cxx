@@ -553,7 +553,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             useTankModels = false;
 
         // relative to my tank
-        const float* myPos = myTank->getPosition();
+        const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+        const float* myPos = tmp;
         const float myAngle = myTank->getAngle();
 
         // draw the view angle below stuff
@@ -642,7 +643,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
                     (myTank->getFlag() != Flags::Seer))
                 continue;
 
-            const float* position = player->getPosition();
+            const float* position = tmp;
 
             if (player->getFlag() != Flags::Null)
             {

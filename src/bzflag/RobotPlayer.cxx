@@ -146,7 +146,9 @@ void            RobotPlayer::doUpdate(float dt)
     {
         float p1[3];
         getProjectedPosition(target, p1);
-        const float* p2     = getPosition();
+
+        const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+        const float* p2     = tmp;
         float shootingAngle = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
         if (shootingAngle < 0.0f)
             shootingAngle += (float)(2.0 * M_PI);
@@ -214,7 +216,9 @@ void            RobotPlayer::doUpdateMotion(float dt)
         bool evading = false;
         // record previous position
         const float oldAzimuth = getAngle();
-        const float* oldPosition = getPosition();
+
+        const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+        const float* oldPosition = tmp;
         float position[3];
         position[0] = oldPosition[0];
         position[1] = oldPosition[1];
@@ -362,8 +366,11 @@ float           RobotPlayer::getTargetPriority(const
     // go after closest player
     // FIXME -- this is a pretty stupid heuristic
     const float worldSize = BZDBCache::worldSize;
-    const float* p1 = getPosition();
-    const float* p2 = _target->getPosition();
+
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+    const float tmp2[3] = { _target->getPosition()[0].val(), _target->getPosition()[1].val(), _target->getPosition()[2].val()};
+    const float* p1 = tmp;
+    const float* p2 = tmp2;
 
     float basePriority = 1.0f;
     // give bonus to non-paused player
@@ -403,8 +410,9 @@ void            RobotPlayer::setTarget(const Player* _target)
     // work backwards (from target to me)
     float proj[3];
     getProjectedPosition(target, proj);
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
     const float *p1 = proj;
-    const float* p2 = getPosition();
+    const float* p2 = tmp;
     float q1[2], q2[2];
     BzfRegion* headRegion = findRegion(p1, q1);
     BzfRegion* tailRegion = findRegion(p2, q2);

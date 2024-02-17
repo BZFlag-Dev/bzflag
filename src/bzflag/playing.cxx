@@ -2470,7 +2470,8 @@ static void     handleServerMessage(bool human, uint16_t code,
             // uh oh, i'm dead
             if (myTank->isAlive())
             {
-                serverLink->sendDropFlag(myTank->getPosition());
+                const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+                serverLink->sendDropFlag(tmp);
                 handleMyTankKilled(reason);
             }
         }
@@ -2719,7 +2720,9 @@ static void     handleServerMessage(bool human, uint16_t code,
                     && (Team::isColorTeam(myTank->getTeam())))
             {
                 hud->setAlert(1, "Team Grab!!!", 3.0f, false);
-                const float* pos = tank->getPosition();
+
+                const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+                const float* pos = tmp;
                 playWorldSound(SFX_TEAMGRAB, pos, false);
             }
         }
@@ -2818,7 +2821,9 @@ static void     handleServerMessage(bool human, uint16_t code,
                     remotePlayers[i]->isAlive() &&
                     remotePlayers[i]->getTeam() == capturedTeam)
             {
-                const float* pos = remotePlayers[i]->getPosition();
+
+                const float tmp[3] = { remotePlayers[i]->getPosition()[0].val(), remotePlayers[i]->getPosition()[1].val(), remotePlayers[i]->getPosition()[2].val()};
+                const float* pos = tmp;
                 playWorldSound(SFX_EXPLOSION, pos, false);
                 float explodePos[3];
                 explodePos[0] = pos[0];
@@ -3575,7 +3580,9 @@ static void     updateFlags(float dt)
             Player* tank = lookupPlayer(flag.owner);
             if (tank)
             {
-                const float* pos = tank->getPosition();
+
+                const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+                const float* pos = tmp;
                 flag.position[0] = pos[0];
                 flag.position[1] = pos[1];
                 flag.position[2] = pos[2] + tank->getDimensions()[2];
@@ -3827,7 +3834,8 @@ static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
     if ((fromTank == myTank) || (toTank == myTank))
         updateFlag(myTank->getFlag());
 
-    const float *pos = toTank->getPosition();
+    const float tmp[3] = { toTank->getPosition()[0].val(), toTank->getPosition()[1].val(), toTank->getPosition()[2].val()};
+    const float *pos = tmp;
     if (f.type->flagTeam != ::NoTeam)
     {
         if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam()))
@@ -3869,7 +3877,9 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
             teachAutoPilot( myTank->getFlag(), -1 );
 
         // tell other players I've dropped my flag
-        lookupServer(tank)->sendDropFlag(tank->getPosition());
+
+        const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+        lookupServer(tank)->sendDropFlag(tmp);
 
         // drop it
         handleFlagDropped(tank);

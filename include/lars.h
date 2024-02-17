@@ -55,6 +55,7 @@ class ProtectedFloat {
     // operator float() const { return deobfuscate(); }
 
     float val() { return deobfuscate(); }
+    const float val() const { return deobfuscate(); }
     void obfuscateAdd(float add) { obfuscate(deobfuscate() + add); }
     void obfuscateAdd(float add, float linenr) {
         obfuscate(deobfuscate() + add);

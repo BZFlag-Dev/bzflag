@@ -73,6 +73,7 @@ class Player {
     long getOrder() const;
     short getStatus() const;
     SplitFloat *getPosition();
+    const SplitFloat *getPosition() const;
     float getAngle() const;
     const float *getForward() const;
     const float *getVelocity() const;
@@ -375,6 +376,7 @@ inline long Player::getOrder() const { return state.order; }
 inline short Player::getStatus() const { return state.status; }
 
 inline SplitFloat *Player::getPosition() { return state.pos; }
+inline const SplitFloat *Player::getPosition() const { return state.pos; }
 
 inline float Player::getAngle() const { return state.azimuth; }
 

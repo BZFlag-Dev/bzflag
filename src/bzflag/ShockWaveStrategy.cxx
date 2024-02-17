@@ -109,7 +109,8 @@ float ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank, float position[3]
     // return if player is inside radius of destruction -- note that a
     // shock wave can kill anything inside the radius, be it behind or
     // in a building or even zoned.
-    const float* playerPos = tank->getPosition();
+    const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+    const float* playerPos = tmp;
     const float* shotPos = getPath().getPosition();
     const float dx = playerPos[0] - shotPos[0];
     const float dy = playerPos[1] - shotPos[1];

@@ -355,7 +355,8 @@ static std::string cmdDrop(const std::string&,
                 !(flag == Flags::OscillationOverthruster &&
                   myTank->getLocation() == LocalPlayer::InBuilding))
         {
-            serverLink->sendDropFlag(myTank->getPosition());
+            const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+            serverLink->sendDropFlag(tmp);
             // changed: on windows it may happen the MsgDropFlag
             // never comes back to us, so we drop it right away
             handleFlagDropped(myTank);
