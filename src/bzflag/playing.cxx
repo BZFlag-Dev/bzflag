@@ -2485,7 +2485,8 @@ static void     handleServerMessage(bool human, uint16_t code,
         else if (victimPlayer)
         {
             victimPlayer->setExplode(TimeKeeper::getTick());
-            const float* pos = victimPlayer->getPosition();
+            const float tmp[3] = { victimPlayer->getPosition()[0].val(), victimPlayer->getPosition()[1].val(), victimPlayer->getPosition()[2].val()};
+            const float* pos = tmp;
             const bool localView = isViewTank(victimPlayer);
             if (reason == GotRunOver)
                 playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
@@ -3906,7 +3907,9 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
 
         // todo hook this back up for 2.4.4. or later
         TankDeathOverride *death = NULL;
-        EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle(),reason,tank, flagType);
+
+        const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+        EFFECTS.addDeathEffect(tank->getColor(), tmp, tank->getAngle(),reason,tank, flagType);
 
         tank->setDeathEffect(death);
         tank->explodeTank();
@@ -3921,7 +3924,8 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
         }
         else
         {
-            const float* pos = tank->getPosition();
+            const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+            const float* pos = tmp;
             if (reason == GotRunOver)
             {
                 playWorldSound(SFX_RUNOVER, pos,
@@ -3936,7 +3940,8 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
 
         if (tank != myTank &&(!death || death->ShowExplosion()))
         {
-            const float* pos = tank->getPosition();
+            const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+            const float* pos = tmp;
             float explodePos[3];
             explodePos[0] = pos[0];
             explodePos[1] = pos[1];
@@ -4091,10 +4096,11 @@ static void     checkEnvironment()
     if (!myTank->isAlive() || myTank->isPaused()) return;
 
     FlagType* flagd = myTank->getFlag();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     if (flagd->flagTeam != NoTeam)
     {
         // have I captured a flag?
-        TeamColor base = world->whoseBase(myTank->getPosition());
+        TeamColor base = world->whoseBase(tmp);
         TeamColor team = myTank->getTeam();
         if ((base != NoTeam) &&
                 ((flagd->flagTeam == team && base != team) ||
@@ -4109,7 +4115,7 @@ static void     checkEnvironment()
         if (TimeKeeper::getTick()-lastGrabSent > 0.2)
         {
             // grab any and all flags i'm driving over
-            const float* tpos = myTank->getPosition();
+            const float* tpos = tmp;
             const float radius = myTank->getRadius();
             const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
             for (int i = 0; i < numFlags; i++)
@@ -4177,12 +4183,13 @@ static void     checkEnvironment()
                     myTank->getDeathPhysicsDriver());
     }
     // if not dead yet, see if i've dropped below the death level
-    else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))
+    else if ((waterLevel > 0.0f) && (myTank->getPosition()[2].val() <= waterLevel))
         gotBlowedUp(myTank, WaterDeath, ServerPlayer);
     // if not dead yet, see if i got run over by the steamroller
     else
     {
-        const float* myPos = myTank->getPosition();
+        const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+        const float* myPos = tmp;
         const float myRadius = myTank->getRadius();
         for (i = 0; i < curMaxPlayers; i++)
         {
@@ -4191,7 +4198,8 @@ static void     checkEnvironment()
                      ((myPos[2] < 0.0f) && remotePlayers[i]->isAlive() &&
                       !remotePlayers[i]->isPhantomZoned())))
             {
-                const float* pos = remotePlayers[i]->getPosition();
+                const float tmp[3] = { remotePlayers[i]->getPosition()[0].val(), remotePlayers[i]->getPosition()[1].val(), remotePlayers[i]->getPosition()[2].val()};
+                const float* pos = tmp;
                 if (pos[2] < 0.0f) continue;
                 if (remotePlayers[i]->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() &&
                         remotePlayers[i]->getTeam() == myTank->getTeam()) continue;
@@ -4267,7 +4275,8 @@ void setLookAtMarker(void)
     // get info about my tank
     const float c = cosf(- myTank->getAngle());
     const float s = sinf(- myTank->getAngle());
-    const float *p = myTank->getPosition();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    const float *p = tmp;
     const fvec3 myPos(p[0],p[1],p[2]);
 
     // initialize best target
@@ -4354,7 +4363,7 @@ void setLookAtMarker(void)
     if (myTank->getFlag() == Flags::Colorblindness)
         markercolor = RogueTeam;
 
-    hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
+    hud->AddEnhancedNamedMarker(Float3ToVec3(tmp),
                                 Float3ToVec4(Team::getTankColor(markercolor)),
                                 label, isFriendly(bestTarget), 2.0f);
 }
@@ -4376,8 +4385,8 @@ void setTarget()
     // get info about my tank
     const float c = cosf(-myTank->getAngle());
     const float s = sinf(-myTank->getAngle());
-    const float x0 = myTank->getPosition()[0];
-    const float y0 = myTank->getPosition()[1];
+    const float x0 = myTank->getPosition()[0].val();
+    const float y0 = myTank->getPosition()[1].val();
 
     // initialize best target
     Player* bestTarget = NULL;
@@ -4390,7 +4399,8 @@ void setTarget()
         if (!remotePlayers[i] || !remotePlayers[i]->isAlive()) continue;
 
         // compute position in my local coordinate system
-        const float* pos = remotePlayers[i]->getPosition();
+        const float tmp[3] = { remotePlayers[i]->getPosition()[0].val(), remotePlayers[i]->getPosition()[1].val(), remotePlayers[i]->getPosition()[2].val()};
+        const float* pos = tmp;
         const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
         const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
 
@@ -4494,8 +4504,8 @@ static void setHuntTarget()
     // get info about my tank
     const float c = cosf(-myTank->getAngle());
     const float s = sinf(-myTank->getAngle());
-    const float x0 = myTank->getPosition()[0];
-    const float y0 = myTank->getPosition()[1];
+    const float x0 = myTank->getPosition()[0].val();
+    const float y0 = myTank->getPosition()[1].val();
 
     // initialize best target
     Player* bestTarget = NULL;
@@ -4508,7 +4518,8 @@ static void setHuntTarget()
         if (!remotePlayers[i] || !remotePlayers[i]->isAlive()) continue;
 
         // compute position in my local coordinate system
-        const float* pos = remotePlayers[i]->getPosition();
+        const float tmp[3] = { remotePlayers[i]->getPosition()[0].val(), remotePlayers[i]->getPosition()[1].val(), remotePlayers[i]->getPosition()[2].val()};
+        const float* pos = tmp;
         const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
         const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
 
@@ -4564,7 +4575,8 @@ static void setHuntTarget()
         }
         if (!pulse.isOn())
         {
-            const float* bestTargetPosition = bestTarget->getPosition();
+            const float tmp[3] = { bestTarget->getPosition()[0].val(), bestTarget->getPosition()[1].val(), bestTarget->getPosition()[2].val()};
+            const float* bestTargetPosition = tmp;
             playWorldSound(SFX_HUNT, bestTargetPosition);
             pulse.setClock(1.0f);
         }
@@ -4839,14 +4851,16 @@ static void     checkEnvironment(RobotPlayer* tank)
     else
     {
         bool dead = false;
-        const float* myPos = tank->getPosition();
+        const float tmp[3] = { tank->getPosition()[0].val(), tank->getPosition()[1].val(), tank->getPosition()[2].val()};
+        const float* myPos = tmp;
         const float myRadius = tank->getRadius();
         if (((myTank->getFlag() == Flags::Steamroller) ||
                 ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
                  !myTank->isPhantomZoned()))
                 && !myTank->isPaused())
         {
-            const float* pos = myTank->getPosition();
+            const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+            const float* pos = tmp;
             if (pos[2] >= 0.0f)
             {
                 const float radius = myRadius +
@@ -4868,7 +4882,8 @@ static void     checkEnvironment(RobotPlayer* tank)
                      ((tank->getFlag() == Flags::Burrow) && remotePlayers[i]->isAlive() &&
                       !remotePlayers[i]->isPhantomZoned())))
             {
-                const float* pos = remotePlayers[i]->getPosition();
+                const float tmp[3] = { remotePlayers[i]->getPosition()[0].val(), remotePlayers[i]->getPosition()[1].val(), remotePlayers[i]->getPosition()[2].val()};
+                const float* pos = tmp;
                 if (pos[2] < 0.0f) continue;
                 const float radius = myRadius +
                                      (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius());
@@ -5965,7 +5980,8 @@ void drawFrame(const float dt)
         }
         else
         {
-            myTankPos = myTank->getPosition();
+            const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+            myTankPos = tmp;
             myTankDir = myTank->getForward();
             myTankAngle = myTank->getAngle();
             muzzleHeight = myTank->getMuzzleHeight();
@@ -6588,7 +6604,8 @@ static void roamSmoothFollow(Roaming::RoamingCamera& deltaCamera)
     const float speedY = BZDB.eval("followSpeedY");
     const float speedZ = BZDB.eval("followSpeedZ");
 
-    const float* pos = p->getPosition();
+    const float tmp[3] = { p->getPosition()[0].val(), p->getPosition()[1].val(), p->getPosition()[2].val()};
+    const float* pos = tmp;
     const float* fwd = p->getForward();
     const float target[3] =
     {
@@ -6813,7 +6830,8 @@ static void     prepareTheHUD()
     // prep the HUD
     if (myTank)
     {
-        const float* myPos = myTank->getPosition();
+        const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+        const float* myPos = tmp;
         hud->setHeading(myTank->getAngle());
         hud->setAltitude(myPos[2]);
         if (world->allowTeamFlags())
@@ -6873,6 +6891,7 @@ static void     updatePauseCountdown(float dt)
              * later for being in places we shouldn't without holding the
              * right flags.
              */
+
             if (myTank->getLocation() == LocalPlayer::InBuilding)
             {
                 // custom message when trying to pause while in a building
@@ -6903,8 +6922,9 @@ static void     updatePauseCountdown(float dt)
             {
                 // okay, now we pause.  first drop any team flag we may have.
                 const FlagType* flagd = myTank->getFlag();
+                const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
                 if (flagd->flagTeam != NoTeam)
-                    serverLink->sendDropFlag(myTank->getPosition());
+                    serverLink->sendDropFlag(tmp);
 
                 if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
                     serverLink->sendNewRabbit();
@@ -7340,7 +7360,9 @@ static void     playingLoop()
                 const Player* targetdPlayer = myTank->getTarget();
                 if (targetdPlayer && targetdPlayer->isAlive() && targetdPlayer->getFlag() != Flags::Stealth)
                 {
-                    hud->AddLockOnMarker(Float3ToVec3(myTank->getTarget()->getPosition()),
+
+                    const float tmp[3] = { myTank->getTarget()->getPosition()[0].val(), myTank->getTarget()->getPosition()[1].val(), myTank->getTarget()->getPosition()[2].val()};
+                    hud->AddLockOnMarker(Float3ToVec3(tmp),
                                          myTank->getTarget()->getCallSign(),
                                          !isKillable(myTank->getTarget()));
                 }
