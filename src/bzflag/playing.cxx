@@ -4363,7 +4363,8 @@ void setLookAtMarker(void)
     if (myTank->getFlag() == Flags::Colorblindness)
         markercolor = RogueTeam;
 
-    hud->AddEnhancedNamedMarker(Float3ToVec3(tmp),
+    const float tmp2[3] = { bestTarget->getPosition()[0].val(), bestTarget->getPosition()[1].val(), bestTarget->getPosition()[2].val()};
+    hud->AddEnhancedNamedMarker(Float3ToVec3(tmp2),
                                 Float3ToVec4(Team::getTankColor(markercolor)),
                                 label, isFriendly(bestTarget), 2.0f);
 }

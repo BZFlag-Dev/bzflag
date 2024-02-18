@@ -510,7 +510,7 @@ Plan *HuntPlayerPlan::createSubPlan()
     Player *pPlayer = lookupPlayer(playerID);
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
-    const float tmp2[3] = { pPlayer->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    const float tmp2[3] = { pPlayer->getPosition()[0].val(), pPlayer->getPosition()[1].val(), pPlayer->getPosition()[2].val()};
     bool isObscured = TargetingUtils::isLocationObscured( tmp, tmp2);
     if (isObscured)
     {

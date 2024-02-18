@@ -1027,9 +1027,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
     glTranslatef(0.0f, 0.52f, -0.04f);
 
     //barrel roll to camera
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = LocalPlayer::getMyTank()->getPosition()[i].val();
+    const float tmp[3] = { LocalPlayer::getMyTank()->getPosition()[0].val(), LocalPlayer::getMyTank()->getPosition()[1].val(), LocalPlayer::getMyTank()->getPosition()[2].val()};
     const float *playerpos = tmp;
     float camerapos[3] =
     {

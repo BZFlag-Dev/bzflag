@@ -84,10 +84,7 @@ static bool isFlagUseful(FlagType *type)
 static ShotPath *findWorstBullet(float &minDistance)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    float tmp[3];
-    for (int i = 0; i < 3; i++) {
-        tmp[i] = myTank->getPosition()[i].val();
-    }
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     const float *pos = tmp;
     ShotPath *minPath = NULL;
 
@@ -180,10 +177,7 @@ static bool avoidDeathFall(float & UNUSED(rotation), float &speed)
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     float pos1[3], pos2[3];
 
-    float tmp[3];
-    for (int i = 0; i < 3; i++) {
-        tmp[i] = myTank->getPosition()[i].val();
-    }
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     memcpy(pos1, tmp, sizeof(pos1));
     memcpy(pos2, pos1, sizeof(pos1));
     pos1[2] += 10.0f * BZDBCache::tankHeight;
@@ -217,10 +211,7 @@ static bool avoidDeathFall(float & UNUSED(rotation), float &speed)
 static bool avoidBullet(float &rotation, float &speed)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    float tmp[3];
-    for (int i = 0; i < 3; i++) {
-        tmp[i] = myTank->getPosition()[i].val();
-    }
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     const float *pos = tmp;
 
     if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
@@ -303,10 +294,7 @@ static bool stuckOnWall(float &rotation, float &speed)
     }
 
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    float tmp[3];
-    for (int i = 0; i < 3; i++) {
-        tmp[i] = myTank->getPosition()[i].val();
-    }
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     const float *pos = tmp;
     float myAzimuth = myTank->getAngle();
 
@@ -343,9 +331,7 @@ static RemotePlayer *findBestTarget()
 {
     RemotePlayer *target = NULL;
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = myTank->getPosition()[i].val();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     const float *pos = tmp;
     float myAzimuth = myTank->getAngle();
     float distance = Infinity;
@@ -380,9 +366,7 @@ static RemotePlayer *findBestTarget()
                 break;
             }
 
-            float tmp[3];
-            for (int i = 0; i < 3; i++)
-                tmp[i] = remotePlayers[t]->getPosition()[i].val();
+            const float tmp[3] = { remotePlayers[t]->getPosition()[0].val(), remotePlayers[t]->getPosition()[1].val(), remotePlayers[t]->getPosition()[2].val()};
             float d = TargetingUtils::getTargetDistance(pos, tmp);
             bool isObscured = TargetingUtils::isLocationObscured( pos, tmp);
             if (isObscured) //demote the priority of obscured enemies
@@ -409,9 +393,7 @@ static bool chasePlayer(float &rotation, float &speed)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = myTank->getPosition()[i].val();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     const float *pos = tmp;
 
     RemotePlayer *rPlayer = findBestTarget();
@@ -420,9 +402,8 @@ static bool chasePlayer(float &rotation, float &speed)
 
     myTank->setTarget(rPlayer);
 
-    float tmp2[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = rPlayer->getPosition()[i].val();
+
+    const float tmp2[3] = { rPlayer->getPosition()[0].val(), rPlayer->getPosition()[1].val(), rPlayer->getPosition()[2].val()};
     const float *targetPos = tmp2;
     float distance = TargetingUtils::getTargetDistance(pos, targetPos);
     if (distance > 250.0f)
@@ -529,9 +510,7 @@ static bool lookForFlag(float &rotation, float &speed)
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     float pos[3];
 
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = myTank->getPosition()[i].val();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     memcpy( pos, tmp, sizeof( pos ));
     if (pos[2] < 0.0f)
         pos[2] = 0.0f;
@@ -577,9 +556,7 @@ static bool lookForFlag(float &rotation, float &speed)
             if (myTank->getFlag() != Flags::Null)
             {
 
-                float tmp[3];
-                for (int i = 0; i < 3; i++)
-                    tmp[i] = myTank->getPosition()[i].val();
+                const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
                 serverLink->sendDropFlag(tmp);
                 handleFlagDropped(myTank);
             }
@@ -611,9 +588,7 @@ static bool navigate(float &rotation, float &speed)
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     float pos[3];
 
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = myTank->getPosition()[i].val();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     memcpy(pos, tmp, sizeof(pos));
     if (pos[2] < 0.0f)
         pos[2] = 0.01f;
@@ -640,9 +615,7 @@ static bool navigate(float &rotation, float &speed)
     {
         World *world = World::getWorld();
         const float *temp = world->getBase(myTank->getTeam());
-        float tmp[3];
-        for (int i = 0; i < 3; i++)
-            tmp[i] = myTank->getPosition()[i].val();
+        const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
         if (temp == NULL)
         {
             serverLink->sendDropFlag(tmp);
@@ -683,9 +656,7 @@ static bool fireAtTank()
     static TimeKeeper lastShot;
     float pos[3];
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    float tmp[3];
-    for (int i = 0; i < 3; i++)
-        tmp[i] = myTank->getPosition()[i].val();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
     memcpy(pos, tmp, sizeof(pos));
     if (pos[2] < 0.0f)
         pos[2] = 0.01f;
@@ -709,9 +680,7 @@ static bool fireAtTank()
                         !remotePlayers[t]->isNotResponding())
                 {
 
-                    float tmp[3];
-                    for (int i = 0; i < 3; i++)
-                        tmp[i] = remotePlayers[t]->getPosition()[i].val();
+                    const float tmp[3] = { remotePlayers[t]->getPosition()[0].val(), remotePlayers[t]->getPosition()[1].val(), remotePlayers[t]->getPosition()[2].val()};
                     const float *tp = tmp;
                     float enemyPos[3];
                     //toss in some lag adjustment/future prediction - 300 millis
@@ -765,9 +734,7 @@ static bool fireAtTank()
                             && (myTank->getFlag() != Flags::ShockWave))
                         continue;
 
-                    float tmp[3];
-                    for (int i = 0; i < 3; i++)
-                        tmp[i] = remotePlayers[t]->getPosition()[i].val();
+                    const float tmp[3] = { remotePlayers[t]->getPosition()[0].val(), remotePlayers[t]->getPosition()[1].val(), remotePlayers[t]->getPosition()[2].val()};
                     const float *tp = tmp;
                     float enemyPos[3];
                     //toss in some lag adjustment/future prediction - 300 millis
@@ -820,9 +787,7 @@ static void dropHardFlags()
             ||  (type == Flags::Identify)
             ||  ((type == Flags::PhantomZone) && !myTank->isFlagActive()))
     {
-        float tmp[3];
-        for (int i = 0; i < 3; i++)
-            tmp[i] = myTank->getPosition()[i].val();
+        const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
         serverLink->sendDropFlag(tmp);
         handleFlagDropped(myTank);
     }

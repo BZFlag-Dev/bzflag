@@ -643,6 +643,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
                     (myTank->getFlag() != Flags::Seer))
                 continue;
 
+            const float tmp[3] = { player->getPosition()[0].val(), player->getPosition()[1].val(), player->getPosition()[2].val()};
             const float* position = tmp;
 
             if (player->getFlag() != Flags::Null)

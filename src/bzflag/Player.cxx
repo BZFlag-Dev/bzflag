@@ -580,7 +580,7 @@ bool Player::hitObstacleResizing()
 {
     const float* dims = dimensions;
 
-    const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
     // check walls
     const World* world = World::getWorld();
     if (world)
@@ -970,13 +970,13 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
                     tankNode->setClipPlane(plane);
             }
         }
-        else if (tmp[2] < 0.0f)
+        else if (getPosition()[2].val() < 0.0f)
         {
             // this should only happen with Burrow flags
             tankNode->setClipPlane(groundPlane);
         } // isCrossingWall()
     }   // isAlive()
-    else if (isExploding() && (tmp[2] > ZERO_TOLERANCE))
+    else if (isExploding() && (state.pos[2].val() > ZERO_TOLERANCE))
     {
         float t = float((TimeKeeper::getTick() - explodeTime) /
                         BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
