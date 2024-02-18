@@ -189,7 +189,8 @@ void bz_ServerSidePlayerHandler::dropFlag(void)
         return ;
 
     // TODO Make this actually update based on movement
-    dropPlayerFlag(*player, player->lastState.pos);
+    const float tmp[3] = { player->lastState.pos[0].val(), player->lastState.pos[1].val(), player->lastState.pos[2].val()};
+    dropPlayerFlag(*player, tmp);
 }
 
 //-------------------------------------------------------------------------

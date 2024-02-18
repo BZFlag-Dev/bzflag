@@ -31,6 +31,7 @@
 
 /* system implementation headers */
 #include <algorithm>
+#include "stdio.h"
 
 LocalPlayer*        LocalPlayer::mainPlayer = NULL;
 
@@ -252,6 +253,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
     const Location oldLocation = location;
     const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
     const float* oldPosition = tmp;
+    printf("T: old %f %f %f\n", oldPosition[0], oldPosition[1], oldPosition[2]);
     const float oldAzimuth = getAngle();
     const float oldAngVel = getAngularVelocity();
     const float* oldVelocity = getVelocity();

@@ -2806,8 +2806,10 @@ BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force 
         if (flagId >= 0)
         {
             FlagInfo& currentFlag = *FlagInfo::get(flagId);
+
+            const float tmp[3] = { gkPlayer->lastState.pos[0].val(), gkPlayer->lastState.pos[1].val(), gkPlayer->lastState.pos[2].val()};
             if (currentFlag.flag.type->flagTeam != NoTeam)
-                dropFlag(currentFlag, gkPlayer->lastState.pos);// drop team flags
+                dropFlag(currentFlag, tmp);// drop team flags
             else
                 resetFlag(currentFlag);// reset non-team flags
         }

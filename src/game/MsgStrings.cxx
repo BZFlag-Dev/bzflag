@@ -818,10 +818,11 @@ static MsgStringList handleMsgPlayerUpdate (PacketInfo *pi)
     d = nboUnpackFloat (d, timestamp);
     d = nboUnpackUByte (d, index);
     d = state.unpack (d, pi->code);
+    const float tmp[3] = { state.pos[0].val(), state.pos[1].val(), state.pos[2].val()};
 
     listPush (list, 1, "player: %s", strPlayer(index).c_str());
     listPush (list, 2, "state: 0x%04X  order: %li", state.status, state.order);
-    listPush (list, 3, "pos:    %s", strVector (state.pos).c_str());
+    listPush (list, 3, "pos:    %s", strVector (tmp).c_str());
     listPush (list, 3, "vel:    %s", strVector (state.velocity).c_str());
     listPush (list, 3, "angle:  %-8.3f = %8.3f deg",
               state.azimuth, state.azimuth * (180.0f / M_PI));

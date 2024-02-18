@@ -2845,8 +2845,9 @@ void zapFlagByPlayer(int playerIndex)
     flag.player = playerIndex;
     // do not simply zap team flag
     Flag &carriedflag = flag.flag;
+    const float tmp[3] = { playerData->lastState.pos[0].val(), playerData->lastState.pos[1].val(), playerData->lastState.pos[2].val()};
     if (carriedflag.type->flagTeam != ::NoTeam)
-        dropPlayerFlag(*playerData, playerData->lastState.pos);
+        dropPlayerFlag(*playerData, tmp);
     else
         zapFlag(flag);
 }
@@ -3255,9 +3256,10 @@ void playerAlive(int playerIndex)
     playerData->setPlayerState(spawnData.pos, spawnData.rot);
 
     // send MsgAlive
+    const float tmp[3] = { playerData->lastState.pos[0].val(), playerData->lastState.pos[1].val(), playerData->lastState.pos[2].val()};
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackVector(buf, playerData->lastState.pos);
+    buf = nboPackVector(buf, tmp);
     buf = nboPackFloat(buf, playerData->lastState.azimuth);
     broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
 
@@ -3620,7 +3622,8 @@ static void searchFlag(GameKeeper::Player &playerData)
 
     const PlayerId playerIndex = playerData.getIndex();
 
-    const float *tpos    = playerData.lastState.pos;
+    const float tmp[3] = { playerData.lastState.pos[0].val(), playerData.lastState.pos[1].val(), playerData.lastState.pos[2].val()};
+    const float *tpos    = tmp;
     float radius2 = radius * radius;
 
     int closestFlag = -1;
@@ -3680,7 +3683,8 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
         const float tankSpeed = BZDBCache::tankSpeed;
         const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius +
                               BZDBCache::flagRadius);
-        const float* tpos = playerData->lastState.pos;
+        const float tmp[3] = { playerData->lastState.pos[0].val(), playerData->lastState.pos[1].val(), playerData->lastState.pos[2].val()};
+        const float* tpos = tmp;
         const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
                             (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
 
@@ -4554,9 +4558,9 @@ static bool isTeleporterMotion ( GameKeeper::Player &playerData, PlayerState &st
     {
         Obstacle *currentTele = teleporterList[i];
         const float *telePosition = currentTele->getPosition();
-        float deltaInitial2 = squareAndAdd(state.pos[0] - telePosition[0],state.pos[1] - telePosition[1]);
-        float deltaFinal2 = squareAndAdd(playerData.lastState.pos[0] - telePosition[0],
-                                         playerData.lastState.pos[1] - telePosition[1]);
+        float deltaInitial2 = squareAndAdd(state.pos[0].val() - telePosition[0],state.pos[1].val() - telePosition[1]);
+        float deltaFinal2 = squareAndAdd(playerData.lastState.pos[0].val() - telePosition[0],
+                                         playerData.lastState.pos[1].val() - telePosition[1]);
 
         if (deltaInitial2 < initialDist2)
             initialDist2 = deltaInitial2;
@@ -4582,8 +4586,8 @@ static bool isCheatingMovement(GameKeeper::Player &playerData, PlayerState &stat
         return false;
 
     float movementDelta[2];
-    movementDelta[0] = state.pos[0] - playerData.lastState.pos[0];
-    movementDelta[1] = state.pos[1] - playerData.lastState.pos[1];
+    movementDelta[0] = state.pos[0].val() - playerData.lastState.pos[0].val();
+    movementDelta[1] = state.pos[1].val() - playerData.lastState.pos[1].val();
 
     float realDist2 = squareAndAdd(movementDelta[0], movementDelta[1]);
     logDebugMessage(4,"isCheatingMovement: dist %f, maxDist %f\n",sqrt(realDist2),maxMovement);
@@ -5323,10 +5327,10 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
             float maxHeight = getMaxWorldHeight();
 
-            if (!disableHeightChecks && state.pos[2] > maxHeight)
+            if (!disableHeightChecks && state.pos[2].val() > maxHeight)
             {
                 logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-                                playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
+                                playerData->player.getCallSign(), t, maxHeight, state.pos[2].val());
                 sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
                 removePlayer(t, "too high");
                 break;
@@ -5340,25 +5344,25 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                 // test all the map bounds + some fudge factor, just in case
                 static const float positionFudge = 10.0f; /* linear distance */
                 float worldSize = BZDBCache::worldSize;
-                if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge))
+                if ( (state.pos[1].val() >= worldSize*0.5f + positionFudge) || (state.pos[1].val() <= -worldSize*0.5f - positionFudge))
                 {
                     logDebugMessage(2,"Player %s [%d] y position %.2f is out of bounds (%.2f + %.2f)\n",
-                                    playerData->player.getCallSign(), t, state.pos[1], worldSize * 0.5f, positionFudge);
+                                    playerData->player.getCallSign(), t, state.pos[1].val(), worldSize * 0.5f, positionFudge);
                     InBounds = false;
                 }
-                else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge))
+                else if ( (state.pos[0].val() >= worldSize*0.5f + positionFudge) || (state.pos[0].val() <= -worldSize*0.5f - positionFudge))
                 {
                     logDebugMessage(2,"Player %s [%d] x position %.2f is out of bounds (%.2f + %.2f)\n",
-                                    playerData->player.getCallSign(), t, state.pos[0], worldSize * 0.5f, positionFudge);
+                                    playerData->player.getCallSign(), t, state.pos[0].val(), worldSize * 0.5f, positionFudge);
                     InBounds = false;
                 }
             }
 
             static const float burrowFudge = 1.0f; /* linear distance */
-            if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge)
+            if (state.pos[2].val()<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge)
             {
                 logDebugMessage(2,"Player %s [%d] z depth %.2f is less than burrow depth (%.2f + %.2f)\n",
-                                playerData->player.getCallSign(), t, state.pos[2], BZDB.eval(StateDatabase::BZDB_BURROWDEPTH), burrowFudge);
+                                playerData->player.getCallSign(), t, state.pos[2].val(), BZDB.eval(StateDatabase::BZDB_BURROWDEPTH), burrowFudge);
                 InBounds = false;
             }
 
@@ -5367,7 +5371,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             {
                 logDebugMessage(1,"Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
                                 playerData->player.getCallSign(), t,
-                                state.pos[0], state.pos[1], state.pos[2]);
+                                state.pos[0].val(), state.pos[1].val(), state.pos[2].val());
                 sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
                 removePlayer(t, "Out of map bounds");
             }
@@ -5409,9 +5413,9 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                         else if (flag.flag.type == Flags::Agility)
                             maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
                         else if ((flag.flag.type == Flags::Burrow) &&
-                                 (playerData->lastState.pos[2] == state.pos[2]) &&
+                                 (playerData->lastState.pos[2].val() == state.pos[2].val()) &&
                                  (playerData->lastState.velocity[2] == state.velocity[2]) &&
-                                 (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
+                                 (state.pos[2].val() <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
                             // if we have burrow and are not actively burrowing
                             // You may have burrow and still be above ground. Must
                             // check z in ground!!
@@ -5424,7 +5428,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                     // but don't actually kick
                     // don't kick if the player is paused, because problems if have V
                     float smallTol = 0.001f;
-                    if ((fabs(playerData->lastState.pos[2]-state.pos[2]) > smallTol)
+                    if ((fabs(playerData->lastState.pos[2].val()-state.pos[2].val()) > smallTol)
                             ||  (fabs(playerData->lastState.velocity[2]-state.velocity[2])> smallTol)
                             ||  ((state.status & PlayerState::Alive) == 0)
                             ||  (playerData->player.isPaused()))
@@ -5810,7 +5814,8 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
         {
             if (FlagInfo::get(j)->player == p)
             {
-                dropPlayerFlag(playerData, playerData.lastState.pos);
+                const float tmp[3] = { playerData.lastState.pos[0].val(), playerData.lastState.pos[1].val(), playerData.lastState.pos[2].val()};
+                dropPlayerFlag(playerData, tmp);
                 // Should recheck if player is still available
                 if (!GameKeeper::Player::getPlayerByIndex(p))
                     return;
@@ -7903,7 +7908,8 @@ void playerStateToAPIState(bz_PlayerUpdateState &apiState, const PlayerState &pl
     apiState.phydrv = (playerState.status & PlayerState::OnDriver) ? playerState.phydrv : -1;
     apiState.rotation = playerState.azimuth;
     apiState.angVel = playerState.angVel;
-    memcpy(apiState.pos,playerState.pos,sizeof(float)*3);
+    const float tmp[3] = { playerState.pos[0].val(), playerState.pos[1].val(), playerState.pos[2].val()};
+    memcpy(apiState.pos,tmp,sizeof(float)*3);
     memcpy(apiState.velocity,playerState.velocity,sizeof(float)*3);
 }
 
@@ -7953,7 +7959,11 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
 
     playerState.azimuth = apiState.rotation;
     playerState.angVel = apiState.angVel;
-    memcpy(playerState.pos,apiState.pos,sizeof(float)*3);
+    float tmp[3];
+    memcpy(tmp,apiState.pos,sizeof(float)*3);
+    for (int i = 0; i < 3; i++)
+        playerState.pos[i] = tmp[i];
+    // memcpy(playerState.pos,apiState.pos,sizeof(float)*3);
     memcpy(playerState.velocity,apiState.velocity,sizeof(float)*3);
 }
 

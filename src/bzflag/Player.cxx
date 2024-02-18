@@ -12,6 +12,7 @@
 
 /* interface header */
 #include "Player.h"
+#include "stdio.h"
 
 // common interface headers
 #include "TankSceneNode.h"
@@ -253,9 +254,14 @@ void Player::forceReload(float time)
     jamTime += time;
 }
 
-void Player::move(const float* _pos, float _azimuth)
+void Player::move(const float* _pos, float _azimuth, const char* str)
 {
     // assumes _forward is normalized
+    printf("Moving\n");
+    printf("called by %s\n", str);
+    printf("x: %f\n", _pos[0]);
+    printf("y: %f\n", _pos[1]);
+    printf("z: %f\n", _pos[2]);
     state.pos[0] = _pos[0];
     state.pos[1] = _pos[1];
     state.pos[2] = _pos[2];
@@ -280,7 +286,6 @@ void Player::move(const float* _pos, float _azimuth)
             World::getWorld()->getProximity(tmp, BZDBCache::tankRadius);
     }
 }
-
 
 void Player::setVelocity(const float* _velocity)
 {

@@ -15,6 +15,7 @@
 
 // system headers
 #include <math.h>
+#include <stdio.h>
 
 // local implementation headers
 #include "common.h"
@@ -38,6 +39,10 @@ const float smallMaxAngVel = 0.001f * smallScale;
 PlayerState::PlayerState()
     : order(0), status(DeadStatus), azimuth(0.0f), angVel(0.0f)
 {
+    printf("TEST\n");
+    // pos[0] = SplitFloat(0.0f);
+    // pos[1] = SplitFloat(0.0f);
+    // pos[2] = SplitFloat(0.0f);
     pos[0] = pos[1] = pos[2] = 0.0f;
     velocity[0] = velocity[1] = velocity[2] = 0.0f;
     phydrv = -1;
@@ -78,11 +83,7 @@ void*   PlayerState::pack(void* buf, uint16_t& code)
 
         code = MsgPlayerUpdate;
 
-        float tmp[3];
-        for (int i=0; i<3; i++)
-        {
-            tmp[i] = pos[i].val();
-        }
+        const float tmp[3] = { pos[0].val(), pos[1].val(), pos[2].val()};
         buf = nboPackVector(buf, tmp);
         buf = nboPackVector(buf, velocity);
         buf = nboPackFloat(buf, azimuth);
@@ -160,8 +161,12 @@ const void* PlayerState::unpack(const void* buf, uint16_t code)
 
     if (code == MsgPlayerUpdate)
     {
+        printf("MsgPlayerUpdate\n");
         float tmp[3];
         buf = nboUnpackVector(buf, tmp);
+        printf("%f\n", tmp[0]);
+        printf("%f\n", tmp[1]);
+        printf("%f\n", tmp[2]);
         for (int i=0; i<3; i++)
         {
             pos[i] = tmp[i];
@@ -172,6 +177,7 @@ const void* PlayerState::unpack(const void* buf, uint16_t code)
     }
     else
     {
+        printf("NOT MsgPlayerUpdate\n");
         int16_t posShort[3], velShort[3], aziShort, angVelShort;
 
         buf = nboUnpackShort(buf, posShort[0]);
@@ -183,6 +189,9 @@ const void* PlayerState::unpack(const void* buf, uint16_t code)
         buf = nboUnpackShort(buf, aziShort);
         buf = nboUnpackShort(buf, angVelShort);
 
+        printf("%h\n", posShort[0]);
+        printf("%h\n", posShort[1]);
+        printf("%h\n", posShort[2]);
         for (int i=0; i<3; i++)
         {
             pos[i] = ((float)posShort[i] * smallMaxDist) / smallScale;

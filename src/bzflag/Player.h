@@ -72,8 +72,8 @@ class Player {
     FlagType *getFlag() const;
     long getOrder() const;
     short getStatus() const;
-    SplitFloat *getPosition();
-    const SplitFloat *getPosition() const;
+    ProtectedFloat *getPosition();
+    const ProtectedFloat *getPosition() const;
     float getAngle() const;
     const float *getForward() const;
     const float *getVelocity() const;
@@ -160,7 +160,8 @@ class Player {
     void doDeadReckoning();
 
     // called to update state according to incoming packets
-    void move(const float *pos, float azimuth);
+    // void move(const float *pos, float azimuth);
+    void move(const float *pos, float azimuth, const char* str = __builtin_FUNCTION());
     void setVelocity(const float *velocity);
     void setAngularVelocity(float);
     void setPhysicsDriver(int);
@@ -375,8 +376,8 @@ inline long Player::getOrder() const { return state.order; }
 
 inline short Player::getStatus() const { return state.status; }
 
-inline SplitFloat *Player::getPosition() { return state.pos; }
-inline const SplitFloat *Player::getPosition() const { return state.pos; }
+inline ProtectedFloat *Player::getPosition() { return state.pos; }
+inline const ProtectedFloat *Player::getPosition() const { return state.pos; }
 
 inline float Player::getAngle() const { return state.azimuth; }
 

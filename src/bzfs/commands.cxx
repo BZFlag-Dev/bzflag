@@ -1689,7 +1689,8 @@ bool FlagCommand::operator() (const char     *message,
                 if (currentFlag.flag.type->flagTeam != NoTeam)
                 {
                     // drop team flags
-                    dropFlag(currentFlag, gkPlayer->lastState.pos);
+                    const float tmp[3] = { gkPlayer->lastState.pos[0].val(), gkPlayer->lastState.pos[1].val(), gkPlayer->lastState.pos[2].val()};
+                    dropFlag(currentFlag, tmp);
                 }
                 else
                 {

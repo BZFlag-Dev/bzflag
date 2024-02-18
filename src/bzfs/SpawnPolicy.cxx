@@ -219,7 +219,8 @@ bool SpawnPolicy::isImminentlyDangerous() const
             continue;
         if (playerData->player.isAlive())
         {
-            float *enemyPos   = playerData->lastState.pos;
+            float tmp[3] = { playerData->lastState.pos[0].val(), playerData->lastState.pos[1].val(), playerData->lastState.pos[2].val()};
+            float *enemyPos   = tmp;
             float  enemyAngle = playerData->lastState.azimuth;
             if (playerData->player.getFlag() >= 0)
             {
@@ -278,7 +279,8 @@ float SpawnPolicy::enemyProximityCheck(float &enemyAngle) const
         if (playerData->player.isAlive()
                 && areFoes(playerData->player.getTeam(), team))
         {
-            float *enemyPos = playerData->lastState.pos;
+            float tmp[3] = { playerData->lastState.pos[0].val(), playerData->lastState.pos[1].val(), playerData->lastState.pos[2].val()};
+            float *enemyPos = tmp;
             if (fabs(enemyPos[2] - testPos[2]) < 1.0f)
             {
                 float x = enemyPos[0] - testPos[0];

@@ -11,7 +11,7 @@
 ///////////////////////////////////////////
 class ProtectedFloat {
   protected:
-    float unprotected_val;
+    float unprotected_val = 0.0f;
     virtual float deobfuscate() const { return unprotected_val; };
     virtual void obfuscate(float val) { unprotected_val = val; }
 

@@ -47,7 +47,7 @@ class PlayerState {
 
     long order;        // packet ordering
     short status;      // see PStatus enum
-    SplitFloat pos[3]; // position of tank
+    ProtectedFloat pos[3]; // position of tank
     float velocity[3]; // velocity of tank
     float azimuth;     // orientation of tank
     float angVel;      // angular velocity of tank
