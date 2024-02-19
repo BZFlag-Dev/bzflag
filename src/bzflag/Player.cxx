@@ -1442,7 +1442,9 @@ void Player::setDeadReckoning()
     inputStatus = state.status;
     inputAzimuth = state.azimuth;
     inputAngVel = state.angVel;
-    memcpy(inputPos, state.pos, sizeof(float[3]));
+
+    const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+    memcpy(inputPos, tmp, sizeof(float[3]));
     memcpy(inputVel, state.velocity, sizeof(float[3]));
     inputPhyDrv = state.phydrv;
 

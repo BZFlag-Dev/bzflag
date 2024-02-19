@@ -46,7 +46,8 @@ void Plan::execute(float &, float &)
 {
     float pos[3];
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    memcpy(pos, myTank->getPosition(), sizeof(pos));
+    const float tmp2[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    memcpy(pos, tmp2, sizeof(pos));
     if (pos[2] < 0.0f)
         pos[2] = 0.01f;
     float myAzimuth = myTank->getAngle();

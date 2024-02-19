@@ -2934,7 +2934,8 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
         if (!player)
             return false;
 
-        memcpy(pos,player->lastState.pos,sizeof(float)*3);
+        const float tmp[3] = { player->lastState.pos[0].val(), player->lastState.pos[1].val(), player->lastState.pos[2].val()};
+        memcpy(pos,tmp,sizeof(float)*3);
     }
     else
         memcpy(pos,pFlag->flag.position,sizeof(float)*3);

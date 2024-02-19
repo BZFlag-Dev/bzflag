@@ -73,7 +73,10 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], floa
         // update the current state
         lastUpdate.time = bz_getCurrentTime();
         // get where I am;
-        memcpy(lastUpdate.pos, _pos, sizeof(float) *3);
+        float tmp[3];
+        memcpy(tmp, _pos, sizeof(float) *3);
+        for (int i = 0; i < 3; i++)
+            lastUpdate.pos[i] = tmp[i];
         lastUpdate.rotVel = 0;
         lastUpdate.vec[0] = 0;
         lastUpdate.vec[1] = 0;
@@ -334,7 +337,8 @@ void bz_ServerSidePlayerHandler::getPosition ( float *p )
     if (!player || !p)
         return;
 
-    memcpy(p, player->lastState.pos, sizeof(float[3]));
+    const float tmp[3] = { player->lastState.pos[0].val(), player->lastState.pos[1].val(), player->lastState.pos[2].val()};
+    memcpy(p, tmp, sizeof(float[3]));
 }
 
 void bz_ServerSidePlayerHandler::getVelocity ( float *v )
