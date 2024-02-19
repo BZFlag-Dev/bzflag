@@ -39,6 +39,17 @@ class ProtectedFloat {
         ProtectedFloat p(val + add);
         return p;
     }
+    ProtectedFloat operator-(ProtectedFloat add) {
+        float val = deobfuscate();
+        float valadd = add.deobfuscate();
+        ProtectedFloat p(val - valadd);
+        return p;
+    }
+    ProtectedFloat operator-(float add) {
+        float val = deobfuscate();
+        ProtectedFloat p(val - add);
+        return p;
+    }
     ProtectedFloat &operator+=(float add) {
         obfuscateAdd(add);
         return *this;

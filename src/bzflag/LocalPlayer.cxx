@@ -253,7 +253,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
     const Location oldLocation = location;
     const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
     const float* oldPosition = tmp;
-    printf("T: old %f %f %f\n", oldPosition[0], oldPosition[1], oldPosition[2]);
+    // printf("T: old %f %f %f\n", oldPosition[0], oldPosition[1], oldPosition[2]);
     const float oldAzimuth = getAngle();
     const float oldAngVel = getAngularVelocity();
     const float* oldVelocity = getVelocity();
@@ -1127,7 +1127,7 @@ void            LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
     else if (flag == Flags::Thief)
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f))
+    else if ((flag == Flags::Burrow) && (getPosition()[2].val() < 0.0f))
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
     else if ((flag == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
         fracOfMaxSpeed = 0.0f;
@@ -1183,7 +1183,7 @@ void            LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
     // boost turn speed for other flags
     if (flag == Flags::QuickTurn)
         fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-    else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f))
+    else if ((flag == Flags::Burrow) && (getPosition()[2].val() < 0.0f))
         fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
 
     // apply handicap advantage to tank speed
@@ -1245,14 +1245,20 @@ bool            LocalPlayer::fireShot()
         return false;
 
     // prepare shot
+    LocalPlayer* myTank = LocalPlayer::getMyTank();
+    const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+    printf("SHOTTESTTSETT fired at %f %f %f\n", tmp[0], tmp[1], tmp[2]);
+    printf("SHOTTE fired at %f %f %f\n", state.pos[0].val(), state.pos[1].val(), state.pos[2].val());
     FiringInfo firingInfo(*this, i + getSalt());
     // FIXME team coloring of shot is never used; it was meant to be used
     // for rabbit mode to correctly calculate team kills when rabbit changes
     firingInfo.shot.team = getTeam();
+    printf("SHOTTTTTTTTT\n");
     if (firingInfo.flagType == Flags::ShockWave)
     {
         // move shot origin under tank and make it stationary
         const float tmp[3] = { getPosition()[0].val(), getPosition()[1].val(), getPosition()[2].val()};
+        printf("ShockWave fired at %f %f %f\n", tmp[0], tmp[1], tmp[2]);
         const float* pos = tmp;
         firingInfo.shot.pos[0] = pos[0];
         firingInfo.shot.pos[1] = pos[1];
@@ -1282,6 +1288,8 @@ bool            LocalPlayer::fireShot()
 
     // make shot and put it in the table
     shots[i] = new LocalShotPath(firingInfo);
+    const float* t = shots[i]->getPosition();
+    printf("SHOT fired at %f %f %f\n", t[0], t[1], t[2]);
 
     // Insert timestamp, useful for dead reckoning jitter fixing
     // TODO should maybe use getTick() instead? must double check
@@ -1427,7 +1435,7 @@ void            LocalPlayer::doJump()
     FlagType* flag = getFlag();
 
     // can't jump while burrowed
-    if (getPosition()[2] < 0.0f)
+    if (getPosition()[2].val() < 0.0f)
         return;
 
     if (flag == Flags::Wings)

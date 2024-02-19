@@ -28,9 +28,11 @@
 
 FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
 {
+    printf("SHOTTE2 fired at %f %f %f\n", tank.state.pos[0].val(), tank.state.pos[1].val(), tank.state.pos[2].val());
     shot.player = tank.getId();
     shot.id = uint16_t(id);
     tank.getMuzzle(shot.pos);
+    printf("SHOT2 fired at %f %f %f\n", shot.pos[0], shot.pos[1], shot.pos[2]);
     const float* dir = tank.getForward();
     const float* tankVel = tank.getVelocity();
     float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);

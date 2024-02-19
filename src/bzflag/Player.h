@@ -306,8 +306,9 @@ class Player {
     short localTks;    // local player team killed this many
 
     // highly dynamic data
+  public:
     PlayerState state;
-
+  private:
     // additional state
     bool autoPilot;
 

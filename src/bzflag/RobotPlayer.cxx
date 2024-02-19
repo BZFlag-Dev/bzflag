@@ -43,9 +43,9 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 // estimate a player's position at now+t, similar to dead reckoning
 void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const
 {
-    double hisx=targ->getPosition()[0];
-    double hisy=targ->getPosition()[1];
-    double hisz=targ->getPosition()[2];
+    double hisx=targ->getPosition()[0].val();
+    double hisy=targ->getPosition()[1].val();
+    double hisz=targ->getPosition()[2].val();
     double hisvx=targ->getVelocity()[0];
     double hisvy=targ->getVelocity()[1];
     double hisvz=targ->getVelocity()[2];
@@ -85,10 +85,10 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
 // 3. jump to 1., using projected position, loop until result is stable
 void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
 {
-    double myx = getPosition()[0];
-    double myy = getPosition()[1];
-    double hisx = targ->getPosition()[0];
-    double hisy = targ->getPosition()[1];
+    double myx = getPosition()[0].val();
+    double myy = getPosition()[1].val();
+    double hisx = targ->getPosition()[0].val();
+    double hisy = targ->getPosition()[1].val();
     double deltax = hisx - myx;
     double deltay = hisy - myy;
     double distance = hypotf(deltax,deltay) - BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - BZDBCache::tankRadius;
@@ -116,9 +116,9 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
     // projected pos in building -> use current pos
     if (World::getWorld()->inBuilding(projpos, 0.0f, BZDBCache::tankHeight))
     {
-        projpos[0] = targ->getPosition()[0];
-        projpos[1] = targ->getPosition()[1];
-        projpos[2] = targ->getPosition()[2];
+        projpos[0] = targ->getPosition()[0].val();
+        projpos[1] = targ->getPosition()[1].val();
+        projpos[2] = targ->getPosition()[2].val();
     }
 }
 
@@ -167,8 +167,8 @@ void            RobotPlayer::doUpdate(float dt)
         if (missby < 0.5f * BZDBCache::tankLength &&
                 p1[2] < shotRadius)
         {
-            float pos[3] = {getPosition()[0], getPosition()[1],
-                            getPosition()[2] +  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)
+            float pos[3] = {getPosition()[0].val(), getPosition()[1].val(),
+                            getPosition()[2].val() +  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)
                            };
             float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
             Ray tankRay(pos, dir);
@@ -186,9 +186,9 @@ void            RobotPlayer::doUpdate(float dt)
                         p = LocalPlayer::getMyTank();
                     if (!p || p->getId() == getId() || validTeamTarget(p) ||
                             !p->isAlive()) continue;
-                    float relpos[3] = {getPosition()[0] - p->getPosition()[0],
-                                       getPosition()[1] - p->getPosition()[1],
-                                       getPosition()[2] - p->getPosition()[2]
+                    float relpos[3] = {getPosition()[0].val() - p->getPosition()[0].val(),
+                                       getPosition()[1].val() - p->getPosition()[1].val(),
+                                       getPosition()[2].val() - p->getPosition()[2].val()
                                       };
                     Ray ray(relpos, dir);
                     float impact = rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);

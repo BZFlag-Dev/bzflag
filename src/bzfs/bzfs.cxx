@@ -3920,9 +3920,9 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
 
     if (checkCheat)   //cheat checking
     {
-        TeamColor base = whoseBase(playerData->lastState.pos[0],
-                                   playerData->lastState.pos[1],
-                                   playerData->lastState.pos[2]);
+        TeamColor base = whoseBase(playerData->lastState.pos[0].val(),
+                                   playerData->lastState.pos[1].val(),
+                                   playerData->lastState.pos[2].val());
         if ((teamIndex == playerData->player.getTeam() &&
                 base == playerData->player.getTeam()))
         {
@@ -3939,8 +3939,8 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
                             playerData->player.getCallSign(), playerIndex,
                             Team::getName(playerData->player.getTeam()),
                             Team::getName(teamIndex),
-                            playerData->lastState.pos[0], playerData->lastState.pos[1],
-                            playerData->lastState.pos[2]);
+                            playerData->lastState.pos[0].val(), playerData->lastState.pos[1].val(),
+                            playerData->lastState.pos[2].val());
             //char message[MessageLen];
             //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
             //sendMessage(ServerPlayer, playerIndex, message);
@@ -4160,7 +4160,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     else
     {
         //If shot is different height than player, can't be sure they didn't drop V in air
-        if (playerData->lastState.pos[2]
+        if (playerData->lastState.pos[2].val()
                 != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
             tankSpeed *= tankSpeedMult;
     }
@@ -4194,9 +4194,9 @@ static void shotFired(int playerIndex, void *buf, int len)
         if (firingInfo.flagType == Flags::Obesity)
             muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
         const PlayerState &last = playerData->lastState;
-        float dx = last.pos[0] - shot.pos[0];
-        float dy = last.pos[1] - shot.pos[1];
-        float dz = last.pos[2] + muzzleHeight - shot.pos[2];
+        float dx = last.pos[0].val() - shot.pos[0];
+        float dy = last.pos[1].val() - shot.pos[1];
+        float dz = last.pos[2].val() + muzzleHeight - shot.pos[2];
 
         // ignore z error for falling tanks
         if (last.status & PlayerState::Falling)
@@ -4208,7 +4208,7 @@ static void shotFired(int playerIndex, void *buf, int len)
             logDebugMessage(2,"Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
                             shooter.getCallSign(), playerIndex,
                             shot.pos[0], shot.pos[1], shot.pos[2],
-                            last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
+                            last.pos[0].val(), last.pos[1].val(), last.pos[2].val(), sqrt(delta));
             return;
         }
     }
@@ -4281,7 +4281,7 @@ static void shotFired(int playerIndex, void *buf, int len)
                     // also handle case where limit was set to 0
                     float lastPos [3];
                     for (int i = 0; i < 3; i ++)
-                        lastPos[i] = playerData->lastState.pos[i];
+                        lastPos[i] = playerData->lastState.pos[i].val();
                     fInfo.grabs = 0; // recycle this flag now
                     dropFlag(fInfo, lastPos);
                 }

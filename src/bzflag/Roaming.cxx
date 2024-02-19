@@ -17,6 +17,7 @@
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
 #include "Team.h"
+#include "stdio.h"
 
 /* local headers */
 #include "ScoreboardRenderer.h"
@@ -329,6 +330,7 @@ void Roaming::buildRoamingLabel(void)
 void Roaming::updatePosition(RoamingCamera* dc, float dt)
 {
     World* world = World::getWorld();
+    printf("camera pos: %f, %f, %f\n", camera.pos[0], camera.pos[1], camera.pos[2]);
 
     // are we tracking?
     bool tracking = false;

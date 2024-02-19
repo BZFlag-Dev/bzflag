@@ -2346,6 +2346,7 @@ static void     handleServerMessage(bool human, uint16_t code,
     case MsgAlive:
     {
         PlayerId id;
+        // LARS
         float pos[3], forward;
         msg = nboUnpackUByte(msg, id);
         msg = nboUnpackVector(msg, pos);
@@ -4845,7 +4846,7 @@ static void     checkEnvironment(RobotPlayer* tank)
                     tank->getDeathPhysicsDriver());
     }
     // if not dead yet, see if the robot dropped below the death level
-    else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel))
+    else if ((waterLevel > 0.0f) && (tank->getPosition()[2].val() <= waterLevel))
         gotBlowedUp(tank, WaterDeath, ServerPlayer);
 
     // if not dead yet, see if i got run over by the steamroller
@@ -5124,7 +5125,7 @@ static void enteringServer(const void *buf)
     updateFlag(Flags::Null);
     updateHighScores();
     hud->setHeading(myTank->getAngle());
-    hud->setAltitude(myTank->getPosition()[2]);
+    hud->setAltitude(myTank->getPosition()[2].val());
     hud->setTimeLeft((uint32_t)~0);
     fireButton = false;
     firstLife = true;
@@ -5941,12 +5942,12 @@ void drawFrame(const float dt)
     // get media object
     static BzfMedia* media = PlatformFactory::getMedia();
 
-    static const float    defaultPos[3] = { 0.0f, 0.0f, 0.0f };
+    static float    defaultPos[3] = { 0.0f, 0.0f, 0.0f };
     static const float    defaultDir[3] = { 1.0f, 0.0f, 0.0f };
     static int frameCount = 0;
     static float cumTime = 0.0f;
 
-    const float* myTankPos;
+    float* myTankPos;
     const float* myTankDir;
     float myTankAngle = 0.0f;
     GLfloat fov;
@@ -5978,11 +5979,20 @@ void drawFrame(const float dt)
             myTankDir = defaultDir;
             muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
             fov = BZDB.eval("defaultFOV");
+            eyePoint[0] = myTankPos[0];
+            eyePoint[1] = myTankPos[1];
+            eyePoint[2] = myTankPos[2] + muzzleHeight;
         }
         else
         {
-            const float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
-            myTankPos = tmp;
+            // float tmp[3] = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+            // for (int i = 0; i < 3; i++)
+            //     myTankPos[i] = tmp[i];
+            // myTankPos[0] = myTank->getPosition()[0].val();
+            // myTankPos[1] = myTank->getPosition()[1].val();
+            // myTankPos[2] = myTank->getPosition()[2].val();
+            // myTankPos = { myTank->getPosition()[0].val(), myTank->getPosition()[1].val(), myTank->getPosition()[2].val()};
+            // printf("camera pos3: %f, %f, %f\n", myTankPos[0], myTankPos[1], myTankPos[2]);
             myTankDir = myTank->getForward();
             myTankAngle = myTank->getAngle();
             muzzleHeight = myTank->getMuzzleHeight();
@@ -5993,13 +6003,16 @@ void drawFrame(const float dt)
                 fov = BZDB.eval("displayFOV");
             if (viewType == SceneRenderer::ThreeChannel)
                 fov *= 0.75f;
+            eyePoint[0] = myTank->getPosition()[0].val();
+            eyePoint[1] = myTank->getPosition()[1].val();
+            eyePoint[2] = myTank->getPosition()[2].val()+ muzzleHeight;
         }
         fov *= (float)(M_PI / 180.0);
 
         // set projection and view
-        eyePoint[0] = myTankPos[0];
-        eyePoint[1] = myTankPos[1];
-        eyePoint[2] = myTankPos[2] + muzzleHeight;
+        // eyePoint[0] = myTankPos[0];
+        // eyePoint[1] = myTankPos[1];
+        // eyePoint[2] = myTankPos[2] + muzzleHeight;
         targetPoint[0] = eyePoint[0] + myTankDir[0];
         targetPoint[1] = eyePoint[1] + myTankDir[1];
         targetPoint[2] = eyePoint[2] + myTankDir[2];
@@ -6009,6 +6022,7 @@ void drawFrame(const float dt)
             hud->setAltitude(-1.0f);
             float roamViewAngle;
             const Roaming::RoamingCamera* roam = ROAM.getCamera();
+
             if (!(ROAM.getMode() == Roaming::roamViewFree) &&
                     (ROAM.getTargetTank() || (devDriving && myTank)))
             {
@@ -6024,9 +6038,9 @@ void drawFrame(const float dt)
                     eyePoint[0] = roam->pos[0];
                     eyePoint[1] = roam->pos[1];
                     eyePoint[2] = roam->pos[2];
-                    targetPoint[0] = target->getPosition()[0];
-                    targetPoint[1] = target->getPosition()[1];
-                    targetPoint[2] = target->getPosition()[2] +
+                    targetPoint[0] = target->getPosition()[0].val();
+                    targetPoint[1] = target->getPosition()[1].val();
+                    targetPoint[2] = target->getPosition()[2].val() +
                                      target->getMuzzleHeight();
                 }
                 // camera following target
@@ -6037,12 +6051,12 @@ void drawFrame(const float dt)
                         const bool slowKB = BZDB.isTrue("slowKeyboard");
                         if (slowKB == (BZDB.eval("roamSmoothTime") < 0.0f))
                         {
-                            eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-                            eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-                            eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-                            targetPoint[0] = target->getPosition()[0];
-                            targetPoint[1] = target->getPosition()[1];
-                            targetPoint[2] = target->getPosition()[2];
+                            eyePoint[0] = target->getPosition()[0].val() - targetTankDir[0] * 40;
+                            eyePoint[1] = target->getPosition()[1].val() - targetTankDir[1] * 40;
+                            eyePoint[2] = target->getPosition()[2].val() + muzzleHeight * 6;
+                            targetPoint[0] = target->getPosition()[0].val();
+                            targetPoint[1] = target->getPosition()[1].val();
+                            targetPoint[2] = target->getPosition()[2].val();
                         }
                         else
                         {
@@ -6050,9 +6064,9 @@ void drawFrame(const float dt)
                             eyePoint[0] = roam->pos[0];
                             eyePoint[1] = roam->pos[1];
                             eyePoint[2] = roam->pos[2];
-                            targetPoint[0] = target->getPosition()[0];
-                            targetPoint[1] = target->getPosition()[1];
-                            targetPoint[2] = target->getPosition()[2] +
+                            targetPoint[0] = target->getPosition()[0].val();
+                            targetPoint[1] = target->getPosition()[1].val();
+                            targetPoint[2] = target->getPosition()[2].val() +
                                              target->getMuzzleHeight();
                             if (BZDB.isSet("followOffsetZ"))
                                 targetPoint[2] += BZDB.eval("followOffsetZ");
@@ -6064,13 +6078,13 @@ void drawFrame(const float dt)
                 {
                     if (!trackPlayerShot(target, eyePoint, targetPoint))
                     {
-                        eyePoint[0] = target->getPosition()[0];
-                        eyePoint[1] = target->getPosition()[1];
-                        eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
+                        eyePoint[0] = target->getPosition()[0].val();
+                        eyePoint[1] = target->getPosition()[1].val();
+                        eyePoint[2] = target->getPosition()[2].val() + target->getMuzzleHeight();
                         targetPoint[0] = eyePoint[0] + targetTankDir[0];
                         targetPoint[1] = eyePoint[1] + targetTankDir[1];
                         targetPoint[2] = eyePoint[2] + targetTankDir[2];
-                        hud->setAltitude(target->getPosition()[2]);
+                        hud->setAltitude(target->getPosition()[2].val());
                     }
                 }
                 // track team flag
@@ -6277,7 +6291,7 @@ void drawFrame(const float dt)
         if (ROAM.isRoaming() && myTank && !devDriving)
         {
             if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank())
-                myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
+                myTank->setZpos(ROAM.getTargetTank()->getPosition()[2].val());
             else
                 myTank->setZpos(ROAM.getCamera()->pos[2]);
         }

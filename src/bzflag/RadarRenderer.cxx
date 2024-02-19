@@ -414,7 +414,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     float maxRange = radarLimit;
     // when burrowed, limit radar range
     if (myTank && (myTank->getFlag() == Flags::Burrow) &&
-            (myTank->getPosition()[2] < 0.0f))
+            (myTank->getPosition()[2].val() < 0.0f))
         maxRange = radarLimit / 4.0f;
     if (radarRange > maxRange)
     {
@@ -800,7 +800,7 @@ float RadarRenderer::colorScale(const float z, const float h)
         const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
         // Scale color so that objects that are close to tank's level are opaque
-        const float zTank = myTank->getPosition()[2];
+        const float zTank = myTank->getPosition()[2].val();
 
         if (zTank > (z + h))
             scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
@@ -826,7 +826,7 @@ float RadarRenderer::transScale(const float z, const float h)
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
     // Scale color so that objects that are close to tank's level are opaque
-    const float zTank = myTank->getPosition()[2];
+    const float zTank = myTank->getPosition()[2].val();
     if (zTank > (z + h))
         scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
     else if (zTank < z)

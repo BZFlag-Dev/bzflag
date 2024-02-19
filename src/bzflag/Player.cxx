@@ -235,10 +235,10 @@ void Player::getMuzzle(float* m) const
         front = front + (dimensionsRate[0] * 0.1f);
     front = front + 0.1f;
 
-    m[0] = state.pos[0] + (front * forward[0]);
-    m[1] = state.pos[1] + (front * forward[1]);
+    m[0] = state.pos[0].val() + (front * forward[0]);
+    m[1] = state.pos[1].val() + (front * forward[1]);
     const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-    m[2] = state.pos[2] + (height * dimensionsScale[2]);
+    m[2] = state.pos[2].val() + (height * dimensionsScale[2]);
     return;
 }
 
@@ -257,11 +257,11 @@ void Player::forceReload(float time)
 void Player::move(const float* _pos, float _azimuth, const char* str)
 {
     // assumes _forward is normalized
-    printf("Moving\n");
-    printf("called by %s\n", str);
-    printf("x: %f\n", _pos[0]);
-    printf("y: %f\n", _pos[1]);
-    printf("z: %f\n", _pos[2]);
+    // printf("Moving\n");
+    // printf("called by %s\n", str);
+    // printf("x: %f\n", _pos[0]);
+    // printf("y: %f\n", _pos[1]);
+    // printf("z: %f\n", _pos[2]);
     state.pos[0] = _pos[0];
     state.pos[1] = _pos[1];
     state.pos[2] = _pos[2];
@@ -367,8 +367,8 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
         // adjust for driver angular velocity
         if (av != 0.0f)
         {
-            const float dx = state.pos[0] - ap[0];
-            const float dy = state.pos[1] - ap[1];
+            const float dx = state.pos[0].val() - ap[0];
+            const float dy = state.pos[1].val() - ap[1];
             vel[0] += av * dy;
             vel[1] -= av * dx;
             angVel = state.angVel - av;
@@ -474,7 +474,7 @@ void Player::updateTrackMarks()
         {
             bool drawMark = true;
             float markPos[3];
-            markPos[2] = state.pos[2];
+            markPos[2] = state.pos[2].val();
             // FIXME - again, this should be pulled for TankGeometryMgr
             const float fullLength = 6.0f;
             const float treadHeight = 1.2f;
@@ -484,14 +484,14 @@ void Player::updateTrackMarks()
             if (relativeSpeed > +minSpeed)
             {
                 // draw the mark at the back of the treads
-                markPos[0] = state.pos[0] - (forward[0] * dist);
-                markPos[1] = state.pos[1] - (forward[1] * dist);
+                markPos[0] = state.pos[0].val() - (forward[0] * dist);
+                markPos[1] = state.pos[1].val() - (forward[1] * dist);
             }
             else if (relativeSpeed < -minSpeed)
             {
                 // draw the mark at the front of the treads
-                markPos[0] = state.pos[0] + (forward[0] * dist);
-                markPos[1] = state.pos[1] + (forward[1] * dist);
+                markPos[0] = state.pos[0].val() + (forward[0] * dist);
+                markPos[1] = state.pos[1].val() + (forward[1] * dist);
             }
             else
                 drawMark = false;
@@ -1422,9 +1422,9 @@ void Player::setDeadReckoning(float timestamp)
     inputTimestamp = timestamp;
     if (dt > 0.0f && dt < MaxUpdateTime * 1.5f)
     {
-        apparentVelocity[0] = (inputPos[0] - state.pos[0]) / dt;
-        apparentVelocity[1] = (inputPos[1] - state.pos[1]) / dt;
-        apparentVelocity[2] = (inputPos[2] - state.pos[2]) / dt;
+        apparentVelocity[0] = (inputPos[0] - state.pos[0].val()) / dt;
+        apparentVelocity[1] = (inputPos[1] - state.pos[1].val()) / dt;
+        apparentVelocity[2] = (inputPos[2] - state.pos[2].val()) / dt;
     }
 
     // set the current state
