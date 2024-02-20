@@ -16,7 +16,7 @@ build argument:
   docker build . -t bzflag-server:latest --build-arg plugins="UselessMine,mapchange"
 
 It is also possible to supply custom arguments to the configure script:
-  docker build . -t bzflag-server:latest --build-arg configure="--enable-debug --enable-custom-plugins-file=plugins.txt"
+  docker build . -t bzflag-server:latest --build-arg configure="--enable-custom-plugins-file=plugins.txt"
 
 
 Running a self-built image
@@ -28,6 +28,17 @@ as /srv/bzfs/5154. The configuration file is at /srv/bzfs/5154/config.
 Start a server that automatically starts when the system boots up (and restarts if bzfs exits or crashes):
   docker run -d --restart unless-stopped -p 0.0.0.0:5154:5154/tcp -p 0.0.0.0:5154:5154/udp -v /srv/bzfs/5154:/data \
     --name bzfs5154 bzflag-server:latest -conf config
+
+Note that podman does not automatically start containers when the host system reboots. You must externally manage them
+with some other method, such as a systemd unit. Podman supports the generation of unit files. Build and run the
+container first. Then you need to use loginctl to enable linger so that the user unit can start without requiring you to
+first log in to the user. Then you use podman to generate a systemd unit and enable it.
+  sudo loginctl enable-linger UsernameHere
+  mkdir -p ~/.config/systemd/user/
+  podman generate systemd --new --name bzfs5154 > ~/.config/systemd/user/bzfs5154.service
+  podman stop bzfs5154 && podman rm bzfs5154
+  systemctl --user daemon-reload
+  systemctl --user enable bzfs5154.service --now
 
 List running and stopped containers:
   docker ps -a
