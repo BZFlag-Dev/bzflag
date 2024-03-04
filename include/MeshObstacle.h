@@ -105,7 +105,6 @@ public:
     int getFaceCount() const;
     MeshFace* getFace(int face) const;
     const float* getPosition() const;
-    const float* getSize() const;
     bool useSmoothBounce() const;
     bool noClusters() const;
 
@@ -208,11 +207,6 @@ inline MeshFace* MeshObstacle::getFace(int face) const
 inline const float* MeshObstacle::getPosition() const
 {
     return pos;
-}
-
-inline const float* MeshObstacle::getSize() const
-{
-    return size;
 }
 
 inline bool MeshObstacle::useSmoothBounce() const
