@@ -71,7 +71,7 @@ public:
 
     std::string userTextures[2];
 
-private:
+protected:
     void finalize();
 
 private:
