@@ -128,12 +128,7 @@ public:
     ScoreboardRenderer *getScoreboard();
 
 protected:
-    void      hudColor3f(GLfloat, GLfloat, GLfloat);
-    void      hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-    void      hudColor3fv(const GLfloat*);
-    void      hudColor4fv(const GLfloat*);
     void      hudColor3Afv(const float*, const float);
-    void      hudSColor3fv(const GLfloat*);
     void      renderAlerts(void);
     void      renderStatus(void);
     void      renderCracks();
