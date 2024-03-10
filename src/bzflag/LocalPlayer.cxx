@@ -182,7 +182,6 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
     const float scale = (dt / slideTime);
     const float speedAdj = desiredSpeed * scale;
     const float* ov = oldVelocity;
-    const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
     float* nv = newVelocity;
     nv[0] = ov[0] + (cos_val * speedAdj);
     nv[1] = ov[1] + (sin_val * speedAdj);
@@ -193,9 +192,10 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
     if (newSpeed > maxSpeed)
     {
         float adjSpeed;
+        const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
         if (oldSpeed > maxSpeed)
         {
-            adjSpeed = oldSpeed - (dt * (maxSpeed / slideTime));
+            adjSpeed = oldSpeed - maxSpeed * scale;
             if (adjSpeed < 0.0f)
                 adjSpeed = 0.0f;
         }
