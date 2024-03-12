@@ -1285,21 +1285,6 @@ bool LocalPlayer::fireShot()
         {
             // the server is going to drop it for us now....
         }
-        else
-        {
-            if (flagLimit % 5 == 0 || flagLimit <= 3)
-            {
-                std::string limitMessage;
-                if (flagLimit > 1)
-                    limitMessage = TextUtils::format("%d shots left", flagLimit);
-                else if (flagLimit == 1)
-                    limitMessage = "1 shot left";
-                else
-                    limitMessage = "The flag is empty and can not be fired anymore";
-
-                addMessage(nullptr, limitMessage, 0);
-            }
-        }
     }
 
     if (gettingSound)

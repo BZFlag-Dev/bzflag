@@ -274,6 +274,10 @@ private:
     unsigned int      lastTimeChange;
     int           triangleCount;
     int           radarTriangleCount;
+
+    bool        flagLimitShown = false;
+    bool        flagLimitInfo = false;
+    TimeKeeper  flagLimitStartTime;
 };
 
 
