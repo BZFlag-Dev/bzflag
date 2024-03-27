@@ -2902,11 +2902,13 @@ static void     handleServerMessage(bool human, uint16_t code,
         msg = firingInfo.unpack(msg);
 
         const int shooterid = firingInfo.shot.player;
-        RemotePlayer* shooter = remotePlayers[shooterid];
+        RemotePlayer* shooter = shooterid < maxRemotePlayers
+                                ? remotePlayers[shooterid]
+                                : NULL;
 
         if (shooterid != ServerPlayer)
         {
-            if (shooter && remotePlayers[shooterid]->getId() == shooterid)
+            if (shooter && shooter->getId() == shooterid)
             {
                 shooter->addShot(firingInfo);
 

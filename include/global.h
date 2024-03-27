@@ -34,6 +34,11 @@ const int       TokenLen = 22;      // opaque string (now int(10)) and terminati
 const int       VersionLen = 60;    // including terminating NUL
 const int       MessageLen = 128;   // including terminating NUL
 
+// world->maxPlayers do not work as bzfs uses more player slot than
+// real players. Any tcp connection is assigned a slot.
+// So I put now 216. We should fix it though.
+const int       maxRemotePlayers = 216;
+
 // types of things we can be
 enum PlayerType
 {

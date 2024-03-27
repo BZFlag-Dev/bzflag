@@ -247,14 +247,9 @@ void WorldBuilder::preGetWorld()
     // prepare players array
     if (world->players)
         delete[] world->players;
-    // FIXME
-    // world->maxPlayers do not work as bzfs uses more player slot than
-    // real players. Any tcp connection is assigned a slot.
-    // So I put now 216. We should fix it though.
-    const int maxPlayers = 216;
-    world->players = new RemotePlayer*[maxPlayers];
+    world->players = new RemotePlayer*[maxRemotePlayers];
     int i;
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < maxRemotePlayers; i++)
         world->players[i] = NULL;
 
     // prepare flags array
