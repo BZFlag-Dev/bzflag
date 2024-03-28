@@ -177,6 +177,9 @@ MeshSceneNode::~MeshSceneNode()
     }
     delete[] lods;
 
+    delete [] lodLengths;
+    delete [] radarLengths;
+
     OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
 
     return;

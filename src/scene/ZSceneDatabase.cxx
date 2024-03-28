@@ -215,7 +215,7 @@ void ZSceneDatabase::makeCuller()
     logDebugMessage(2,"SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
     if (culledList != staticList)
-        delete culledList;
+        delete [] culledList;
 
     // make scratch pad for the culler
     culledList = new SceneNode*[staticCount];
