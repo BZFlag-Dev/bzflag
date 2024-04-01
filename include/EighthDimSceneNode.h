@@ -26,8 +26,8 @@ public:
     ~EighthDimSceneNode();
 
     bool        cull(const ViewFrustum&) const;
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
 protected:
     EighthDimSceneNode(int numPolys);
