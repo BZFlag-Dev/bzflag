@@ -41,10 +41,7 @@ protected:
                         const OpenGLGState* gstate);
         ~ShellRenderNode();
         void render() override;
-        void renderShadow() override
-        {
-            return;
-        }
+        void renderShadow() override;
         const GLfloat* getPosition() const override;
     public:
         const OpenGLGState* getGState() const;

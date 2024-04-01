@@ -28,8 +28,8 @@ public:
                         const float size[3], float rotation);
     ~EighthDPyrSceneNode();
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
 protected:
     class EighthDPyrRenderNode : public RenderNode

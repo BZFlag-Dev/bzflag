@@ -164,6 +164,10 @@ void EighthDimShellNode::ShellRenderNode::render()
     return;
 }
 
+void EighthDimShellNode::ShellRenderNode::renderShadow()
+{
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

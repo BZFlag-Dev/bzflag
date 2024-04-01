@@ -53,8 +53,8 @@ public:
     void move(const GLfloat pos[3], const GLfloat forward[3]);
     void        addLight(SceneRenderer&);
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
 protected:
     bool        isSuper;

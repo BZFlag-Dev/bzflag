@@ -64,8 +64,8 @@ public:
 
     void        move(const GLfloat plane[4]);
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
     // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
     // following declaration isn't public it generates an error when trying
     // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in

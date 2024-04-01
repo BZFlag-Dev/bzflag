@@ -28,8 +28,8 @@ public:
                         const float size[3], float rotation);
     ~EighthDBoxSceneNode();
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
 protected:
     class EighthDBoxRenderNode : public RenderNode
