@@ -236,23 +236,8 @@ void kill()
 
 void clearCustomFlags()
 {
-    FlagSet::iterator itr, nitr;
-    for (int q = 0; q < (int)NumQualities; ++q)
-    {
-        for (itr = FlagType::flagSets[q].begin(); itr != FlagType::flagSets[q].end(); ++itr)
-        {
-            if ((*itr)->custom)
-            {
-                FlagType::getFlagMap().erase((*itr)->flagAbbv);
-                nitr = itr;
-                ++nitr;
-                delete (*itr);
-                FlagType::flagSets[q].erase(itr);
-                itr = nitr;
-                if (itr == FlagType::flagSets[q].end()) break;
-            }
-        }
-    }
+    for (auto flag : FlagType::customFlags)
+        delete flag;
     FlagType::customFlags.clear();
 }
 }
@@ -292,8 +277,7 @@ void* FlagType::packCustom(void* buf) const
 
 const void* FlagType::unpackCustom(const void* buf, FlagType* &type)
 {
-    uint8_t *abbv = new uint8_t[3];
-    abbv[0]=abbv[1]=abbv[2]=0;
+    unsigned char abbv[3] = {0, 0, 0};
     buf = nboUnpackUByte(buf, abbv[0]);
     buf = nboUnpackUByte(buf, abbv[1]);
 
@@ -319,7 +303,7 @@ const void* FlagType::unpackCustom(const void* buf, FlagType* &type)
         assert(false); // shouldn't happen
     }
 
-    type = new FlagType(sName, reinterpret_cast<const char*>(&abbv[0]),
+    type = new FlagType(sName, (const char *)abbv,
                         e, (ShotType)shot, (FlagQuality)quality, NoTeam, sHelp, true);
     return buf;
 }
