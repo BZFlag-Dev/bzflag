@@ -106,10 +106,10 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
         float rotation = it->rotation;
         float nx = x - pos[0];
         float ny = y - pos[1];
-        if (nx == 0.0f)
-            nx = 1.0f;
-        float rx = (float)(cosf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
-        float ry = (float)(sinf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
+        float an = atan2f(ny, nx) - rotation;
+        float di = hypotf(nx, ny);
+        float rx = cosf(an) * di;
+        float ry = sinf(an) * di;
 
 
         if (fabsf(rx) < _size[0] &&

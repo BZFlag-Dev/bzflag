@@ -189,8 +189,10 @@ TeamColor       World::whoseBase(const float* pos) const
         {
             float nx = pos[0] - it->p[0];
             float ny = pos[1] - it->p[1];
-            float rx = (float) (cosf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
-            float ry = (float) (sinf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
+            float an = atan2f(ny, nx) - it->p[3];
+            float di = hypotf(nx, ny);
+            float rx = cosf(an) * di;
+            float ry = sinf(an) * di;
             if (fabsf(rx) < it->p[4] &&
                     fabsf(ry) < it->p[5])
             {
