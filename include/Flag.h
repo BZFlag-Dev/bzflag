@@ -140,6 +140,8 @@ public:
         getFlagMap()[flagAbbv] = this;
     }
 
+    ~FlagType();
+
     /** returns a label of flag name and abbreviation with the flag name
      * excentuating the abbreviation if relevant.
      */

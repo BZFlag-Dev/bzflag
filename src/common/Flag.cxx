@@ -250,6 +250,11 @@ void clearCustomFlags()
 }
 }
 
+FlagType::~FlagType()
+{
+    getFlagMap().erase(flagAbbv);
+}
+
 void* FlagType::pack(void* buf) const
 {
     buf = nboPackUByte(buf, (flagAbbv.size() > 0) ? flagAbbv[0] : 0);
