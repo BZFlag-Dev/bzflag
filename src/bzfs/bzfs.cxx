@@ -192,9 +192,13 @@ public:
         addNetworkLogCallback(this);
     }
 
-    virtual ~BZFSNetLogCB()
+    void kill()
     {
         removeNetworkLogCallback(this);
+    }
+
+    virtual ~BZFSNetLogCB()
+    {
     }
 
     virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param )
@@ -7874,6 +7878,7 @@ int main(int argc, char **argv)
     Record::kill();
     Replay::kill();
     Flags::kill();
+    netLogCB.kill();
 
 #if defined(_WIN32)
     WSACleanup();
