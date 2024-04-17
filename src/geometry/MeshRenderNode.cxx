@@ -84,19 +84,6 @@ void OpaqueRenderNode::render()
 }
 
 
-void OpaqueRenderNode::renderRadar()
-{
-    glPushMatrix();
-    glMultMatrixf(xformMatrix);
-    drawMgr->executeSetGeometry(lod, set);
-    glPopMatrix();
-
-    addTriangleCount(triangles);
-
-    return;
-}
-
-
 void OpaqueRenderNode::renderShadow()
 {
     glPushMatrix();

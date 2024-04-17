@@ -32,7 +32,6 @@ public:
                      const GLfloat* color, int lod, int set,
                      const Extents* exts, int triangles);
     void render() override;
-    void renderRadar() override;
     void renderShadow() override;
     const GLfloat* getPosition() const override;
 private:
