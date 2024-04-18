@@ -77,8 +77,8 @@ private:
     float ripple2;
 
     GLuint glList;
-    GLfloat verts[(maxChunks + 1) * 2][3];
-    GLfloat txcds[(maxChunks + 1) * 2][2];
+    GLfloat verts[maxChunks * 2][3];
+    GLfloat txcds[maxChunks * 2][2];
 };
 
 
