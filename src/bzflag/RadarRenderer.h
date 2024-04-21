@@ -69,7 +69,7 @@ private:
                          bool useSquares);
     void        drawFancyTank(const class Player* player);
     void        drawFlag(const float pos[3]);
-    void        drawFlagOnTank(const float pos[3]);
+    void        drawFlagOnTank();
 
     static float    colorScale(const float z, const float h);
     static float    transScale(const float z, const float h);

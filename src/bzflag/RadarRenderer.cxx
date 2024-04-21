@@ -163,8 +163,6 @@ void RadarRenderer::setTankColor(const Player* player)
 
 void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useSquares)
 {
-    glPushMatrix();
-
     // 'ps' is pixel scale, setup in render()
     const float tankRadius = BZDBCache::tankRadius;
     float minSize = 1.5f + (ps * BZDBCache::radarTankPixels);
@@ -178,9 +176,6 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
 
     // NOTE: myTank was checked in render()
     const float myAngle = LocalPlayer::getMyTank()->getAngle();
-
-    // transform to the tanks location
-    glTranslatef(pos[0], pos[1], 0.0f);
 
     // draw the tank
     if (useSquares || !useTankDimensions)
@@ -224,8 +219,6 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     glVertex2f(0.0f, +size);
     glVertex2f(-size, 0.0f);
     glEnd();
-
-    glPopMatrix();
 }
 
 
@@ -278,13 +271,12 @@ void RadarRenderer::drawFlag(const float pos[3])
     glEnd();
 }
 
-void RadarRenderer::drawFlagOnTank(const float pos[3])
+void RadarRenderer::drawFlagOnTank()
 {
     glPushMatrix();
 
     // align it to the screen axes
     const float angle = LocalPlayer::getMyTank()->getAngle();
-    glTranslatef(pos[0], pos[1], 0.0f);
     glRotatef(float(angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
 
     float tankRadius = BZDBCache::tankRadius;
@@ -644,16 +636,23 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
             const float* position = player->getPosition();
 
+            glPushMatrix();
+
+            // transform to the tanks location
+            glTranslatef(position[0], position[1], 0.0f);
+
             if (player->getFlag() != Flags::Null)
             {
                 glColor3fv(player->getFlag()->getRadarColor());
-                drawFlagOnTank(position);
+                drawFlagOnTank();
             }
 
             if (!observer)
                 drawTank(position, player, true);
             else
                 drawTank(position, player, false);
+
+            glPopMatrix();
         }
 
         bool coloredShot = BZDB.isTrue("coloredradarshots");
@@ -753,17 +752,20 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         {
             // revert to the centered transformation
             glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-            glTranslatef(-myPos[0], -myPos[1], 0.0f);
+
+            glPushMatrix();
 
             // my flag
             if (myTank->getFlag() != Flags::Null)
             {
                 glColor3fv(myTank->getFlag()->getRadarColor());
-                drawFlagOnTank(myPos);
+                drawFlagOnTank();
             }
 
             // my tank
             drawTank(myPos, myTank, false);
+
+            glPopMatrix();
 
             // re-setup the blending function
             // (was changed by drawing jump jets)
