@@ -188,7 +188,7 @@ void ZSceneDatabase::setupCullList()
         else
         {
             if (culledList != staticList)
-                delete culledList;
+                delete [] culledList;
             culledList = staticList;
             culledCount = staticCount;
         }
