@@ -169,7 +169,6 @@ void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
     glPushMatrix();
     glScalef(scale, scale, 1);
 
-    glPushMatrix();
     int charToUse = 0;
     for (int i = 0; i < len; i++)
     {
@@ -191,7 +190,6 @@ void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
     glPopMatrix();
     if (color[0] >= 0)
         glColor4f(1, 1, 1, 1);
-    glPopMatrix();
 }
 
 // Local Variables: ***
