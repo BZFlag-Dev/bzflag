@@ -87,33 +87,36 @@ void TextureFont::preLoadLists()
         listIDs[i] = glGenLists(1);
         glNewList(listIDs[i], GL_COMPILE);
         {
-            glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
-
-            float fFontY = (float)(fontMetrics[i].endY - fontMetrics[i].startY);
-            float fFontX = (float)(fontMetrics[i].endX - fontMetrics[i].startX);
+            const float initiX = (float)fontMetrics[i].initialDist;
+            const float fFontY = (float)(fontMetrics[i].endY
+                                         - fontMetrics[i].startY);
+            const float fFontX = (float)(fontMetrics[i].endX
+                                         - fontMetrics[i].startX);
+            const float startX = (float)fontMetrics[i].startX
+                                 / (float)textureXSize;
+            const float endX   = (float)fontMetrics[i].endX
+                                 / (float)textureXSize;
+            const float startY = (float)fontMetrics[i].startY
+                                 / (float)textureYSize;
+            const float endY   = (float)fontMetrics[i].endY
+                                 / (float)textureYSize;
 
             glBegin(GL_TRIANGLE_STRIP);
             glNormal3f(0.0f, 0.0f, 1.0f);
-            glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-            glVertex3f(0.0f, fFontY, 0.0f);
+            glTexCoord2f(startX, 1.0f - startY);
+            glVertex3f(initiX, fFontY, 0.0f);
 
-            glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-            glVertex3f(0.0f, 0.0f, 0.0f);
+            glTexCoord2f(startX, 1.0f - endY);
+            glVertex3f(initiX, 0.0f, 0.0f);
 
-            glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-            glVertex3f(fFontX, fFontY, 0.0f);
+            glTexCoord2f(endX, 1.0f - startY);
+            glVertex3f(initiX + fFontX, fFontY, 0.0f);
 
-            glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-            glVertex3f(fFontX, 0.0f, 0.0f);
+            glTexCoord2f(endX, 1.0f - endY);
+            glVertex3f(initiX + fFontX, 0.0f, 0.0f);
             glEnd();
 
-            // this plus the initial 'initialDist' equal 'fullWidth'
-            float fFontPostX = (float)(fontMetrics[i].charWidth +
-                                       fontMetrics[i].whiteSpaceDist);
+            float fFontPostX = (float)(fontMetrics[i].fullWidth);
 
             glTranslatef(fFontPostX, 0.0f, 0.0f);
         }
