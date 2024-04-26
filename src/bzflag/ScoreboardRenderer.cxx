@@ -495,6 +495,12 @@ void ScoreboardRenderer::renderScoreboard(void)
             setHuntState (HUNT_NONE);
         else
         {
+            if (huntPosition < 0)
+            {
+                huntPosition = numPlayers - 1;
+                if (players[huntPosition] == myTank)
+                    --huntPosition;
+            }
             if (players[huntPosition] == myTank)
             {
                 if (huntPositionEvent < 0)
