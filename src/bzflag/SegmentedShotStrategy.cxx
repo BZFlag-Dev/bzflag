@@ -335,11 +335,23 @@ void  SegmentedShotStrategy::radarRender() const
     if (length > 0)
     {
         const float* vel = getPath().getVelocity();
-        const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
         float dir[3];
-        dir[0] = vel[0] * d * shotTailLength * length;
-        dir[1] = vel[1] * d * shotTailLength * length;
-        dir[2] = vel[2] * d * shotTailLength * length;
+        dir[0] = vel[0];
+        dir[1] = vel[1];
+        dir[2] = vel[2];
+        if (vel[0] || vel[1] || vel[2])
+        {
+            const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+            dir[0] *= d;
+            dir[1] *= d;
+            dir[2] *= d;
+        }
+        else
+            dir[2] = 1.0f;
+
+        dir[0] *= shotTailLength * length;
+        dir[1] *= shotTailLength * length;
+        dir[2] *= shotTailLength * length;
         glBegin(GL_LINES);
         glVertex2fv(orig);
         if (BZDBCache::leadingShotLine == 0)   //lagging
@@ -404,8 +416,11 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const float    *v = shotPath.getVelocity();
     TimeKeeper      startTime = shotPath.getStartTime();
     float timeLeft = shotPath.getLifetime();
-    float    minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
-                       / hypotf(v[0], hypotf(v[1], v[2]));
+    bool nullSpeed = !(v[0] || v[1] || v[2]);
+    float minTime  = nullSpeed
+                     ? 1.0f
+                     : BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
+                     / hypotf(v[0], hypotf(v[1], v[2]));
 
     // if all shots ricochet and obstacle effect is stop, then make it ricochet
     if (e == Stop && World::getWorld()->allShotsRicochet())
@@ -488,6 +503,8 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
             o[2] += t * d[2];
             reason = ShotPathSegment::Boundary;
         }
+        else if (nullSpeed)
+            reason = ShotPathSegment::Boundary;
         else if (teleporter)
         {
             // entered teleporter -- teleport it
