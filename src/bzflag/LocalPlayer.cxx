@@ -705,7 +705,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
         if (nominalPlanarSpeed2)
         {
             float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
-                + newVelocity[1] * newVelocity[1];
+                                    + newVelocity[1] * newVelocity[1];
             float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
             if (scaling > 1.0f)
             {
