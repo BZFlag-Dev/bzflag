@@ -237,8 +237,11 @@ void Obstacle::addInsideSceneNode(SceneNode* node)
 {
     insideNodeCount++;
     SceneNode** tmp = new SceneNode*[insideNodeCount];
-    memcpy(tmp, insideNodes, (insideNodeCount - 1) * sizeof(SceneNode*));
-    delete[] insideNodes;
+    if (insideNodes)
+    {
+        memcpy(tmp, insideNodes, (insideNodeCount - 1) * sizeof(SceneNode*));
+        delete[] insideNodes;
+    }
     insideNodes = tmp;
     insideNodes[insideNodeCount - 1] = node;
 }

@@ -585,11 +585,13 @@ StateDatabase::ExpressionToken::ExpressionToken()
 {
     tokenType = Number;
     tokenContents.number = 0;
+    tokenContents.oper = none;
 }
 
 StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
 {
     tokenType = _tokenType;
+    tokenContents.oper = none;
     switch (tokenType)
     {
     case Number:
@@ -598,7 +600,6 @@ StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
     case Variable:
         break;
     case Oper:
-        tokenContents.oper = none;
         break;
     }
 }
