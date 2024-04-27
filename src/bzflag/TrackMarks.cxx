@@ -735,6 +735,9 @@ static void drawPuddle(const TrackEntry& te)
 
 static void drawTreads(const TrackEntry& te)
 {
+    if (!TrackFadeTime)
+        return;
+
     const float ratio = (te.lifeTime / TrackFadeTime);
 
     glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);

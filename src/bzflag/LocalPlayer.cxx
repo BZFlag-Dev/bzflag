@@ -702,14 +702,17 @@ void            LocalPlayer::doUpdateMotion(float dt)
         newVelocity[1] = (newPos[1] - oldPosition[1]) * oodt;
         newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
 
-        float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
-                                + newVelocity[1] * newVelocity[1];
-        float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
-        if (scaling > 1.0f)
+        if (nominalPlanarSpeed2)
         {
-            scaling = sqrtf(scaling);
-            newVelocity[0] /= scaling;
-            newVelocity[1] /= scaling;
+            float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
+                + newVelocity[1] * newVelocity[1];
+            float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
+            if (scaling > 1.0f)
+            {
+                scaling = sqrtf(scaling);
+                newVelocity[0] /= scaling;
+                newVelocity[1] /= scaling;
+            }
         }
     }
 

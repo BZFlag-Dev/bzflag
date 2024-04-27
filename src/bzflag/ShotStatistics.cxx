@@ -54,9 +54,18 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
     playerNorm[0] = pVec[0]/playerMag;
     playerNorm[1] = pVec[1]/playerMag;
     playerNorm[2] = pVec[2]/playerMag;
-    shotNorm[0] = shotVec[0]/shotMag;
-    shotNorm[1] = shotVec[1]/shotMag;
-    shotNorm[2] = shotVec[2]/shotMag;
+    if (shotMag)
+    {
+        shotNorm[0] = shotVec[0]/shotMag;
+        shotNorm[1] = shotVec[1]/shotMag;
+        shotNorm[2] = shotVec[2]/shotMag;
+    }
+    else
+    {
+        shotNorm[0] = 1.0f;
+        shotNorm[1] = 0.0f;
+        shotNorm[2] = 0.0f;
+    }
 
     float dot = (shotNorm[0] * playerNorm[0]) + (shotNorm[1] * playerNorm[1]) + shotNorm[2] * playerNorm[2];
 
