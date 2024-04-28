@@ -105,7 +105,7 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     char percentText[5];
     for(i = 25; i <= 100; ++i)
     {
-        snprintf(percentText, 5, "%i%%", i);
+        snprintf(percentText, 5, "%hhi%%", i);
         options->push_back(percentText);
     }
     for (i = 0; i < (int)options->size(); i++)
@@ -123,7 +123,7 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     options = &option->getList();
     for(i = 0; i <= 20; ++i)
     {
-        snprintf(percentText, 5, "%i%%", i);
+        snprintf(percentText, 5, "%hhi%%", i);
         options->push_back(percentText);
     }
     for (i = 0; i < (int)options->size(); i++)
