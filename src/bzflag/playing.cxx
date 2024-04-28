@@ -3728,6 +3728,13 @@ static void     updateExplosions(float dt)
     }
 }
 
+static void dropLastExplosions()
+{
+    for (auto explosion : explosions)
+        delete explosion;
+    explosions.clear();
+}
+
 static void     addExplosions(SceneDatabase* scene)
 {
     const int count = explosions.size();
@@ -7486,6 +7493,8 @@ static void     playingLoop()
         doMessages();
 
     } // end main client loop
+
+    dropLastExplosions();
 }
 
 
