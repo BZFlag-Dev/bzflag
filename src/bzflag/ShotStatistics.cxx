@@ -12,8 +12,11 @@
 
 // Interface header
 #include "ShotStatistics.h"
+
+// Common headers
 #include "TimeKeeper.h"
 #include "playing.h"
+#include "mathRoutine.h"
 
 ShotStatistics::ShotStatistics() :
     totalFired(0), totalHit(0)
@@ -49,23 +52,16 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
     float playerMag,shotMag;
 
     playerMag = sqrt((pVec[0]*pVec[0])+(pVec[1]*pVec[1])+pVec[2]*pVec[2]);
-    shotMag = sqrt((shotVec[0]*shotVec[0])+(shotVec[1]*shotVec[1])+shotVec[2]*shotVec[2]);
+    shotMag = bzInverseSqrt(shotVec[0] * shotVec[0] +
+                            shotVec[1] * shotVec[1] +
+                            shotVec[2] * shotVec[2]);
 
     playerNorm[0] = pVec[0]/playerMag;
     playerNorm[1] = pVec[1]/playerMag;
     playerNorm[2] = pVec[2]/playerMag;
-    if (shotMag)
-    {
-        shotNorm[0] = shotVec[0]/shotMag;
-        shotNorm[1] = shotVec[1]/shotMag;
-        shotNorm[2] = shotVec[2]/shotMag;
-    }
-    else
-    {
-        shotNorm[0] = 1.0f;
-        shotNorm[1] = 0.0f;
-        shotNorm[2] = 0.0f;
-    }
+    shotNorm[0]   = shotVec[0] * shotMag;
+    shotNorm[1]   = shotVec[1] * shotMag;
+    shotNorm[2]   = shotVec[2] * shotMag;
 
     float dot = (shotNorm[0] * playerNorm[0]) + (shotNorm[1] * playerNorm[1]) + shotNorm[2] * playerNorm[2];
 

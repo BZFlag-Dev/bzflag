@@ -42,6 +42,7 @@ libCommon_la_SOURCES  =			\
 	bzsignal.cxx			\
 	cURLManager.cxx			\
 	global.cxx			\
+	mathRoutine.cxx			\
 	md5.cxx				\
 	messages.cxx
 

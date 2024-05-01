@@ -140,6 +140,7 @@ noinst_HEADERS =			\
 	common.h			\
 	cURLManager.h			\
 	global.h			\
+	mathRoutine.h			\
 	md5.h				\
 	messages.h			\
 	multicast.h			\
