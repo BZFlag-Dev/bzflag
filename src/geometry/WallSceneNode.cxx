@@ -75,10 +75,14 @@ void            WallSceneNode::setNumLODs(int num, float* areas)
 
 void            WallSceneNode::setPlane(const GLfloat _plane[4])
 {
-    // get normalization factor
-    const float n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
-                                 (_plane[1] * _plane[1]) +
-                                 (_plane[2] * _plane[2]));
+    float n = 1.0f;
+    if (_plane[0] || _plane[1] || _plane[2])
+    {
+        // get normalization factor
+        n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
+                         (_plane[1] * _plane[1]) +
+                         (_plane[2] * _plane[2]));
+    }
 
     // store normalized plane equation
     plane[0] = n * _plane[0];
