@@ -5482,6 +5482,7 @@ static void joinInternetGame()
     numRobots = 0;
 #endif
 
+    delete serverLink;
     serverLink = _serverLink;
 
     // assume everything's okay for now
