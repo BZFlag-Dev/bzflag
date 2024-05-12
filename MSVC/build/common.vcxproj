@@ -375,6 +375,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="..\..\src\common\Language.cxx" />
+    <ClCompile Include="..\..\src\common\mathRoutine.cxx" />
     <ClCompile Include="..\..\src\common\md5.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -526,6 +527,7 @@
     <ClInclude Include="..\..\include\CallbackList.h" />
     <ClInclude Include="..\..\include\CommandManager.h" />
     <ClInclude Include="..\..\include\common.h" />
+    <ClInclude Include="..\..\include\mathRoutine.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="..\..\include\ConfigFileManager.h" />
     <ClInclude Include="..\..\include\Country.h" />
