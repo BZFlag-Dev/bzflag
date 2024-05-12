@@ -4095,21 +4095,21 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
 
     float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-    FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
+    auto fInfo = FlagInfo::get(shooter.getFlag());
     // verify player flag
     if ((firingInfo.flagType != Flags::Null)
-            && (firingInfo.flagType != fInfo.flag.type))
+            && (firingInfo.flagType != fInfo->flag.type))
     {
         std::string fireFlag = "unknown";
         std::string holdFlag = "unknown";
         if (firingInfo.flagType)
             fireFlag = firingInfo.flagType->flagAbbv;
-        if (fInfo.flag.type)
+        if (fInfo->flag.type)
         {
-            if (fInfo.flag.type == Flags::Null)
+            if (fInfo->flag.type == Flags::Null)
                 holdFlag = "none";
             else
-                holdFlag = fInfo.flag.type->flagAbbv;
+                holdFlag = fInfo->flag.type->flagAbbv;
         }
 
         // probably a cheater using wrong shots.. exception for thief since they steal someone elses
@@ -4127,7 +4127,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
 
     if (shooter.haveFlag())
-        firingInfo.flagType = fInfo.flag.type;
+        firingInfo.flagType = fInfo->flag.type;
     else
         firingInfo.flagType = Flags::Null;
 
@@ -4255,12 +4255,12 @@ static void shotFired(int playerIndex, void *buf, int len)
     if (shooter.haveFlag())
     {
 
-        fInfo.numShots++; // increase the # shots fired
+        fInfo->numShots++; // increase the # shots fired
 
-        int limit = clOptions->flagLimit[fInfo.flag.type];
+        int limit = clOptions->flagLimit[fInfo->flag.type];
         if (limit != -1)   // if there is a limit for players flag
         {
-            int shotsLeft = limit -  fInfo.numShots;
+            int shotsLeft = limit -  fInfo->numShots;
             if (shotsLeft > 0)   //still have some shots left
             {
                 // give message each shot below 5, each 5th shot & at start
@@ -4282,8 +4282,8 @@ static void shotFired(int playerIndex, void *buf, int len)
                     float lastPos [3];
                     for (int i = 0; i < 3; i ++)
                         lastPos[i] = playerData->lastState.pos[i];
-                    fInfo.grabs = 0; // recycle this flag now
-                    dropFlag(fInfo, lastPos);
+                    fInfo->grabs = 0; // recycle this flag now
+                    dropFlag(*fInfo, lastPos);
                 }
                 else     // more shots fired than allowed
                 {
