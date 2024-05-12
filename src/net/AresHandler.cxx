@@ -137,7 +137,7 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
     }
     else if (status == HbAPending)
     {
-        hostName = strdup(hostent->h_name);
+        hostName = hostent->h_name;
         status = HbASucceeded;
         logDebugMessage(2,"Player [%d] resolved to %s\n", index, hostName.c_str());
     }
