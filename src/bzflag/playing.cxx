@@ -52,7 +52,7 @@
 #include "PhysicsDriver.h"
 #include "PlatformFactory.h"
 #include "QuadWallSceneNode.h"
-#include "ServerList.h"
+#include "ServerAuth.h"
 #include "SphereSceneNode.h"
 #include "TankGeometryMgr.h"
 #include "Team.h"
@@ -7010,26 +7010,28 @@ static void     playingLoop()
             // if already connected to a game then first sign off
             if (myTank) leaveGame();
 
-            // get token if we need to (have a password but no token)
-            if ((startupInfo.token[0] == '\0')
-                    && (startupInfo.password[0] != '\0'))
+            // Erase any existing token
+            startupInfo.token[0] = '\0';
+
+            // get token if we have a password
+            if (startupInfo.password[0] != '\0')
             {
-                ServerList* serverList = new ServerList;
-                serverList->startServerPings(&startupInfo);
+                ServerAuth* serverAuth = new ServerAuth;
+                serverAuth->requestToken(&startupInfo);
                 // wait no more than 10 seconds for a token
                 for (int j = 0; j < 40; j++)
                 {
-                    serverList->checkEchos(getStartupInfo());
                     cURLManager::perform();
                     if (startupInfo.token[0] != '\0') break;
                     TimeKeeper::sleep(0.25f);
                 }
-                delete serverList;
+                delete serverAuth;
+
+                // don't let the bad token specifier slip through to the server,
+                // just erase it
+                if (strcmp(startupInfo.token, "badtoken") == 0)
+                    startupInfo.token[0] = '\0';
             }
-            // don't let the bad token specifier slip through to the server,
-            // just erase it
-            if (strcmp(startupInfo.token, "badtoken") == 0)
-                startupInfo.token[0] = '\0';
 
             ares->queryHost(startupInfo.serverName);
             waitingDNS = true;

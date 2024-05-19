@@ -43,7 +43,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
     std::string bzfsUserAgent = "bzfs ";
     bzfsUserAgent     += getAppVersion();
 
-    setURLwithNonce(listServerURL);
+    setURL(listServerURL);
     setUserAgent(bzfsUserAgent);
     setTimeout(10);
 
