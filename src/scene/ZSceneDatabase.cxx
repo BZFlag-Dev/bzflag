@@ -206,7 +206,8 @@ void ZSceneDatabase::makeCuller()
     TimeKeeper startTime = TimeKeeper::getCurrent();
 
     // sorted from lowest to highest
-    qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
+    if (staticCount)
+        qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
 
     // make the tree
     octree->addNodes (staticList, staticCount, cullDepth, cullElements);

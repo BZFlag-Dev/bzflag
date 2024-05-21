@@ -349,7 +349,8 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
     // copy the incoming list
     const int listBytes = _listSize * sizeof(SceneNode*);
     list = (SceneNode**)malloc(listBytes);
-    memcpy(list, _list, listBytes);
+    if (listBytes)
+        memcpy(list, _list, listBytes);
 
     // copy the extents, and make a slighty puffed up version
     extents = exts;
