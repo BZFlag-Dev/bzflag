@@ -1675,6 +1675,8 @@ static bool removePlayer (PlayerId id)
         myTank->setRecipient(0);
     if (myTank->getNemesis() == p)
         myTank->setNemesis(0);
+    if (myTank->getTarget() == p)
+        myTank->setTarget(NULL);
 
     completer.unregisterWord(p->getCallSign());
 
