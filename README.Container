@@ -18,6 +18,17 @@ build argument:
 It is also possible to supply custom arguments to the configure script:
   docker build . -t bzflag-server:latest --build-arg configure="--enable-custom-plugins-file=plugins.txt"
 
+Troubleshooting
+---------------
+
+> [stage-1 2/5] RUN apk update && apk upgrade --no-cache &&     apk add --no-cache c-ares libcurl libgcc libstdc++ zlib\
+    &&     adduser -S bzfsd &&     mkdir /data && chown bzfsd:nogroup /data:
+> 0.393 fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/APKINDEX.tar.gz
+> 5.394 WARNING: updating and opening https://dl-cdn.alpinelinux.org/alpine/v3.20/main: temporary error (try again later)
+
+If the build process fails due to network errors on the `apk update` step, then it may be a DNS problem with your Docker
+engine configuration. Add the `--network=host` flag to your `docker build` command to use your host machine's DNS
+instead of Docker's internal DNS.
 
 Running a self-built image
 --------------------------
