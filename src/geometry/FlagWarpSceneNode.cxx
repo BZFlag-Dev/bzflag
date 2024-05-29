@@ -100,11 +100,22 @@ void            FlagWarpSceneNode::addRenderNodes(
 // FlagWarpSceneNode::FlagWarpRenderNode
 //
 
+float FlagWarpSceneNode::FlagWarpRenderNode::ring[12][2];
+
 FlagWarpSceneNode::FlagWarpRenderNode::FlagWarpRenderNode(
     const FlagWarpSceneNode* _sceneNode) :
     sceneNode(_sceneNode)
 {
-    // do nothing
+    static bool init = true;
+    if (init)
+    {
+        init = false;
+        for (int i = 0; i < 12; i++)
+        {
+            ring[i][0] = cosf((float)(2.0 * M_PI * double(i) / 12.0));
+            ring[i][1] = sinf((float)(2.0 * M_PI * double(i) / 12.0));
+        }
+    }
 }
 
 FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
@@ -124,8 +135,8 @@ void            FlagWarpSceneNode::FlagWarpRenderNode::render()
     for (int i = 0; i < 12; i++)
     {
         const GLfloat r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
-        geom[i][0] = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
-        geom[i][1] = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
+        geom[i][0] = r * ring[i][0];
+        geom[i][1] = r * ring[i][1];
     }
 
     const GLfloat* sphere = sceneNode->getSphere();

@@ -45,6 +45,7 @@ protected:
         const GLfloat* getPosition() const override;
     private:
         const FlagWarpSceneNode* sceneNode;
+        static float ring[12][2];
     };
     friend class FlagWarpRenderNode;
 
