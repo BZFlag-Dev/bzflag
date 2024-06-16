@@ -97,13 +97,6 @@ void RadarRenderer::setDimming(float newDimming)
 }
 
 
-void RadarRenderer::drawShot(const ShotPath* shot)
-{
-    glBegin(GL_POINTS);
-    glVertex2fv(shot->getPosition());
-    glEnd();
-}
-
 void RadarRenderer::setTankColor(const Player* player)
 {
     //The height box also uses the tank color

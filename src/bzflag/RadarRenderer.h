@@ -62,7 +62,6 @@ private:
     RadarRenderer(const RadarRenderer&);
     RadarRenderer&  operator=(const RadarRenderer&);
 
-    void        drawShot(const ShotPath*);
     void        setTankColor(const class Player* player);
     void        drawTank(const float pos[3],
                          const class Player* player,
