@@ -1202,7 +1202,6 @@ void RadarRenderer::renderBasesAndTeles()
     // is one system that doesn't do correct filtering.
     const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
     int count = teleporters.size();
-    glColor3f(1.0f, 1.0f, 0.25f);
     glBegin(GL_LINES);
     for (i = 0; i < count; i++)
     {
