@@ -1038,9 +1038,8 @@ void FlashShotEffect::draw(const SceneRenderer &)
     //         - camerapos[1] * sin(-rotation[2]);
     camerapos[1] = camerapos[1] * cos(-rotation[2])
                    + camerapos[0] * sin(-rotation[2]);
-    glRotatef(270 - atan(camerapos[1] / camerapos[2]) / deg2Rad +
-              (camerapos[2] >= 0 ? 180 : 0), //for a single-sided face
-              0,1,0);
+    //for a single-sided face
+    glRotatef(std::atan2(camerapos[2], camerapos[1]) / deg2Rad, 0,1,0);
 
     ringState.setState();
 
