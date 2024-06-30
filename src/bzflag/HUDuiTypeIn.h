@@ -38,10 +38,10 @@ public:
     ~HUDuiTypeIn();
 
     void        setObfuscation(bool on);
-    int         getMaxLength() const;
+    size_t      getMaxLength() const;
     std::string     getString() const;
 
-    void        setMaxLength(int);
+    void        setMaxLength(size_t);
     void        setString(const std::string&);
     void        setEditing(bool _allowEdit);
     void        setColorFunc(TypeInColorFunc func)
@@ -55,9 +55,9 @@ protected:
     void        doRender();
 
 private:
-    int         maxLength;
+    size_t          maxLength;
     std::string     string;
-    int         cursorPos;
+    size_t          cursorPos;
     bool        allowEdit;
     bool        obfuscate;
     TypeInColorFunc colorFunc;
