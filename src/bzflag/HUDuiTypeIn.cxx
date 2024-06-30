@@ -18,6 +18,7 @@
 
 // common implementation headers
 #include "FontManager.h"
+#include "PlatformFactory.h"
 
 // local implementation headers
 #include "HUDui.h"
@@ -45,7 +46,7 @@ void            HUDuiTypeIn::setObfuscation(bool on)
     obfuscate = on;
 }
 
-int         HUDuiTypeIn::getMaxLength() const
+size_t          HUDuiTypeIn::getMaxLength() const
 {
     return maxLength;
 }
@@ -55,7 +56,7 @@ std::string     HUDuiTypeIn::getString() const
     return string;
 }
 
-void            HUDuiTypeIn::setMaxLength(int _maxLength)
+void            HUDuiTypeIn::setMaxLength(size_t _maxLength)
 {
     maxLength = _maxLength;
     string = string.substr(0, maxLength);
@@ -102,7 +103,7 @@ bool            HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
             return true;
 
         case BzfKeyEvent::Right:
-            if (cursorPos < (int)string.length())
+            if (cursorPos < string.length())
                 cursorPos++;
             return true;
 
@@ -119,7 +120,7 @@ bool            HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
             break;
 
         case BzfKeyEvent::Delete:
-            if (cursorPos < (int)string.length())
+            if (cursorPos < string.length())
             {
                 cursorPos++;
                 c = backspace;
@@ -131,6 +132,40 @@ bool            HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
         default:
             return false;
         }
+    }
+
+    // Handle pasting text
+    if (key.shift == BzfKeyEvent::ControlKey && c == 'v')
+    {
+        // Get text from the clipboard, if any
+        std::string clipboard = PlatformFactory::getInstance()->getClipboard();
+        size_t clipboard_len = clipboard.length();
+
+        if (clipboard_len > 0)
+        {
+            // Check if all the characters are printable
+            bool allPrintable = true;
+            for(size_t i = 0; i < clipboard_len; ++i)
+            {
+                if (!isprint(clipboard[i]))
+                {
+                    allPrintable = false;
+                    break;
+                }
+                // Normalize whitespace
+                else if (isspace(clipboard[i]))
+                    clipboard[i] = whitespace;
+            }
+
+            // Verify that the contents is printable and that we won't exceed the maximum length after we paste
+            if (allPrintable && string.length() + clipboard_len < maxLength)
+            {
+                string = string.substr(0, cursorPos) + clipboard + string.substr( cursorPos, string.length() - cursorPos);
+                cursorPos += clipboard_len;
+            }
+        }
+
+        return true;
     }
 
     if (c == '\t')
@@ -154,7 +189,7 @@ bool            HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     {
         if (isspace(c))
             c = whitespace;
-        if ((int)string.length() == maxLength)
+        if (string.length() == maxLength)
             return true;
 
         string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);

@@ -65,6 +65,23 @@ BzfJoystick* SdlPlatformFactory::createJoystick()
 {
     return new SDLJoystick;
 }
+
+std::string SdlPlatformFactory::getClipboard()
+{
+    if (SDL_HasClipboardText())
+    {
+        char* clipboard = SDL_GetClipboardText();
+        if (clipboard != nullptr)
+        {
+            const std::string text(clipboard);
+            SDL_free(clipboard);
+            return text;
+        }
+    }
+
+    return std::string();
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

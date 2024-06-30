@@ -19,6 +19,8 @@
 
 #include "common.h"
 
+#include <string>
+
 class BzfDisplay;
 class BzfVisual;
 class BzfWindow;
@@ -36,6 +38,7 @@ public:
     virtual BzfVisual*   createVisual(const BzfDisplay*) = 0;
     virtual BzfWindow*   createWindow(const BzfDisplay*, BzfVisual*) = 0;
     virtual BzfJoystick* createJoystick();
+    virtual std::string  getClipboard() = 0;
 
     static PlatformFactory* getInstance();
     static BzfMedia*        getMedia();

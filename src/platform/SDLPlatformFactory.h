@@ -30,6 +30,7 @@ public:
     BzfWindow*        createWindow(const BzfDisplay*, BzfVisual*);
     BzfMedia*     createMedia();
     BzfJoystick*      createJoystick();
+    std::string       getClipboard();
 
 private:
     SdlPlatformFactory(const SdlPlatformFactory&);
