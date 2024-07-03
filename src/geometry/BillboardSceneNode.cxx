@@ -20,6 +20,7 @@
 // common implementation headers
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "mathRoutine.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -365,7 +366,8 @@ void            BillboardSceneNode::BillboardRenderNode::render()
     dir[0] = eye[0] - sphere[0];
     dir[1] = eye[1] - sphere[1];
     dir[2] = eye[2] - sphere[2];
-    d = sceneNode->width / hypotf(dir[0], hypotf(dir[1], dir[2]));
+    float speed2 = dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
+    d = sceneNode->width * bzInverseSqrt(speed2);
 
     glPushMatrix();
     {
