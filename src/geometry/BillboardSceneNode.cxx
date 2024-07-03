@@ -366,8 +366,8 @@ void            BillboardSceneNode::BillboardRenderNode::render()
     dir[0] = eye[0] - sphere[0];
     dir[1] = eye[1] - sphere[1];
     dir[2] = eye[2] - sphere[2];
-    float speed2 = dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
-    d = sceneNode->width * bzInverseSqrt(speed2);
+    float dist2 = dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
+    d = sceneNode->width * bzInverseSqrt(dist2);
 
     glPushMatrix();
     {
