@@ -40,7 +40,7 @@ public:
     virtual bool isBuilt() const = 0;
 
     virtual void filter(bool dofilter) = 0;
-    virtual void drawString(float scale, GLfloat color[3], const char *str, int len) = 0;
+    virtual void drawString(float scale, GLfloat color[4], const char *str, int len) = 0;
 
     float getStrLength(float scale, const char *str, int len) const;
     float getStrLength(float scale, const std::string &str) const;
