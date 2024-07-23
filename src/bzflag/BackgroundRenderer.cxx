@@ -14,6 +14,8 @@
 #include "BackgroundRenderer.h"
 
 // system headers
+#include <algorithm>
+#include <cmath>
 #include <string.h>
 
 // common headers
@@ -1311,9 +1313,9 @@ static void setupBlackFog(float fogColor[4])
 
 void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 {
-    static const int receiverRings = 4;
-    static const int receiverSlices = 8;
-    static const float receiverRingSize = 1.2f;   // meters
+    constexpr int receiverRings = 4;
+    constexpr int receiverSlices = 8;
+    constexpr float receiverRingSize = 1.2f;   // meters
     static float angle[receiverSlices + 1][2];
 
     static bool init = false;
@@ -1341,8 +1343,6 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     float fogColor[4];
     setupBlackFog(fogColor);
 
-    glPushMatrix();
-    int i, j;
     for (int k = 0; k < count; k++)
     {
         const OpenGLLight& light = renderer.getLight(k);
@@ -1353,76 +1353,72 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         const GLfloat* lightColor = light.getColor();
         const GLfloat* atten = light.getAttenuation();
 
+        float posZ = pos[2];
+        float posZSquared = posZ * posZ;
+
         // point under light
-        float d = pos[2];
+        float d = posZ;
         float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
 
         // maximum value
-        const float maxVal = (lightColor[0] > lightColor[1]) ?
-                             ((lightColor[0] > lightColor[2]) ?
-                              lightColor[0] : lightColor[2]) :
-                             ((lightColor[1] > lightColor[2]) ?
-                              lightColor[1] : lightColor[2]);
+        const float maxVal = std::max({lightColor[0], lightColor[1], lightColor[2]});
 
         // if I is too attenuated, don't bother drawing anything
         if ((I * maxVal) < 0.02f)
             continue;
 
         // move to the light's position
+        glPushMatrix();
         glTranslatef(pos[0], pos[1], 0.0f);
 
         // set the main lighting color
-        float color[4];
-        color[0] = lightColor[0];
-        color[1] = lightColor[1];
-        color[2] = lightColor[2];
-        color[3] = I;
+        float color[4] = { lightColor[0], lightColor[1], lightColor[2], I };
+        GLfloat outerSize = receiverRingSize;
 
-        // draw ground receiver, computing lighting at each vertex ourselves
+        // compute inner ring light values
+        d = std::sqrt(outerSize * outerSize + posZSquared);
+        I = B / (atten[0] + d * (atten[1] + d * atten[2]));
+        I *= pos[2] / d;
+        float outerAlpha = I;
+
+        // draw center fan
         glBegin(GL_TRIANGLE_FAN);
         {
             glColor4fv(color);
             glVertex2f(0.0f, 0.0f);
 
-            // inner ring
-            d = hypotf(receiverRingSize, pos[2]);
-            I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-            I *= pos[2] / d;
-            color[3] = I;
+            color[3] = outerAlpha;
             glColor4fv(color);
-            for (j = 0; j <= receiverSlices; j++)
+            for (int j = 0; j <= receiverSlices; j++)
             {
-                glVertex2f(receiverRingSize * angle[j][0],
-                           receiverRingSize * angle[j][1]);
+                glVertex2f(outerSize * angle[j][0],
+                           outerSize * angle[j][1]);
             }
         }
         glEnd();
         triangleCount += receiverSlices;
 
-        for (i = 1; i < receiverRings; i++)
+        // draw concentric rings
+        for (int i = 1; i < receiverRings; i++)
         {
-            const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
-            const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
+            const GLfloat innerSize = outerSize;
+            float innerAlpha = outerAlpha;
 
-            // compute inner and outer lit colors
-            d = hypotf(innerSize, pos[2]);
-            I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-            I *= pos[2] / d;
-            float innerAlpha = I;
-
+            outerSize = receiverRingSize * static_cast<GLfloat>((i + 1) * (i + 1));
             if (i + 1 == receiverRings)
-                I = 0.0f;
+                outerAlpha = 0.0f;
             else
             {
-                d = hypotf(outerSize, pos[2]);
+                // compute outer lit colors
+                d = std::sqrt(outerSize * outerSize + posZSquared);
                 I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-                I *= pos[2] / d;
+                I *= posZ / d;
+                outerAlpha = I;
             }
-            float outerAlpha = I;
 
             glBegin(GL_TRIANGLE_STRIP);
             {
-                for (j = 0; j <= receiverSlices; j++)
+                for (int j = 0; j <= receiverSlices; j++)
                 {
                     color[3] = innerAlpha;
                     glColor4fv(color);
@@ -1436,9 +1432,8 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         }
         triangleCount += (receiverSlices * receiverRings * 2);
 
-        glTranslatef(-pos[0], -pos[1], 0.0f);
+        glPopMatrix();
     }
-    glPopMatrix();
 
     glFogfv(GL_FOG_COLOR, fogColor);
 }
