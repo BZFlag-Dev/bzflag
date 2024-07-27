@@ -25,7 +25,7 @@ class EighthDimSceneNode : public SceneNode
 public:
     ~EighthDimSceneNode();
 
-    bool        cull(const ViewFrustum&) const;
+    bool        cull(const ViewFrustum&) const override;
     void        notifyStyleChange() override;
     void        addRenderNodes(SceneRenderer&) override;
 
