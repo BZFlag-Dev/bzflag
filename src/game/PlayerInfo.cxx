@@ -243,7 +243,7 @@ void PlayerInfo::setCallSign(const char * c)
 {
     if (c != NULL)
     {
-        strncpy(callSign, c, CallSignLen);
+        strncpy(callSign, c, CallSignLen - 1);
         callSign[CallSignLen - 1] = '\0';   // ensure null termination
     }
 }
@@ -366,7 +366,7 @@ bool PlayerInfo::isMottoReadable()
 
 void PlayerInfo::setMotto(const char* _motto)
 {
-    strncpy(motto, _motto, MottoLen);
+    strncpy(motto, _motto, MottoLen - 1);
     motto[MottoLen - 1] = '\0';   // ensure null termination
 }
 
@@ -379,7 +379,7 @@ void PlayerInfo::setToken(const char * c)
 {
     if (c != NULL)
     {
-        strncpy(token, c, TokenLen);
+        strncpy(token, c, TokenLen - 1);
         token[TokenLen - 1] = '\0'; // ensure null termination
     }
 }
@@ -457,7 +457,7 @@ void PlayerInfo::setClientVersion(const char * c)
 {
     if (c != NULL)
     {
-        strncpy(clientVersion, c, VersionLen);
+        strncpy(clientVersion, c, VersionLen - 1);
         clientVersion[VersionLen - 1] = '\0';   // ensure null termination
     }
 }
