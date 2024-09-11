@@ -595,11 +595,11 @@ FlagCommand::FlagCommand()       : ServerCommand("/flag",
 LagWarnCommand::LagWarnCommand()     : ServerCommand("/lagwarn",
             "[milliseconds] - display or set the maximum allowed lag time") {}
 LagDropCommand::LagDropCommand()     : ServerCommand("/lagdrop",
-            "[count] - display or set the number of lag warings before a player is kicked") {}
+            "[count] - display or set the number of lag warnings before a player is kicked") {}
 JitterWarnCommand::JitterWarnCommand()   : ServerCommand("/jitterwarn",
             "[milliseconds] - display or set the maximum allowed jitter time") {}
 JitterDropCommand::JitterDropCommand()   : ServerCommand("/jitterdrop",
-            "[count] - display or set the number of jitter warings before a player is kicked") {}
+            "[count] - display or set the number of jitter warnings before a player is kicked") {}
 PacketLossWarnCommand::PacketLossWarnCommand()     : ServerCommand("/packetlosswarn",
             "<%> - change the maximum allowed packetloss") {}
 PacketLossDropCommand::PacketLossDropCommand()   : ServerCommand("/packetlossdrop",

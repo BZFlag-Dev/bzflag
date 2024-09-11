@@ -195,9 +195,9 @@ KillCommand::KillCommand()       : ServerCommand("/kill",
 BanListCommand::BanListCommand()     : ServerCommand("/banlist",
             "[pattern] - List the IPs currently banned from this server") {}
 CheckIPCommand::CheckIPCommand()     : ServerCommand("/checkip",
-            "<ip> - check if IP is banned and print corresponding ban info") {}
+            "<ip> - check if an IP address is banned and print corresponding ban info") {}
 BanCommand::BanCommand()         : ServerCommand("/ban",
-            "<#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, ip or ip range off the server") {}
+            "<#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, IP address or IP range off the server") {}
 UnbanCommand::UnbanCommand()         : ServerCommand("/unban",
             "<ip> - remove a ip pattern from the ban list") {}
 HostbanCommand::HostbanCommand()     : ServerCommand("/hostban",
