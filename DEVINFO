@@ -157,7 +157,7 @@ Formatting
 Everybody has their own style and has things they don't like about any
 other style.  Well, we can't have a zillion styles in the code, so
 follow the BZFlag style if you want your contribution included. 
-BZFlag is formated using the Allman Style, and this is enforced
+BZFlag is formatted using the Allman Style, and this is enforced
 with the artistic styler, astyle, using these command line options:
 
 astyle --style=allman -nxjQ --convert-tabs --max-code-length=120 \
@@ -283,12 +283,12 @@ be broken up into smaller coherent chunks.  This way if a bug or other
 issue with a particular commit is later encountered, the change can be
 more easily isolated and undone or fixed.
 
-Submiting changes
+Submitting changes
 --------------
 
 If you do not have source code commit access and would like to propose
-a change for inclusion, you should create a pull requests. Requests
-should be submited on GitHub at:
+a change for inclusion, you should create a pull request. Requests
+should be submitted on GitHub at:
 
 https://github.com/BZFlag-Dev/bzflag/pulls
 
@@ -304,11 +304,11 @@ Licensing and Developer Agreement
 
 By committing to a source code repository or submitting a patch/pull request, you
 the developer are assigning copyright of the submission to the project maintainer (Tim Riker),
-and his successors, as defined in the BZFlag Developer Agreement located at.
+and his successors, as defined in the BZFlag Developer Agreement located at
 https://github.com/BZFlag-Dev/bzflag/wiki/Developer-Agreement
 
 Grant of Copyright Assignment
-Each Contributor hereby assign to the project maintainer all right, title,
+Each Contributor hereby assigns to the project maintainer all right, title,
 and interest worldwide in all Copyright covering the Contribution.
 
 All submissions are subject to these terms.
