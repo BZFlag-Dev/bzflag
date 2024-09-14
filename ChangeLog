@@ -595,7 +595,7 @@ BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 * game variables no longer accept invalid values. - Jeff Myers
 * Special Effects use tank (was team) color - Karsten Behrmann, Jeff Myers
 * /reset uses the values from the config and the map as default - Jeff Myers
-* Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell
+* Screenshots now remember where they left off - Jeff Myers, Thomas Sowell
 * Have windows dump std::error out to a file - Jeff Myers
 * Various API enhancements - Jeff Myers and others ( from patches )
 * Not applauding when capturing his own flag - Alfredo Tupone
@@ -1045,7 +1045,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
 * World object and -worldsize parameters - Jeff Myers
-* Server side world parm (bzdb) file [clo] - Dave Brosius
+* Server side world param (bzdb) file [clo] - Dave Brosius
 * MsgTeamUpdate, MsgFlagUpdate coalesced - Dave Brosius
 * Burrow Flag - Dave Brosius
 * Observer is a first class team - Dave Brosius
