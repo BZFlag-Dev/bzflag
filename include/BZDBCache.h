@@ -56,7 +56,7 @@ public:
     static Bool  shadows;
     static Bool  stencilShadows;
     static Bool  zbuffer;
-    static Bool  tesselation;
+    static Bool  tessellation;
     static Bool  lighting;
     static Bool  smooth;
     static Bool  colorful;
@@ -104,7 +104,7 @@ public:
 public:
     /** public method to update cached variable
     has to be called at best opportunity
-    (e.g. at beginnig of main loop)
+    (e.g. at beginning of main loop)
     */
     static void update();
 
