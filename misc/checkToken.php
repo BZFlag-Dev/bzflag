@@ -3,10 +3,10 @@
 // This function will check a username and token returned by the bzflag
 // weblogin page at https://my.bzflag.org/weblogin.php?action=weblogin. You can use
 // this URL to ask a user for his bzflag global login. Your page needs to pass
-// in an URL paramater to the weblogin that contains your URL to be called with
+// in an URL parameter to the weblogin that contains your URL to be called with
 // the username and token. This allows your site to use the same usernames and
 // passwords as the forums with out having to worry about being accused of
-// stealing passwords. The URL paramater can have the keys %TOKEN% and
+// stealing passwords. The URL parameter can have the keys %TOKEN% and
 // %USERNAME% that will be replaced with the real username and token when the
 // URL is called. For example:
 //
@@ -16,14 +16,14 @@
 // in plain text to make it clearer what is happening.
 //
 // This would call mysite.com with the token and username passed in as
-// paramaters after the user has given the page a valid username and password.
+// parameters after the user has given the page a valid username and password.
 //
 // This function should be used after you get the info from the login callback,
 // to verify that it is a valid token, and to test which groups the user is a
 // member of.
 //
 // Sites MUST redirect the user to the login form. Sites that send the login
-// info from any other form will automaticly be rejected. The aim of this
+// info from any other form will automatically be rejected. The aim of this
 // service to to show the user that login info is being sent to bzflag.org.
 //
 // TODO: Add some error handling/reporting
