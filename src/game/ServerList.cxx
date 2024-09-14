@@ -64,9 +64,6 @@ void ServerList::readServerList()
 {
     char *base = (char *)theData;
     char *endS = base + theLen;
-    const char tokenIdentifier[]   = "TOKEN: ";
-    const char noTokenIdentifier[] = "NOTOK: ";
-    const char errorIdentifier[]   = "ERROR: ";
     const char noticeIdentifier[]  = "NOTICE: ";
     // walks entire reply including HTTP headers
     while (base < endS)
@@ -81,38 +78,7 @@ void ServerList::readServerList()
             break;
         *scan++ = '\0';
 
-        // look for TOKEN: and save token if found also look for NOTOK:
-        // and record "badtoken" into the token string and print an
-        // error
-        if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0)
-        {
-            strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
-                    TokenLen - 1);
-            startupInfo->token[TokenLen - 1] = '\0';
-#ifdef DEBUG
-            printError("got token:");
-            printError(startupInfo->token);
-#endif
-            base = scan;
-            continue;
-        }
-        else if (!strncmp(base, noTokenIdentifier,
-                          strlen(noTokenIdentifier)))
-        {
-            printError("ERROR: did not get token:");
-            printError(base);
-            strcpy(startupInfo->token, "badtoken\0");
-            base = scan;
-            continue;
-        }
-        else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier)))
-        {
-            printError(base);
-            strcpy(startupInfo->token, "badtoken\0");
-            base = scan;
-            continue;
-        }
-        else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier)))
+        if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier)))
         {
             printError(base);
             base = scan;
@@ -306,19 +272,19 @@ void            ServerList::checkEchos(StartupInfo *info)
 
         std::string msg = "action=LIST&version=";
         msg     += getServerVersion();
-        msg     += "&callsign=";
-        msg     += TextUtils::url_encode(info->callsign);
-        msg     += "&password=";
-        msg     += TextUtils::url_encode(info->password);
-        if (info->serverName[0] != '\0')
+        // Send callsign/password only if the password is set
+        if (info->password[0] != '\0')
         {
-            msg += "&nameport=";
-            msg += info->serverName;
-            msg += ':';
-            msg += std::to_string(info->serverPort);
+            msg     += "&callsign=";
+            msg     += TextUtils::url_encode(info->callsign);
+            msg     += "&password=";
+            msg     += TextUtils::url_encode(info->password);
+            // Since tokens are now tied to a game server host/port instead of the player IP, we will skip generating
+            // a token during the LIST operation.
+            msg     += "&skiptoken=1";
         }
         setPostMode(msg);
-        setURLwithNonce(url);
+        setURL(url);
         addHandle();
 
         // do phase 1 only if we found a valid list server url

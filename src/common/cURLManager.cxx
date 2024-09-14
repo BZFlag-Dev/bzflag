@@ -186,14 +186,6 @@ void cURLManager::setURL(const std::string &url)
         logDebugMessage(1,"CURLOPT_URL error %d : %s\n", result, errorBuffer);
 }
 
-void cURLManager::setURLwithNonce(const std::string &url)
-{
-    // only the default list server is known to support the nonce parameter
-    const std::string nonce = (strcasecmp(url.c_str(), DefaultListServerURL) == 0) ? TextUtils::format("?nocache=%lu",
-                              time(0)) : "";
-    setURL(url + nonce);
-}
-
 void cURLManager::setProgressFunction(curl_xferinfo_callback func, const void* data)
 {
     CURLcode result;

@@ -30,6 +30,7 @@
 #include "TextUtils.h"
 #include "version.h"
 #include "Team.h"
+#include "ServerAuth.h"
 #include "ServerList.h"
 #include "ErrorHandler.h"
 #include "cURLManager.h"
@@ -73,10 +74,25 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
         std::cout << std::endl;
         return;
     }
-    if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0'))
+
+    // If a password was provided, get a token
+    if (startupInfo.password[0] != '\0')
     {
-        // won't really output anything, just gets token
-        outputServerList();
+        ServerAuth* serverAuth = new ServerAuth;
+        serverAuth->requestToken(&startupInfo);
+        // wait no more than 10 seconds for a token
+        for (int j = 0; j < 40; j++)
+        {
+            cURLManager::perform();
+            if (startupInfo.token[0] != '\0') break;
+            TimeKeeper::sleep(0.25f);
+        }
+        delete serverAuth;
+
+        // don't let the bad token specifier slip through to the server,
+        // just erase it
+        if (strcmp(startupInfo.token, "badtoken") == 0)
+            startupInfo.token[0] = '\0';
     }
     sLink.sendEnter(TankPlayer, myTeam, startupInfo.callsign, "bzadmin", startupInfo.token);
     if (sLink.getState() != ServerLink::Okay)

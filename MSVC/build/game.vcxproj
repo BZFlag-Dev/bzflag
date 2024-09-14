@@ -164,6 +164,7 @@
     <ClCompile Include="..\..\src\game\PhysicsDriver.cxx" />
     <ClCompile Include="..\..\src\game\PlayerInfo.cxx" />
     <ClCompile Include="..\..\src\game\Ray.cxx" />
+    <ClCompile Include="..\..\src\game\ServerAuth.cxx" />
     <ClCompile Include="..\..\src\game\ServerItem.cxx" />
     <ClCompile Include="..\..\src\game\ServerList.cxx" />
     <ClCompile Include="..\..\src\game\ServerListCache.cxx" />
@@ -184,6 +185,7 @@
     <ClInclude Include="..\..\include\PhysicsDriver.h" />
     <ClInclude Include="..\..\include\PlayerInfo.h" />
     <ClInclude Include="..\..\include\Ray.h" />
+    <ClInclude Include="..\..\include\ServerAuth.h" />
     <ClInclude Include="..\..\include\ServerItem.h" />
     <ClInclude Include="..\..\include\ServerList.h" />
     <ClInclude Include="..\..\include\ServerListCache.h" />

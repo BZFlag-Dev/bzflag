@@ -529,6 +529,7 @@
 		C38E766527F9062B00EC312C /* CustomZoneSample.bzw in Copy Files (1 item) */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
 		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C3DE232E21E2FBDD0081B64E /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
+		D21A35892BFAA6BD001A28EB /* ServerAuth.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D21A35882BFAA6BD001A28EB /* ServerAuth.cxx */; };
 		D2B721C92BFAA226007126EE /* mathRoutine.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D2B721C82BFAA225007126EE /* mathRoutine.cxx */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
@@ -1814,6 +1815,8 @@
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
 		C353B1E91AE2490D00C5AED5 /* flagStay.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flagStay.bzw; sourceTree = "<group>"; };
+		D21A35872BFAA6AE001A28EB /* ServerAuth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerAuth.h; sourceTree = "<group>"; };
+		D21A35882BFAA6BD001A28EB /* ServerAuth.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerAuth.cxx; sourceTree = "<group>"; };
 		D2B721C72BFAA1E1007126EE /* mathRoutine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mathRoutine.h; sourceTree = "<group>"; };
 		D2B721C82BFAA225007126EE /* mathRoutine.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mathRoutine.cxx; sourceTree = "<group>"; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
@@ -2347,6 +2350,7 @@
 				0305D5D9166C9DAE00557FC4 /* SceneDatabase.h */,
 				0305D5DA166C9DAE00557FC4 /* SceneNode.h */,
 				0305D5DB166C9DAE00557FC4 /* SceneRenderer.h */,
+				D21A35872BFAA6AE001A28EB /* ServerAuth.h */,
 				0305D5DC166C9DAE00557FC4 /* ServerItem.h */,
 				0305D5DD166C9DAE00557FC4 /* ServerList.h */,
 				0305D5DE166C9DAE00557FC4 /* ServerListCache.h */,
@@ -2858,6 +2862,7 @@
 				0355447B166C846F008806E9 /* PlayerInfo.cxx */,
 				0355447C166C846F008806E9 /* Ray.cxx */,
 				0355447D166C846F008806E9 /* README */,
+				D21A35882BFAA6BD001A28EB /* ServerAuth.cxx */,
 				0355447E166C846F008806E9 /* ServerItem.cxx */,
 				0355447F166C846F008806E9 /* ServerList.cxx */,
 				03554480166C846F008806E9 /* ServerListCache.cxx */,
@@ -5070,6 +5075,7 @@
 				0357A80E1670B2090056C938 /* PhysicsDriver.cxx in Sources */,
 				0357A80F1670B2090056C938 /* PlayerInfo.cxx in Sources */,
 				0357A8101670B2090056C938 /* Ray.cxx in Sources */,
+				D21A35892BFAA6BD001A28EB /* ServerAuth.cxx in Sources */,
 				0357A8111670B2090056C938 /* ServerItem.cxx in Sources */,
 				0357A8121670B2090056C938 /* ServerList.cxx in Sources */,
 				0357A8131670B2090056C938 /* ServerListCache.cxx in Sources */,

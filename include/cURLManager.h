@@ -46,7 +46,6 @@ public:
     void setPostMode(std::string postData);
     void setRequestFileTime(bool request);
     void setURL(const std::string &url);
-    void setURLwithNonce(const std::string &url);
     void setProgressFunction(curl_xferinfo_callback func, const void* data);
     void setTimeCondition(timeCondition condition, time_t &t);
     void setInterface(const std::string &interfaceIP);
