@@ -38,7 +38,7 @@ class MeshTransform;
 
 /** This ABC represents a (normally) solid object in a world. It has pure
     virtual functions for getting information about it's size, checking ray
-    intersections, checking point intersections, computting normals etc.
+    intersections, checking point intersections, computing normals etc.
     All these functions have to be implemented in concrete subclasses.
 */
 
@@ -59,7 +59,7 @@ public:
         @param hwidth     Half the X size of the obstacle
         @param hbreadth   Half the Y size of the obstacle
         @param height     The Z size of the obstacle
-        @param drive      @c true if the obstacle is driveththrough, i.e. tanks
+        @param drive      @c true if the obstacle is drivethrough, i.e. tanks
           can pass through it
         @param shoot      @c true if the obstacle is shootthrough, i.e. bullets
           can pass through it
