@@ -338,7 +338,7 @@ void            DisplayMenu::resize(int _width, int _height)
         // Lighting
         if (BZDBCache::lighting)
         {
-            if (BZDB.isTrue("tesselation"))
+            if (BZDB.isTrue("tessellation"))
                 ((HUDuiList*)listHUD[i++])->setIndex(2);
             else
                 ((HUDuiList*)listHUD[i++])->setIndex(1);
@@ -444,7 +444,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     {
         bool oldLighting = BZDBCache::lighting;
         BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
-        BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
+        BZDB.set("tessellation", list->getIndex() == 2 ? "1" : "0");
         if (oldLighting != BZDBCache::lighting)
         {
             BZDB.set("texturereplace", (!BZDBCache::lighting &&

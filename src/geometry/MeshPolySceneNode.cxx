@@ -23,7 +23,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-// FIXME - no tesselation is done on for shot lighting
+// FIXME - no tessellation is done on for shot lighting
 
 
 //

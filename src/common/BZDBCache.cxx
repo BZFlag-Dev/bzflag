@@ -23,7 +23,7 @@ BZDBCache::Bool  BZDBCache::shadows;
 BZDBCache::Bool  BZDBCache::stencilShadows;
 BZDBCache::Bool  BZDBCache::zbuffer;
 BZDBCache::Bool  BZDBCache::useMeshForRadar;
-BZDBCache::Bool  BZDBCache::tesselation;
+BZDBCache::Bool  BZDBCache::tessellation;
 BZDBCache::Bool  BZDBCache::lighting;
 BZDBCache::Bool  BZDBCache::smooth;
 BZDBCache::Bool  BZDBCache::colorful;
@@ -106,7 +106,7 @@ void BZDBCache::init()
     BZDB.addCallback("stencilShadows", clientCallback, NULL);
     BZDB.addCallback("zbuffer", clientCallback, NULL);
     BZDB.addCallback("useMeshForRadar", clientCallback, NULL);
-    BZDB.addCallback("tesselation", clientCallback, NULL);
+    BZDB.addCallback("tessellation", clientCallback, NULL);
     BZDB.addCallback("lighting", clientCallback, NULL);
     BZDB.addCallback("smooth", clientCallback, NULL);
     BZDB.addCallback("colorful", clientCallback, NULL);
@@ -185,8 +185,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
         zbuffer = BZDB.isTrue("zbuffer");
     else if (name == "useMeshForRadar")
         useMeshForRadar = BZDB.isTrue("useMeshForRadar");
-    else if (name == "tesselation")
-        tesselation = BZDB.isTrue("tesselation");
+    else if (name == "tessellation")
+        tessellation = BZDB.isTrue("tessellation");
     else if (name == "lighting")
         lighting = BZDB.isTrue("lighting");
     else if (name == "smooth")
