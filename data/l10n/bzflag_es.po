@@ -2018,7 +2018,7 @@ msgstr "  paquetes enviados: %d (%f/seg)\n"
 msgid "  bytes/packet    : %f\n"
 msgstr "      bytes/paquete: %f\n"
 
-msgid "  bytes recieved  : %d (%f/sec)\n"
+msgid "  bytes received  : %d (%f/sec)\n"
 msgstr "    bytes recibidos: %d (%f/seg)\n"
 
 msgid "  packets received: %d (%f/sec)\n"
