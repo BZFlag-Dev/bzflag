@@ -254,7 +254,7 @@ PATH_TO_AUTOGEN="`dirname $0`"
 NAME_OF_AUTOGEN="`basename $0`"
 AUTOGEN_SH="$PATH_TO_AUTOGEN/$NAME_OF_AUTOGEN"
 
-LIBTOOL_M4="${PATH_TO_AUTOGEN}/misc/libtool.m4"
+LIBTOOL_M4="${PATH_TO_AUTOGEN}/m4/libtool.m4"
 
 if [ "x$HELP" = "x" ] ; then
     HELP=no
