@@ -140,7 +140,7 @@ extern "C" {
         /* 10052 */{WSAENETRESET,   "The connection must be reset because the Windows Sockets implementation dropped it"},
         /* 10053 */{WSAECONNABORTED,    "The virtual circuit was aborted due to timeout or other failure"},
         /* 10054 */{WSAECONNRESET,  "The virtual circuit was reset by the remote side"},
-        /* 10055 */{WSAENOBUFS,     "No buffer space is available or a buffer deadlock has occured. The socket cannot be created"},
+        /* 10055 */{WSAENOBUFS,     "No buffer space is available or a buffer deadlock has occurred. The socket cannot be created"},
         /* 10056 */{WSAEISCONN,     "The socket is already connected"},
         /* 10057 */{WSAENOTCONN,    "The socket is not connected"},
         /* 10058 */{WSAESHUTDOWN,   "The socket has been shutdown"},

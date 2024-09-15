@@ -30,7 +30,7 @@
 /** BZDB is the generic name:value pair database within bzflag and bzfs. Its
  * useful for data that can be serialized to a string that needs to be
  * accessible to many areas of the code. It also provides facilities for
- * saving persistant pairs to the config file and downloading variables from
+ * saving persistent pairs to the config file and downloading variables from
  * the server.
  *
  * BZDB is not an object broker, and isn't meant to be. If you have data
@@ -39,7 +39,7 @@
  * (if accessed often, such as game variables like gravity, you will need a
  * cached version anyway to avoid the overhead of lookup). Using BZDB adds
  * unnecessary overhead if objects generally keep their data hidden without
- * needing persistant state.
+ * needing persistent state.
  *
  * Basically, if your data can be serialized to a string, and it makes sense
  * to do so (eg: config file option, game variable downloaded from server), use
@@ -100,7 +100,7 @@ public:
                             Permission access = Client);
 
     /** mark a value as persistent (i.e. to be saved) or volatile.
-     * this state is stored independently of the existance of a value
+     * this state is stored independently of the existence of a value
      * with the given name.  that is, adding or removing the name
      * will not affect persistence of the name.  the default is
      * volatile.
@@ -203,7 +203,7 @@ public:
      */
     bool              getDebug() const;
 
-// true if we are in a mode where we are seting values that are to be defaults ( config and world time )
+// true if we are in a mode where we are setting values that are to be defaults ( config and world time )
     void              setSaveDefault(bool save);
     bool              getSaveDefault() const;
 

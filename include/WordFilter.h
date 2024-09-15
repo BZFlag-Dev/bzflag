@@ -127,10 +127,10 @@ private:
     ExpCompareSet filters[MAX_FILTER_SETS];
 
 
-    /** used by the agressive filter */
+    /** used by the aggressive filter */
     ExpCompareSet suffixes;
 
-    /** used by the agressive filter */
+    /** used by the aggressive filter */
     ExpCompareSet prefixes;
 
 
@@ -213,7 +213,7 @@ public:
     bool addToFilter(const std::string &word, const std::string &expression);
 
     /** given an input string, filter the input
-     * using either the simple or agressive filter
+     * using either the simple or aggressive filter
      */
     bool filter(char *input, const bool simple=false) const;
     bool filter(std::string &input, const bool simple=false) const;

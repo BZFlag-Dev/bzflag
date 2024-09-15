@@ -1666,7 +1666,7 @@ BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team );
 
 // player score
 BZF_API void bz_computePlayerScore( bool enabled );
-BZF_API bool bz_computingPlayerScore( void );
+BZF_API bool bz_computtingPlayerScore( void );
 
 BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
@@ -2062,7 +2062,7 @@ BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginH
 // team info
 
 BZF_API void bz_computeTeamScore( bool enabled );
-BZF_API bool bz_computingTeamScore( void );
+BZF_API bool bz_computtingTeamScore( void );
 
 BZF_API int bz_getTeamCount (bz_eTeamType team );
 BZF_API int bz_getTeamScore (bz_eTeamType team );

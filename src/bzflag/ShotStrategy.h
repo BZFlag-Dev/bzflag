@@ -13,7 +13,7 @@
 /*
  * ShotStrategy:
  *  Interface for all shot flight path strategies.  A
- *  strategy encapsulates the algorithm for computing
+ *  strategy encapsulates the algorithm for computting
  *  the path taken by a shot.
  */
 

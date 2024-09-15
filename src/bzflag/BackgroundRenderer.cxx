@@ -1378,7 +1378,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         color[2] = lightColor[2];
         color[3] = I;
 
-        // draw ground receiver, computing lighting at each vertex ourselves
+        // draw ground receiver, computting lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
             glColor4fv(color);
@@ -1553,7 +1553,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         float outerSize;
         float outerColor[3];
 
-        // draw ground receiver, computing lighting at each vertex ourselves
+        // draw ground receiver, computting lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
             // center point

@@ -48,10 +48,10 @@ bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
     else
         searchstr += "*.*";
 
-    std::string extenstionSearch;
+    std::string extensionSearch;
 
     if (fileMask && strchr(fileMask,'.'))
-        extenstionSearch = strchr(fileMask,'.')+1;
+        extensionSearch = strchr(fileMask,'.')+1;
 
     hFile = (long)_findfirst(searchstr.c_str(),&fileInfo);
 
@@ -86,7 +86,7 @@ bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
                             if (strrchr(FilePath.c_str(),'.'))
                             {
                                 if (compare_nocase(std::string(strrchr(FilePath.c_str(),'.')+1),
-                                                   extenstionSearch) == 0)
+                                                   extensionSearch) == 0)
                                     list.push_back(FilePath);
                             }
                         }
