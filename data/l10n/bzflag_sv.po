@@ -390,7 +390,7 @@ msgstr "självdestruera/avbryt"
 #msgid "Toggle Main Flags"
 #msgstr ""
 
-#msgid "Silence/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
 #msgid "Server Admin"

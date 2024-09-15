@@ -397,7 +397,7 @@ msgstr "blader voorwaarts door booschappen log"
 #msgid "Toggle Main Flags"
 #msgstr ""
 
-#msgid "Silence/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
 #msgid "Server Admin"
@@ -1278,10 +1278,10 @@ msgstr "hoogte: hogere tanks hebben grotere stippen. Vlaggen zijn kleine kruisje
 #msgid "Toggle Main Flags:"
 #msgstr ""
 
-#msgid "Silience/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
-#msgid "Silience/UnSilence Key:"
+#msgid "Silence/Unsilence Key:"
 #msgstr ""
 
 #msgid "Server Command Key:"

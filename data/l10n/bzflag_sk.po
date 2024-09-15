@@ -1253,7 +1253,7 @@ msgstr "Prepnut vlajky na radare:"
 msgid "Toggle Main Flags:"
 msgstr "Prepnut hlavne vlajky:"
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr "Umlcat/Odmlcat:"
 
 msgid "Server Admin:"
@@ -1874,7 +1874,7 @@ msgstr "Prepnutie vlajok na radare:"
 msgid "Toggle Flags On Field:"
 msgstr "Prepnutie vlajok v poli:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Klaves umlcania/odmlcania:"
 
 msgid "Server Command Key:"

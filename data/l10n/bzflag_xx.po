@@ -1302,7 +1302,7 @@ msgstr ""
 msgid "Toggle Main Flags:"
 msgstr ""
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr ""
 
 msgid "Server Admin:"
@@ -1929,7 +1929,7 @@ msgstr ""
 msgid "Toggle Flags On Field:"
 msgstr ""
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr ""
 
 msgid "Server Command Key:"

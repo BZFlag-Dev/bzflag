@@ -1252,7 +1252,7 @@ msgstr "Otobrazhenie flagov na radare:"
 msgid "Toggle Main Flags:"
 msgstr "Otobrazhenie osnovnyh flagov:"
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr "Vykl/vkl zvuk:"
 
 msgid "Server Admin:"
@@ -1879,7 +1879,7 @@ msgstr "tumbler flanov na radare:"
 msgid "Toggle Flags On Field:"
 msgstr "tumbler flagov v pricele:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Klyuch tishiny/zvuka:"
 
 msgid "Server Command Key:"

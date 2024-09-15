@@ -397,7 +397,7 @@ msgstr "Flaggen auf Radar an/aus"
 msgid "Toggle Main Flags"
 msgstr "Flaggen an/aus"
 
-#msgid "Silence/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
 #msgid "Server Admin"
@@ -1278,10 +1278,10 @@ msgstr "Andeutung auf seine Höhe, je höher der Panzer platziert ist desto grö
 #msgid "Toggle Main Flags:"
 #msgstr ""
 
-#msgid "Silience/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
-#msgid "Silience/UnSilence Key:"
+#msgid "Silence/Unsilence Key:"
 #msgstr ""
 
 msgid "Server Command Key:"

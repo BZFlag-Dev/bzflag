@@ -471,7 +471,7 @@ msgstr "Zobrazit vlajky na radaru:"
 msgid "Toggle Main Flags:"
 msgstr "Zobrazit vlaky pred sebou:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Umlceni/Odmlceni hrace:"
 
 msgid "Server Command Key:"
@@ -629,7 +629,7 @@ msgstr "Posuv zaznamu zprav zpet:"
 msgid "Scroll Message Log Forward:"
 msgstr "Posuv aznamu zprav vpred:"
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr "Umlceni/Odmlceni hrace:"
 
 msgid "Show/Dismiss menu:"
@@ -1614,7 +1614,7 @@ msgstr "zobrazit vlajky na radaru"
 msgid "Toggle Main Flags"
 msgstr "zobrazit vlaky pred sebou"
 
-msgid "Silence/UnSilence"
+msgid "Silence/Unsilence"
 msgstr "Umlceni/Odmlceni hrace"
 
 msgid "self destruct/cancel"
