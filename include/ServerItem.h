@@ -36,7 +36,7 @@ public:
     std::string   getAddrName() const;
     time_t    getAgeMinutes() const;
     time_t    getAgeSeconds() const;
-    std::string   getAgeString() const; // nifty formated age string
+    std::string   getAgeString() const; // nifty formatted age string
     time_t    getNow() const; // current time
     bool      operator<(const ServerItem &right);
 private:

@@ -211,8 +211,8 @@ void LinkManager::findTelesByName(const std::string& name,
         return;
 
     // a leading ':' might be used to indicate absolute linking if
-    // links are ever included in group definintions. strip it here
-    // for forwards compatibiliy.
+    // links are ever included in group definitions. strip it here
+    // for forwards compatibility.
     if (glob[0] == ':')
     {
         glob.erase(0, 1); // erase 1 char from position 0

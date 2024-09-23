@@ -150,7 +150,7 @@ bool            WallSceneNode::cull(const ViewFrustum& frustum) const
 int         WallSceneNode::pickLevelOfDetail(
     const SceneRenderer& renderer) const
 {
-    if (!BZDBCache::tesselation)
+    if (!BZDBCache::tessellation)
         return 0;
 
     int bestLOD = 0;

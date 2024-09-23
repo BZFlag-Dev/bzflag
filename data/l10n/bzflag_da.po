@@ -396,7 +396,7 @@ msgstr "Vis flag i radar (til/fra)"
 msgid "Toggle Main Flags"
 msgstr "Vis flag (til/fra)"
 
-msgid "Silence/UnSilence"
+msgid "Silence/Unsilence"
 msgstr "Ignorer/Ophæv ignorer"
 
 msgid "Server Admin"
@@ -1270,10 +1270,10 @@ msgstr "Radar flag (til/fra): "
 msgid "Toggle Main Flags:"
 msgstr "Flag (til/fra): "
 
-msgid "Silience/UnSilence"
+msgid "Silence/Unsilence"
 msgstr "Ignorer/Ophæv ignorer"
 
-msgid "Silience/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Ignorer/Ophæv ignorer tast"
 
 msgid "Server Command Key:"

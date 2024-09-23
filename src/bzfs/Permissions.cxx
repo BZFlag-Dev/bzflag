@@ -532,7 +532,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
     return PlayerAccessInfo::lastPerm;
 }
 
-// Parse a list of permissions &permissionString and set the corrosponding Permissions
+// Parse a list of permissions &permissionString and set the corresponding Permissions
 // in &info. Return true if a group is referenced but not defined yet, else false.
 // return value is only needed for groupdb parsing, not for userdb.
 bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo &info)
@@ -627,7 +627,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
                 continue;
             }
 
-            // + is like no operator, just let it pass trough
+            // + is like no operator, just let it pass through
             case '+':
                 break;
 

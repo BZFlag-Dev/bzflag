@@ -75,7 +75,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
          * map.
          *
          * TODO: this should be a circle instead of square to prevent such
-         * predictibility and tendency to select those potentially
+         * predictability and tendency to select those potentially
          * dangerous corners.
          */
 

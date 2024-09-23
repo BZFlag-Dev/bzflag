@@ -390,7 +390,7 @@ msgstr "självdestruera/avbryt"
 #msgid "Toggle Main Flags"
 #msgstr ""
 
-#msgid "Silence/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
 #msgid "Server Admin"
@@ -1276,10 +1276,10 @@ msgstr "högt uppe den är: Ju större prick, desto högre upp. Flaggor är små
 #msgid "Toggle Main Flags:"
 #msgstr ""
 
-#msgid "Silience/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
-#msgid "Silience/UnSilence Key:"
+#msgid "Silence/Unsilence Key:"
 #msgstr ""
 
 #msgid "Server Command Key:"
@@ -1565,7 +1565,7 @@ msgstr "Du befinner dig alltid i centrum och framåt är alltid uppåt"
 # !!! Messages below cannot be translated :-(
 
 # Informace o vlajce, kterou sebrali hraci
-# Informations about flags grabbed by opponents
+# Information about flags grabbed by opponents
 #msgid "grabbed High Speed flag"
 #msgstr ""
 

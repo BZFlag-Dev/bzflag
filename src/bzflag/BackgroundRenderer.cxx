@@ -674,10 +674,10 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
         if (BZDBCache::blend && BZDBCache::lighting &&
                 !drawingMirror && BZDBCache::drawGroundLights)
         {
-            if (BZDBCache::tesselation && (renderer.useQuality() >= 3))
+            if (BZDBCache::tessellation && (renderer.useQuality() >= 3))
             {
 //    (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
-                // not really tesselation, but it is tied to the "Best" lighting,
+                // not really tessellation, but it is tied to the "Best" lighting,
                 // avoid on foggy maps, because the blending function accumulates
                 // too much brightness.
                 drawAdvancedGroundReceivers(renderer);
@@ -1378,7 +1378,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         color[2] = lightColor[2];
         color[3] = I;
 
-        // draw ground receiver, computing lighting at each vertex ourselves
+        // draw ground receiver, computting lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
             glColor4fv(color);
@@ -1553,7 +1553,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         float outerSize;
         float outerColor[3];
 
-        // draw ground receiver, computing lighting at each vertex ourselves
+        // draw ground receiver, computting lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
             // center point

@@ -182,7 +182,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
     listHUD.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
     listHUD.push_back(createLabel(NULL, "Toggle Radar Flags:"));
     listHUD.push_back(createLabel(NULL, "Toggle Main Flags:"));
-    listHUD.push_back(createLabel(NULL, "Silence/UnSilence:"));
+    listHUD.push_back(createLabel(NULL, "Silence/Unsilence:"));
     listHUD.push_back(createLabel(NULL, "Server Admin:"));
     listHUD.push_back(createLabel(NULL, "Hunt:"));
     listHUD.push_back(createLabel(NULL, "Auto Pilot:"));

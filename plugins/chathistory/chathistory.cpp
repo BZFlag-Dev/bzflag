@@ -59,7 +59,7 @@ void ChatEvents::Init (const char* commandLine)
         maxChatLines  = realLines;
     }
 
-    // Register our custon slash commands
+    // Register our custom slash commands
     bz_registerCustomSlashCommand("last", &lastChatCommand);
     bz_registerCustomSlashCommand("flushchat", &lastChatCommand);
 
@@ -125,7 +125,7 @@ bool LastChatCommand::SlashCommand (int playerID, bz_ApiString command, bz_ApiSt
         if (history.size() < numLines)
             numLines = (unsigned int)history.size();
 
-        // Send the messages to the requestor
+        // Send the messages to the requester
         bz_sendTextMessage(BZ_SERVER, playerID, bz_format("Last %d message(s) for %s", numLines, params->get(1).c_str()));
         for (unsigned int i = numLines; i > 0; i--)
         {

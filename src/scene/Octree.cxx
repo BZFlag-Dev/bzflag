@@ -352,7 +352,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
     if (listBytes)
         memcpy(list, _list, listBytes);
 
-    // copy the extents, and make a slighty puffed up version
+    // copy the extents, and make a slightly puffed up version
     extents = exts;
     Extents testExts;
     testExts = exts;

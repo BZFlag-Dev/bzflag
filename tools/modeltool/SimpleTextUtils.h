@@ -63,7 +63,7 @@ std::string replace_all(const std::string& in, const std::string& replaceMe, con
  * inside quotes are ignored.
  * Hence /ban "Mr Blahblah" isajerk parses to "/ban", "Mr Blahlah" and "isajerk"
  * but so does "Mr Blahblah" "isajerk", so if you want 3 tokens and a delimeter
- * is in one of the tokens, by puting quotes around it you can get the correct
+ * is in one of the tokens, by putting quotes around it you can get the correct
  * parsing. When use quotes is enabled, \'s and "'s should\can be escaped with \
  * escaping is not currently done for any other character.
  * Should not have " as a delimeter if you want to use quotes

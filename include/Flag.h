@@ -74,7 +74,7 @@ enum FlagStatus
 };
 
 /** This enum tells us if the flag type is droppable, and what happens to it
-    when it's droppped. */
+    when it's dropped. */
 enum FlagEndurance
 {
     /// permanent flag

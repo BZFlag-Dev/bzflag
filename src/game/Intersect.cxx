@@ -294,7 +294,7 @@ float timeRayHitsBlock(const Ray& r, const float* p1,
 }
 
 
-/** Computing ray travel time to the plane described by 3 points
+/** Computting ray travel time to the plane described by 3 points
  */
 static float timeRayHitsPlane(const float pb[3], const float db[3],
                               const float x1[3], const float x2[3],
@@ -318,7 +318,7 @@ static float timeRayHitsPlane(const float pb[3], const float db[3],
     n[1] = u[2] * v[0] - u[0] * v[2];
     n[2] = u[0] * v[1] - u[1] * v[0];
 
-    // computing unnormalized distance projecting the distance on versor
+    // computting unnormalized distance projecting the distance on versor
     float distance = 0.0;
     for (i = 0; i < 3; i++)
         distance += n[i] * d[i];
