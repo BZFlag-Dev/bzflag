@@ -9,7 +9,14 @@ BZFlag 2.4.27
 * Fixed yet another SDL2 window management regression on macOS - Joshua Bodine
 * Remove non-SDL2 platform code and add SDL2 controller rumble support
     - Scott Wichser
+* Fix authentication when behind CGNAT (requires updated client and server)
+    - Tim Riker, Scott Wichser
 * Fix libcurl deprecation warnings - Alfredo Tupone
+* Add Dockerfile for bzfs container - Vladimir Jimenez, Scott Wichser
+* Fix various memory leaks, crashes, buffer overflows, divide by zero errors
+    - Alfredo Tupone
+* Fix skewed textures that occured when the window size changed - Scott Wichser
+* Add support for pasting text into text inputs - Scott Wichser
 
 
 BZFlag 2.4.26  "Tanksgiving" (2022-11-20)
