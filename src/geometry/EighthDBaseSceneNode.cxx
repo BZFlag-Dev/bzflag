@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// inteface header
+// interface header
 #include "EighthDBaseSceneNode.h"
 
 // system headers
