@@ -130,7 +130,7 @@ color coding on *nix, same as \-echo on windows.
 Prints a concise list of the \fBbzflag\fR command line options.
 .TP
 \fB\-latitude\fI latitude\fR
-Uses \fIlatitude\fR when computting celestial object positions.
+Uses \fIlatitude\fR when computing celestial object positions.
 .TP
 \fB\-list\fI url\fR
 Look for list servers using \fIurl\fR.  A built\-in url is
