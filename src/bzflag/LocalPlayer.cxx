@@ -222,7 +222,7 @@ float LocalPlayer::getNewAngVel(float old, float desired)
     else
     {
 
-        /* keybaord users
+        /* keyboard users
          * the larger the oldAngVel contribution, the more slowly an
          * angular velocity converges to the desired "max" velocity; the
          * contribution of the desired and old velocity should add up to

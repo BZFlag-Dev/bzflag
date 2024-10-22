@@ -20,7 +20,7 @@
 // Inherits from
 #include "SceneNode.h"
 
-// Commen headers
+// Common headers
 #include "OpenGLLight.h"
 
 class BillboardSceneNode : public SceneNode

@@ -138,7 +138,7 @@ STRIP_CODE_COMMENTS    = YES
 # file names in lower case letters. If set to YES upper case letters are also
 # allowed. This is useful if you have classes or files whose names only differ
 # in case and if your file system supports case sensitive file names. Windows
-# users are adviced to set this option to NO.
+# users are advised to set this option to NO.
 
 CASE_SENSE_NAMES       = YES
 
@@ -170,7 +170,7 @@ SHOW_INCLUDE_FILES     = YES
 # will interpret the first line (until the first dot) of a JavaDoc-style
 # comment as the brief description. If set to NO, the JavaDoc
 # comments  will behave just like the Qt-style comments (thus requiring an
-# explict @brief command for a brief description.
+# explicit @brief command for a brief description.
 
 JAVADOC_AUTOBRIEF      = YES
 
@@ -638,7 +638,7 @@ COMPACT_RTF            = NO
 RTF_HYPERLINKS         = NO
 
 # Load stylesheet definitions from file. Syntax is similar to doxygen's
-# config file, i.e. a series of assigments. You only have to provide
+# config file, i.e. a series of assignments. You only have to provide
 # replacements, missing definitions are set to their default value.
 
 RTF_STYLESHEET_FILE    =
@@ -764,7 +764,7 @@ EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 
 #---------------------------------------------------------------------------
-# Configuration::addtions related to external references
+# Configuration::additions related to external references
 #---------------------------------------------------------------------------
 
 # The TAGFILES tag can be used to specify one or more tagfiles.
@@ -800,7 +800,7 @@ PERL_PATH              = /usr/bin/perl
 # If the CLASS_DIAGRAMS tag is set to YES (the default) Doxygen will
 # generate a inheritance diagram (in Html, RTF and LaTeX) for classes with base or
 # super classes. Setting the tag to NO turns the diagrams off. Note that this
-# option is superceded by the HAVE_DOT option below. This is only a fallback. It is
+# option is superseded by the HAVE_DOT option below. This is only a fallback. It is
 # recommended to install and use dot, since it yield more powerful graphs.
 
 CLASS_DIAGRAMS         = YES
@@ -902,7 +902,7 @@ GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 
 #---------------------------------------------------------------------------
-# Configuration::addtions related to the search engine
+# Configuration::additions related to the search engine
 #---------------------------------------------------------------------------
 
 # The SEARCHENGINE tag specifies whether or not a search engine should be

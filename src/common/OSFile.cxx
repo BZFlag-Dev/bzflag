@@ -365,7 +365,7 @@ std::string OSFile::getFileName()
     return info->title;
 }
 
-// this CAN return npos, cus the file may not have an extenstion, if it just happens to end in a '.' then well, your really weird Mr. File.
+// this CAN return npos, cus the file may not have an extension, if it just happens to end in a '.' then well, your really weird Mr. File.
 std::string OSFile::getExtension()
 {
     std::string::size_type dot = info->stdName.rfind('.');

@@ -7,7 +7,7 @@ Admin only:
 "katimemult <%>" - sets auto time multiplier per player.
 "katimemultmin <%>" - sets auto time minimum multiplier.
 "kaautotimeon" - enable the autotime function.
-"kaautotimeoff" - disable the autotime funtion.
+"kaautotimeoff" - disable the autotime function.
 "kaffon" - enable forced flags.
 "kaffoff" - disable forced flags.
 "katime <seconds>" - change hold time 1-7200 secs.

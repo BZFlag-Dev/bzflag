@@ -1166,7 +1166,7 @@ bool ResetCommand::operator() (const char    *message,
 bool ShutdownCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
-    // If no playerData - dont perfom permission check, since it is probably the API
+    // If no playerData - don't perform permission check, since it is probably the API
     if (playerData)
     {
         int t = playerData->getIndex();
@@ -1714,7 +1714,7 @@ bool FlagCommand::operator() (const char     *message,
 
             grabFlag(gkPlayer->getIndex(), *fi, false);
 
-            // send the annoucement
+            // send the announcement
             char buffer[MessageLen];
             snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
                      playerData->player.getCallSign(),

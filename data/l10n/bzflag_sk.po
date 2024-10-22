@@ -1253,7 +1253,7 @@ msgstr "Prepnut vlajky na radare:"
 msgid "Toggle Main Flags:"
 msgstr "Prepnut hlavne vlajky:"
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr "Umlcat/Odmlcat:"
 
 msgid "Server Admin:"
@@ -1874,7 +1874,7 @@ msgstr "Prepnutie vlajok na radare:"
 msgid "Toggle Flags On Field:"
 msgstr "Prepnutie vlajok v poli:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Klaves umlcania/odmlcania:"
 
 msgid "Server Command Key:"
@@ -2306,7 +2306,7 @@ msgstr "  odoslanych paketov    : %d (%f/sec)\n"
 msgid "  bytes/packet    : %f\n"
 msgstr "  bajtov/paket    : %f\n"
 
-msgid "  bytes recieved  : %d (%f/sec)\n"
+msgid "  bytes received  : %d (%f/sec)\n"
 msgstr "  prijatych bajtov  : %d (%f/s)\n"
 
 msgid "  packets received: %d (%f/sec)\n"
@@ -2318,7 +2318,7 @@ msgstr "<** UDP kod paketu %x Dlzka %x\n"
 msgid "Fallback to normal TCP receive"
 msgstr "Navrat k obycajnemu prijmu TCP"
 
-msgid "Communication error joining game [No immediate respose]."
+msgid "Communication error joining game [No immediate response]."
 msgstr "Chyba komunikacie pri pripajani sa k hre [Ziadna bezprostredna odpoved]."
 
 msgid "Server forced disconnection."
@@ -2623,7 +2623,7 @@ msgstr "Super"
 msgid "Shock"
 msgstr "Sok"
 
-msgid "Fave."
+msgid "Wave."
 msgstr "Oblub."
 
 msgid "Hit%"

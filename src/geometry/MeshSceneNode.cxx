@@ -45,7 +45,7 @@
 // NOTE
 //
 //   This type of SceneNode does not support
-//   tesselation or splitting of translucent
+//   tessellation or splitting of translucent
 //   nodes for improved back-to-front sorting.
 //
 

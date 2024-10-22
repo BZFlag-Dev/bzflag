@@ -1,7 +1,7 @@
 # Start the build image
 FROM alpine:3 as build
 
-# A comma seperated list of extra plugins to compile
+# A comma-separated list of extra plugins to compile
 ARG plugins=""
 
 # The configure argument is passed to the ./configure script

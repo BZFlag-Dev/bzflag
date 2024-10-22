@@ -1022,7 +1022,7 @@ msgstr "Muestra/oculta banderas en el radar:"
 msgid "Toggle Main Flags:"
 msgstr "Muestra/oculta banderas en vista principal:"
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr "Activa/desactiva sonido:"
 
 msgid "Server Admin:"
@@ -1600,7 +1600,7 @@ msgstr "Mostrar/ocultar banderas en radar:"
 msgid "Toggle Flags On Field:"
 msgstr "Mostrar/ocultar banderas en terreno:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Activar/desactivar sonido:"
 
 msgid "Server Command Key:"
@@ -2018,7 +2018,7 @@ msgstr "  paquetes enviados: %d (%f/seg)\n"
 msgid "  bytes/packet    : %f\n"
 msgstr "      bytes/paquete: %f\n"
 
-msgid "  bytes recieved  : %d (%f/sec)\n"
+msgid "  bytes received  : %d (%f/sec)\n"
 msgstr "    bytes recibidos: %d (%f/seg)\n"
 
 msgid "  packets received: %d (%f/sec)\n"

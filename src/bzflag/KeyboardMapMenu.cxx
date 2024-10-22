@@ -100,7 +100,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
     controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
     controls.push_back(createLabel(NULL, "Toggle Flags On Radar:"));
     controls.push_back(createLabel(NULL, "Toggle Flags On Field:"));
-    controls.push_back(createLabel(NULL, "Silence/UnSilence Key:"));
+    controls.push_back(createLabel(NULL, "Silence/Unsilence Key:"));
     controls.push_back(createLabel(NULL, "Server Command Key:"));
     controls.push_back(createLabel(NULL, "Hunt Key:"));
     controls.push_back(createLabel(NULL, "Add/Modify Hunt Key:"));

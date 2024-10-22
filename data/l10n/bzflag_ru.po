@@ -1252,7 +1252,7 @@ msgstr "Otobrazhenie flagov na radare:"
 msgid "Toggle Main Flags:"
 msgstr "Otobrazhenie osnovnyh flagov:"
 
-msgid "Silence/UnSilence:"
+msgid "Silence/Unsilence:"
 msgstr "Vykl/vkl zvuk:"
 
 msgid "Server Admin:"
@@ -1879,7 +1879,7 @@ msgstr "tumbler flanov na radare:"
 msgid "Toggle Flags On Field:"
 msgstr "tumbler flagov v pricele:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Klyuch tishiny/zvuka:"
 
 msgid "Server Command Key:"
@@ -2317,7 +2317,7 @@ msgstr "  paketov otoslano    : %d (%f/sek)\n"
 msgid "  bytes/packet    : %f\n"
 msgstr "  bajt/paket    : %f\n"
 
-msgid "  bytes recieved  : %d (%f/sec)\n"
+msgid "  bytes received  : %d (%f/sec)\n"
 msgstr "  bajtov polucheno  : %d (%f/sec)\n"
 
 msgid "  packets received: %d (%f/sec)\n"

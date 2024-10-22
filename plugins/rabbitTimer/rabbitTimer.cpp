@@ -17,7 +17,7 @@ class rabbitTimer : public bz_Plugin
 public:
     virtual const char* Name ()
     {
-        return "Rabit Timer";
+        return "Rabbit Timer";
     }
     virtual void Init ( const char* config );
 

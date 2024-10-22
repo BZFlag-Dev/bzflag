@@ -1512,7 +1512,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
         // Trim off the command to leave the player's message
         message = message + 4;
 
-        // Set the message type to an action messsage
+        // Set the message type to an action message
         type = ActionMessage;
     }
 

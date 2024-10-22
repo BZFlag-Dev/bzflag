@@ -393,7 +393,7 @@ msgstr "+OGglE R4daR fl@95"
 msgid "Toggle Main Flags"
 msgstr "t0GGL3 M41N fL4G5"
 
-msgid "Silence/UnSilence"
+msgid "Silence/Unsilence"
 msgstr "$1LenCE/UN5il3nCE"
 
 msgid "Server Admin"
@@ -1289,10 +1289,10 @@ msgstr "J00R +4Nk W0N'T mOve, oUTs1D3 +H3 l4R93 B0Xor J00 dOn't MoV3 AnY PH@5tER
 #msgid "Toggle Main Flags:"
 #msgstr ""
 
-#msgid "Silience/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
-#msgid "Silience/UnSilence Key:"
+#msgid "Silence/Unsilence Key:"
 #msgstr ""
 
 #msgid "Server Command Key:"

@@ -397,7 +397,7 @@ msgstr "Dis/Attiva Bandiere nel Radar"
 msgid "Toggle Main Flags"
 msgstr "Dis/Attiva Bandiere"
 
-msgid "Silence/UnSilence"
+msgid "Silence/Unsilence"
 msgstr "Azzittisci"
 
 msgid "Server Admin"
@@ -1278,7 +1278,7 @@ msgstr "Attiva Bandiere (Radar)"
 msgid "Toggle Main Flags:"
 msgstr "Attiva Bandiere"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Azzittisci"
 
 msgid "Server Command Key:"

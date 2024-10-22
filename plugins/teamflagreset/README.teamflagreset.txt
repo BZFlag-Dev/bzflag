@@ -4,7 +4,7 @@ BZFlag Server Plugin: teamflagreset
 This plugin monitors team flag drops and will automatically reset an idle team
 flag after a specified amount of time.  It will also send a message stating that
 the flag sat idle for too long.  It will not affect teams without players
-(to prevent erronous messages) and will disable itself when there is only one
+(to prevent erroneous messages) and will disable itself when there is only one
 team with players.
 
 

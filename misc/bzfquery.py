@@ -36,7 +36,7 @@ import time
 import select
 
 #
-# If true, display detailled HTML output when exception occur
+# If true, display detailed HTML output when exception occur
 #
 enableCgiTb = True
 
