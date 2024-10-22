@@ -163,19 +163,25 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
 
 const char *AresHandler::getHostname()
 {
-    const std::lock_guard<std::mutex> lock(callback_mutex);
-
-    return hostName.c_str();
+    if (!callback_mutex.try_lock())
+        return "";
+    const char *host = hostName.c_str();
+    callback_mutex.unlock();
+    return host;
 }
 
 AresHandler::ResolutionStatus AresHandler::getHostAddress(struct in_addr
         *clientAddr)
 {
-    const std::lock_guard<std::mutex> lock(callback_mutex);
+    if (!callback_mutex.try_lock())
+        return HbNPending;
 
+    const ResolutionStatus oldStatus = status;
     if (status == HbNSucceeded)
         memcpy(clientAddr, &hostAddress, sizeof(hostAddress));
-    return status;
+    callback_mutex.unlock();
+
+    return oldStatus;
 }
 
 #if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 26
