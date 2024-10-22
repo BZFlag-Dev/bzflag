@@ -1320,7 +1320,7 @@ BZF_API void bz_computePlayerScore( bool enabled )
     Score::KeepPlayerScores = enabled;
 }
 
-BZF_API bool bz_computtingPlayerScore( void )
+BZF_API bool bz_computingPlayerScore( void )
 {
     return Score::KeepPlayerScores;
 }
@@ -3541,7 +3541,7 @@ BZF_API void bz_computeTeamScore( bool enabled )
     Score::KeepTeamScores = enabled;
 }
 
-BZF_API bool bz_computtingTeamScore( void )
+BZF_API bool bz_computingTeamScore( void )
 {
     return Score::KeepTeamScores;
 }

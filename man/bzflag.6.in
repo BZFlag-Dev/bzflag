@@ -144,7 +144,7 @@ from the internet and are queried when using the Find Server menu.
 Set the locale used to display messages, menus, hud alerts, etc.
 .TP
 \fB\-longitude \fIlongitude\fR
-Uses \fIlongitude\fR when computting celestial object positions.
+Uses \fIlongitude\fR when computing celestial object positions.
 .TP
 .B \-m, \-mute
 Disables sound.
