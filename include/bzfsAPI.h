@@ -1666,7 +1666,7 @@ BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team );
 
 // player score
 BZF_API void bz_computePlayerScore( bool enabled );
-BZF_API bool bz_computtingPlayerScore( void );
+BZF_API bool bz_computingPlayerScore( void );
 
 BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
