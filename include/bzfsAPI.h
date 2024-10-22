@@ -2062,7 +2062,7 @@ BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginH
 // team info
 
 BZF_API void bz_computeTeamScore( bool enabled );
-BZF_API bool bz_computtingTeamScore( void );
+BZF_API bool bz_computingTeamScore( void );
 
 BZF_API int bz_getTeamCount (bz_eTeamType team );
 BZF_API int bz_getTeamScore (bz_eTeamType team );
