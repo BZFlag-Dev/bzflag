@@ -120,9 +120,30 @@ void AresHandler::queryHost(const char *name)
 
     // launch the asynchronous query to look up this hostname
     status = HbNPending;
+
+#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
+    struct ares_addrinfo_hints hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+
+    ares_getaddrinfo(aresChannel, name, NULL, &hints, staticCallback1,
+                     (void *)this);
+#else
     ares_gethostbyname(aresChannel, name, AF_INET, staticCallback,
                        (void *)this);
+#endif
 }
+
+#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
+void AresHandler::staticCallback1(void *arg, int status,
+                                  int, struct ares_addrinfo *result)
+{
+    if (status == ARES_EDESTRUCTION)
+        return;
+
+    ((AresHandler *)arg)->callback1(status, result);
+}
+#endif
 
 #if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 5
 void AresHandler::staticCallback(void *arg, int callbackStatus,
@@ -160,6 +181,27 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
         status = HbNSucceeded;
     }
 }
+
+#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
+void AresHandler::callback1(int callbackStatus, struct ares_addrinfo *result)
+{
+    const std::lock_guard<std::mutex> lock(callback_mutex);
+
+    if (callbackStatus != ARES_SUCCESS)
+    {
+        logDebugMessage(1,"Player [%d] failed to resolve: error %d\n", index,
+                        callbackStatus);
+        status = Failed;
+    }
+    else if (status == HbNPending)
+    {
+        memcpy(&hostAddress,
+               &((sockaddr_in *)result->nodes->ai_addr)->sin_addr,
+               sizeof(hostAddress));
+        status = HbNSucceeded;
+    }
+}
+#endif
 
 const char *AresHandler::getHostname()
 {
