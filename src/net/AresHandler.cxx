@@ -164,7 +164,7 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
 
 #if HAVE_ARES_GETADDRINFO
 void AresHandler::staticCallbackAddrInfo(void *arg, int status,
-                                  int, struct ares_addrinfo *result)
+        int, struct ares_addrinfo *result)
 {
     if (status == ARES_EDESTRUCTION)
         return;
