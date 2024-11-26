@@ -54,22 +54,15 @@ public:
         return status;
     };
 private:
-#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
-    static void staticCallback1(void *arg, int status,
+#if HAVE_ARES_GETADDRINFO
+    static void staticCallbackAddrInfo(void *arg, int status,
                                 int timeout, struct ares_addrinfo *result);
+    void      callbackAddrInfo(int status, struct ares_addrinfo *result);
 #endif
-
-#if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
     static void   staticCallback(void *arg, int statusCallback, int timeouts,
                                  struct hostent *hostent);
-#else
-    static void   staticCallback(void *arg, int statusCallback,
-                                 struct hostent *hostent);
-#endif
     void      callback(int status, struct hostent *hostent);
-#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
-    void      callback1(int status, struct ares_addrinfo *result);
-#endif
+
     int       index;
 
     std::string   hostName;

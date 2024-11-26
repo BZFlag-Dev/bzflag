@@ -293,7 +293,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 ]])],[AC_MSG_RESULT([yes])],[AC_MSG_FAILURE([working c-ares library was not found])])
 LIBS="$PRELIBS"
 
-AC_CHECK_LIB(cares, ares_library_init, AC_DEFINE([HAVE_ARES_LIBRARY_INIT],[1],[Define if libcares includes ares_library_init.]))
+AC_CHECK_LIB(cares, ares_getaddrinfo, AC_DEFINE([HAVE_ARES_GETADDRINFO],[1],[Define if libcares includes ares_getaddrinfo.]))
 
 
 

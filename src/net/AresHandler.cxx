@@ -72,9 +72,7 @@ bool AresHandler::globalInit()
 {
     if (!globallyInited)
     {
-#ifdef HAVE_ARES_LIBRARY_INIT
         if (ares_library_init(ARES_LIB_INIT_ALL) == ARES_SUCCESS)
-#endif
             globallyInited = true;
     }
     return globallyInited;
@@ -82,10 +80,8 @@ bool AresHandler::globalInit()
 
 void AresHandler::globalShutdown()
 {
-#ifdef HAVE_ARES_LIBRARY_INIT
     if (globallyInited)
         ares_library_cleanup();
-#endif
 }
 
 void AresHandler::queryHostname(const struct sockaddr *clientAddr)
@@ -121,12 +117,12 @@ void AresHandler::queryHost(const char *name)
     // launch the asynchronous query to look up this hostname
     status = HbNPending;
 
-#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
+#if HAVE_ARES_GETADDRINFO
     struct ares_addrinfo_hints hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
 
-    ares_getaddrinfo(aresChannel, name, NULL, &hints, staticCallback1,
+    ares_getaddrinfo(aresChannel, name, NULL, &hints, staticCallbackAddrInfo,
                      (void *)this);
 #else
     ares_gethostbyname(aresChannel, name, AF_INET, staticCallback,
@@ -134,24 +130,8 @@ void AresHandler::queryHost(const char *name)
 #endif
 }
 
-#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
-void AresHandler::staticCallback1(void *arg, int status,
-                                  int, struct ares_addrinfo *result)
-{
-    if (status == ARES_EDESTRUCTION)
-        return;
-
-    ((AresHandler *)arg)->callback1(status, result);
-}
-#endif
-
-#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 5
 void AresHandler::staticCallback(void *arg, int callbackStatus,
                                  int, struct hostent *hostent)
-#else
-void AresHandler::staticCallback(void *arg, int callbackStatus,
-                                 struct hostent *hostent)
-#endif
 {
     ((AresHandler *)arg)->callback(callbackStatus, hostent);
 }
@@ -182,8 +162,17 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
     }
 }
 
-#if ARES_VERSION_MAJOR > 1 || ARES_VERSION_MINOR >= 16
-void AresHandler::callback1(int callbackStatus, struct ares_addrinfo *result)
+#if HAVE_ARES_GETADDRINFO
+void AresHandler::staticCallbackAddrInfo(void *arg, int status,
+                                  int, struct ares_addrinfo *result)
+{
+    if (status == ARES_EDESTRUCTION)
+        return;
+
+    ((AresHandler *)arg)->callbackAddrInfo(status, result);
+}
+
+void AresHandler::callbackAddrInfo(int callbackStatus, struct ares_addrinfo *result)
 {
     const std::lock_guard<std::mutex> lock(callback_mutex);
 
