@@ -791,7 +791,7 @@ void BackgroundRenderer::setupSkybox()
         bzmats[i]->setReference();
 
     // setup the wrap mode
-    if (GLEW_EXT_texture_edge_clamp)
+    if (GLAD_GL_SGIS_texture_edge_clamp)
         skyboxWrapMode = GL_CLAMP_TO_EDGE;
     else
         skyboxWrapMode = GL_CLAMP;

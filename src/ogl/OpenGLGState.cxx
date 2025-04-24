@@ -23,11 +23,11 @@
 
 /* common implementation headers */
 #include "bzfio.h" // for logDebugMessage(3,)
-#include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
+#include "bzfSDL.h"
 
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
@@ -1322,14 +1322,17 @@ void OpenGLGState::initContext()
         return;
     }
 
-    GLenum err = glewInit();
-    // Running the client using SDL's Wayland driver causes glewInit() to return GLEW_ERROR_NO_GLX_DISPLAY. We do not
-    // check for or use GLX extensions, so I think it's safe to allow for this error code.
-    // https://github.com/nigels-com/glew/issues/417
-    // https://github.com/BZFlag-Dev/bzflag/issues/377
-    if (GLEW_OK != err && GLEW_ERROR_NO_GLX_DISPLAY != err)
+    int version = gladLoadGL((GLADloadfunc) SDL_GL_GetProcAddress);
+
+    if (version == 0)
     {
-        printf("initContext() Error: %s\n", glewGetErrorString(err));
+        printf("Error: Failed to initialize OpenGL context\n");
+        return;
+    }
+
+    if (!GLAD_GL_VERSION_1_1)
+    {
+        printf("OpenGL version 1.1 functionality is required\n");
         return;
     }
 
@@ -1399,9 +1402,9 @@ void OpenGLGState::initGLState()
 bool OpenGLGState::initGLExtensions()
 {
 
-    hasAnisotropicFiltering = GLEW_EXT_texture_filter_anisotropic;
+    hasAnisotropicFiltering = GLAD_GL_EXT_texture_filter_anisotropic;
 
-    if (GLEW_ARB_framebuffer_object)
+    if (GLAD_GL_ARB_framebuffer_object)
     {
         GLint sampleCount = 1;
         glGetIntegerv(GL_MAX_SAMPLES, &sampleCount);
@@ -1559,68 +1562,6 @@ OpenGLGState        OpenGLGStateBuilder::getState() const
 // TODO: Move the rest of this junk into it's own file,
 //       bring the context switch stuff along for the ride
 //
-
-
-// for hooking debuggers
-static void contextFreeError(const char* message)
-{
-    printf ("contextFreeError(): %s\n", message);
-}
-static void contextInitError(const char* message)
-{
-    printf ("contextInitError(): %s\n", message);
-}
-
-
-#undef glNewList
-void bzNewList(GLuint list, GLenum mode)
-{
-    glNewList(list, mode);
-    return;
-}
-
-#undef glGenLists
-GLuint bzGenLists(GLsizei count)
-{
-    if (OpenGLGState::getExecutingFreeFuncs())
-        contextFreeError ("bzGenLists() is having issues");
-    GLuint base = glGenLists(count);
-    //logDebugMessage(4,"genList = %i (%i)\n", (int)base, (int)count);
-    return base;
-}
-
-#undef glDeleteLists
-void bzDeleteLists(GLuint base, GLsizei count)
-{
-    if (OpenGLGState::getExecutingInitFuncs())
-        contextInitError ("bzDeleteLists() is having issues");
-    if (OpenGLGState::haveGLContext())
-        glDeleteLists(base, count);
-    else
-        logDebugMessage(4,"bzDeleteLists(), no context\n");
-    return;
-}
-
-#undef glGenTextures
-void bzGenTextures(GLsizei count, GLuint *textures)
-{
-    if (OpenGLGState::getExecutingFreeFuncs())
-        contextFreeError ("bzGenTextures() is having issues");
-    glGenTextures(count, textures);
-    return;
-}
-
-#undef glDeleteTextures
-void bzDeleteTextures(GLsizei count, const GLuint *textures)
-{
-    if (OpenGLGState::getExecutingInitFuncs())
-        contextInitError ("bzDeleteTextures() is having issues");
-    if (OpenGLGState::haveGLContext())
-        glDeleteTextures(count, textures);
-    else
-        logDebugMessage(4,"bzDeleteTextures(), no context\n");
-    return;
-}
 
 
 //

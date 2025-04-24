@@ -145,7 +145,7 @@ void OpenGLTexture::initContext()
     // compute next mipmap from current mipmap to save time.
     setFilter(filter);
     glBindTexture(GL_TEXTURE_2D, list);
-    if (GLEW_VERSION_1_4)
+    if (GLAD_GL_VERSION_1_4)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
@@ -166,7 +166,7 @@ void OpenGLTexture::initContext()
 
 void OpenGLTexture::setupImage(const GLubyte* pixels)
 {
-    if (GLEW_ARB_texture_non_power_of_two)
+    if (GLAD_GL_ARB_texture_non_power_of_two)
     {
         scaledWidth = width;
         scaledHeight = height;

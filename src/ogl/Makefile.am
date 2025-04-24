@@ -20,7 +20,8 @@ libGLKit_la_SOURCES =			\
 	OpenGLMaterial.cxx		\
 	OpenGLTexture.cxx		\
 	OpenGLUtils.cxx		\
-	RenderNode.cxx
+	RenderNode.cxx			\
+	gl.c
 
 EXTRA_DIST = \
 	README

@@ -1,3 +1,4 @@
+SUBDIRS = glad KHR
 
 noinst_HEADERS =			\
 	AccessList.h			\
