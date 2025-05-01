@@ -920,7 +920,7 @@ void     applyJSModifiers(float& jsx, float& jsy)
 
     // scaled radial dead zone and cap
     const auto jsMagnitude = std::sqrt(jsx * jsx + jsy * jsy);
-    const auto jsRangeMultiplier = jsRangeMax * (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
+    const auto jsRangeMultiplier = (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
 
     // exponential ramp
     const auto jsRampType = BZDB.get("jsRampType");
@@ -955,9 +955,9 @@ void     applyJSModifiers(float& jsx, float& jsy)
     // proportionally scale the coordinates back to the range limit
     const auto jsxAbs = std::abs(jsx);
     const auto jsyAbs = std::abs(jsy);
-    if(jsxAbs > jsRangeMax || jsyAbs > jsRangeMax)
+    if(jsxAbs > 1 || jsyAbs > 1)
     {
-        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs) / jsRangeMax;
+        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs) / 1;
         jsx /= jsRangeExcess;
         jsy /= jsRangeExcess;
     }
