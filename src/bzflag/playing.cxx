@@ -1539,7 +1539,7 @@ static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
         printError (TextUtils::format ("Invalid player identification (%d)", i));
         std::
         cerr <<
-        "WARNING: invalid player identification when adding player with id "
+             "WARNING: invalid player identification when adding player with id "
              << i << std::endl;
         return NULL;
     }
@@ -5484,7 +5484,7 @@ static void joinInternetGame()
 
     // open server
     ServerLink* _serverLink = new ServerLink(serverNetworkAddress,
-        startupInfo.serverPort);
+            startupInfo.serverPort);
 
 #if defined(ROBOT)
     numRobots = 0;
