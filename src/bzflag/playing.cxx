@@ -910,7 +910,7 @@ void     applyJSModifiers(float& jsx, float& jsy)
     const auto jsRangeMax = std::max(std::min(float(BZDB.evalInt("jsRangeMax")) / 100.0f, 1.0f), 0.25f);
     const auto jsRangeMin = std::max(std::min(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.2f), 0.0f);
 
-    // joystick axes inversion values
+    // invert axes
     // 0: no inversion
     // 1: invert X
     // 2: invert Y
@@ -918,28 +918,8 @@ void     applyJSModifiers(float& jsx, float& jsy)
     jsx *= BZDB.evalInt("jsInvertAxes") % 2 == 1 ? -1.0f : 1.0f;
     jsy *= BZDB.evalInt("jsInvertAxes") > 1 ? -1.0f : 1.0f;
 
-    // scaled radial dead zone and cap
-    const auto jsMagnitude = std::sqrt(jsx * jsx + jsy * jsy);
-    const auto jsRangeMultiplier = (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
-
-    // exponential ramp
-    const auto jsRampType = BZDB.get("jsRampType");
-    auto jsRampFactor = jsRangeMultiplier;
-    if(jsRampType == "squared")
-        jsRampFactor = std::pow(jsRangeMultiplier, 2.0f);
-    else if(jsRampType == "cubed")
-        jsRampFactor = std::pow(jsRangeMultiplier, 3.0f);
-
-    // apply both factors
-    if(jsMagnitude < jsRangeMin || isnan(jsRangeMultiplier))
-        jsx = jsy = 0.0f;
-    else
-    {
-        jsx *= jsRampFactor;
-        jsy *= jsRampFactor;
-    }
-
     // stretch corners
+    const auto jsMagnitude = std::sqrt(jsx * jsx + jsy * jsy);
     if(BZDB.isTrue("jsStretchCorners"))
     {
         const auto stretchFactor = (1.0f - float(std::abs(std::abs(atan(jsy / jsx) / M_PI) - 0.25f)) * 4.0f) * jsMagnitude;
@@ -952,12 +932,39 @@ void     applyJSModifiers(float& jsx, float& jsy)
         }
     }
 
-    // proportionally scale the coordinates back to the range limit
+    // apply scaled radial dead zone and range limit
+    const auto jsRadialDeadZoneScale = (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
+    if(jsMagnitude < jsRangeMin || isnan(jsRadialDeadZoneScale))
+        jsx = jsy = 0.0f;
+    else if(jsMagnitude < jsRangeMax) // apply scale between edge of dead zone and range limit radius
+    {
+        jsx *= jsRadialDeadZoneScale;
+        jsy *= jsRadialDeadZoneScale;
+    }
+    else
+    {
+        jsx /= jsRangeMax;
+        jsy /= jsRangeMax;
+    }
+
+    // apply exponential ramp
+    const auto jsRampType = BZDB.get("jsRampType");
+    auto jsRampMultiplier = 1.0f;
+
+    if(jsRampType == "squared")
+        jsRampMultiplier = jsMagnitude / jsRangeMax;
+    else if(jsRampType == "cubed")
+        jsRampMultiplier = std::pow(jsMagnitude / jsRangeMax, 2.0f);
+
+    jsx *= jsRampMultiplier;
+    jsy *= jsRampMultiplier;
+
+    // proportionally scale the coordinates back to the -1, 1 range box
     const auto jsxAbs = std::abs(jsx);
     const auto jsyAbs = std::abs(jsy);
     if(jsxAbs > 1 || jsyAbs > 1)
     {
-        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs) / 1;
+        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs);
         jsx /= jsRangeExcess;
         jsy /= jsRangeExcess;
     }
@@ -1532,7 +1539,7 @@ static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
         printError (TextUtils::format ("Invalid player identification (%d)", i));
         std::
         cerr <<
-             "WARNING: invalid player identification when adding player with id "
+        "WARNING: invalid player identification when adding player with id "
              << i << std::endl;
         return NULL;
     }
@@ -5477,7 +5484,7 @@ static void joinInternetGame()
 
     // open server
     ServerLink* _serverLink = new ServerLink(serverNetworkAddress,
-            startupInfo.serverPort);
+        startupInfo.serverPort);
 
 #if defined(ROBOT)
     numRobots = 0;

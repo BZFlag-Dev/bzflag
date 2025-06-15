@@ -67,13 +67,13 @@ void            HUDuiJSTestLabel::doRender()
     glVertex2f(getX() + (1.0f + rangeLimit) / 2.0f * width, getY() + (1.0f + rangeLimit) / 2.0f * height);
     glEnd();
 
-    //draw a box around the test area
+    // draw a box around the full -1, 1 range
     glColor4fv(boxColor);
     glBegin(GL_LINE_LOOP);
-    glVertex2f(getX() + (1.0f - 1) / 2.0f * width, getY() + (1.0f + 1) / 2.0f * height);
-    glVertex2f(getX() + (1.0f - 1) / 2.0f * width, getY() + (1.0f - 1) / 2.0f * height);
-    glVertex2f(getX() + (1.0f + 1) / 2.0f * width, getY() + (1.0f - 1) / 2.0f * height);
-    glVertex2f(getX() + (1.0f + 1) / 2.0f * width, getY() + (1.0f + 1) / 2.0f * height);
+    glVertex2f(getX(), getY() + height);
+    glVertex2f(getX(), getY());
+    glVertex2f(getX() + width, getY());
+    glVertex2f(getX() + width, getY() + height);
     glEnd();
 
     // draw the real cursor
@@ -97,8 +97,8 @@ void            HUDuiJSTestLabel::doRender()
     // draw the modified cursor
     mainWindow->getJoyPosition(jsx, jsy);
     applyJSModifiers(jsx, jsy);
-    jsxTransformed = ((1.0f + jsx) / 2.0f) * width;
-    jsyTransformed = ((1.0f - jsy) / 2.0f) * height;
+    jsxTransformed = (1.0f + jsx * rangeLimit) / 2.0f * width;
+    jsyTransformed = (1.0f - jsy * rangeLimit) / 2.0f * height;
     glColor4fv(modifiedCursorColor);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(getX() + jsxTransformed, getY() + jsyTransformed - modifiedCursorLength / 2.0f);
