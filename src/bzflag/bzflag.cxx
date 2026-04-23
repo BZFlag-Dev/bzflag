@@ -610,6 +610,7 @@ void dumpResources()
 
     BZDB.set("team", Team::getName(startupInfo.team));
     BZDB.set("server", startupInfo.serverName);
+    BZDB.set("serverAllowedTeams", startupInfo.serverAllowedTeams);
     if (startupInfo.serverPort != ServerPort)
         BZDB.set("port", TextUtils::format("%d", startupInfo.serverPort));
     else
@@ -836,6 +837,13 @@ int         main(int argc, char** argv)
             strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
                     sizeof(startupInfo.serverName) - 1);
             startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
+        }
+        if (BZDB.isSet("serverAllowedTeams"))
+        {
+            // Flawfinder: ignore
+            strncpy(startupInfo.serverAllowedTeams, BZDB.get("serverAllowedTeams").c_str(),
+                    sizeof(startupInfo.serverAllowedTeams) - 1);
+            startupInfo.serverAllowedTeams[sizeof(startupInfo.serverAllowedTeams) - 1] = '\0';
         }
         if (BZDB.isSet("port"))
             startupInfo.serverPort = atoi(BZDB.get("port").c_str());
