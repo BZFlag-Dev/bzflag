@@ -166,28 +166,40 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
 void AresHandler::staticCallbackAddrInfo(void *arg, int status,
         int, struct ares_addrinfo *result)
 {
-    if (status == ARES_EDESTRUCTION)
-        return;
-
-    ((AresHandler *)arg)->callbackAddrInfo(status, result);
+    if (status != ARES_EDESTRUCTION) {
+        ((AresHandler *)arg)->callbackAddrInfo(status, result);
+    }
+    ares_freeaddrinfo(result);
 }
 
 void AresHandler::callbackAddrInfo(int callbackStatus, struct ares_addrinfo *result)
 {
     const std::lock_guard<std::mutex> lock(callback_mutex);
 
-    if (callbackStatus != ARES_SUCCESS)
+    if (callbackStatus != ARES_SUCCESS || !result)
     {
         logDebugMessage(1,"Player [%d] failed to resolve: error %d\n", index,
                         callbackStatus);
         status = Failed;
     }
-    else if (status == HbNPending)
-    {
-        memcpy(&hostAddress,
-               &((sockaddr_in *)result->nodes->ai_addr)->sin_addr,
-               sizeof(hostAddress));
-        status = HbNSucceeded;
+
+    if (status == HbNPending) {
+        auto nodes = result->nodes;
+        if (nodes != nullptr)
+        {
+            struct sockaddr_in *ipv4 = (struct sockaddr_in *)nodes->ai_addr;
+
+            if (ipv4) {
+                memcpy(&hostAddress, &ipv4->sin_addr, sizeof(hostAddress));
+                status = HbNSucceeded;
+            } else {
+                status = Failed;
+            }
+        }
+        else
+        {
+            status = Failed;
+        }
     }
 }
 #endif
