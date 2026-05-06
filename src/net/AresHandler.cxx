@@ -166,9 +166,8 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
 void AresHandler::staticCallbackAddrInfo(void *arg, int status,
         int, struct ares_addrinfo *result)
 {
-    if (status != ARES_EDESTRUCTION) {
+    if (status != ARES_EDESTRUCTION)
         ((AresHandler *)arg)->callbackAddrInfo(status, result);
-    }
     ares_freeaddrinfo(result);
 }
 
@@ -183,23 +182,23 @@ void AresHandler::callbackAddrInfo(int callbackStatus, struct ares_addrinfo *res
         status = Failed;
     }
 
-    if (status == HbNPending) {
+    if (status == HbNPending)
+    {
         auto nodes = result->nodes;
         if (nodes != nullptr)
         {
             struct sockaddr_in *ipv4 = (struct sockaddr_in *)nodes->ai_addr;
 
-            if (ipv4) {
+            if (ipv4)
+            {
                 memcpy(&hostAddress, &ipv4->sin_addr, sizeof(hostAddress));
                 status = HbNSucceeded;
-            } else {
-                status = Failed;
             }
+            else
+                status = Failed;
         }
         else
-        {
             status = Failed;
-        }
     }
 }
 #endif
