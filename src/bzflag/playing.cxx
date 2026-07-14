@@ -5022,7 +5022,7 @@ static void enteringServer(const void *buf)
     std::string teamMsg;
     if (myTank->getTeam() != AutomaticTeam)
     {
-        teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
+        teamMsg = TextUtils::format("%s was unavailable, you were joined ",
                                     Team::getName(myTank->getTeam()));
         if ((TeamColor)team == ObserverTeam)
             teamMsg += "as an Observer";
