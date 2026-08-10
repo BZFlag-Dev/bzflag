@@ -34,6 +34,7 @@
 #include "GameTime.h"
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
+#include "OpenGLAPI.h"
 
 //
 // World
@@ -1213,8 +1214,8 @@ static void drawLines (int count, float (*vertices)[3], int color)
 
 static void drawInsideOutsidePoints()
 {
-    std::vector<const float*> insides;
-    std::vector<const float*> outsides;
+    std::vector<const glm::vec3*> insides;
+    std::vector<const glm::vec3*> outsides;
 
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
     for (unsigned int i = 0; i < meshes.size(); i++)
@@ -1222,19 +1223,19 @@ static void drawInsideOutsidePoints()
         const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
         const int    checkCount  = mesh->getCheckCount();
         const char*  checkTypes  = mesh->getCheckTypes();
-        const afvec3* checkPoints = mesh->getCheckPoints();
+        const glm::vec3* checkPoints = mesh->getCheckPoints();
         for (int c = 0; c < checkCount; c++)
         {
             switch (checkTypes[c])
             {
             case MeshObstacle::CheckInside:
             {
-                insides.push_back(checkPoints[c]);
+                insides.push_back(&checkPoints[c]);
                 break;
             }
             case MeshObstacle::CheckOutside:
             {
-                outsides.push_back(checkPoints[c]);
+                outsides.push_back(&checkPoints[c]);
                 break;
             }
             default:
@@ -1256,27 +1257,27 @@ static void drawInsideOutsidePoints()
     glBegin(GL_POINTS);
     {
         glColor4f(0.0f, 1.0f, 0.0f, 0.8f);
-        for (size_t i = 0; i < insides.size(); i++)
-            glVertex3fv(insides[i]);
+        for (const auto* v : insides)
+            glVertex(*v);
         glColor4f(1.0f, 0.0f, 0.0f, 0.8f);
-        for (size_t i = 0; i < outsides.size(); i++)
-            glVertex3fv(outsides[i]);
+        for (const auto* v : outsides)
+            glVertex(*v);
     }
     glEnd();
 
     glBegin(GL_LINES);
     {
         glColor4f(0.0f, 1.0f, 0.0f, 0.2f);
-        for (size_t i = 0; i < insides.size(); i++)
+        for (const auto* v : insides)
         {
-            glVertex3f(insides[i][0], insides[i][1], 0.0f);
-            glVertex3fv(insides[i]);
+            glVertex(glm::vec3(glm::vec2(*v), 0.0f));
+            glVertex(*v);
         }
         glColor4f(1.0f, 0.0f, 0.0f, 0.2f);
-        for (size_t i = 0; i < outsides.size(); i++)
+        for (const auto* v : outsides)
         {
-            glVertex3f(outsides[i][0], outsides[i][1], 0.0f);
-            glVertex3fv(outsides[i]);
+            glVertex(glm::vec3(glm::vec2(*v), 0.0f));
+            glVertex(*v);
         }
     }
     glEnd();

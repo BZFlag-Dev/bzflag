@@ -84,7 +84,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     else
     {
         // sloppy way to recalculate the transformed extents
-        afvec3 c[8];
+        glm::vec3 c[8];
         c[0][0] = c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
         c[7][0] = c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
         c[0][1] = c[1][1] = c[5][1] = c[4][1] = diExts.mins[1];
@@ -92,21 +92,20 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
         c[0][2] = c[1][2] = c[2][2] = c[3][2] = diExts.mins[2];
         c[7][2] = c[6][2] = c[5][2] = c[4][2] = diExts.maxs[2];
         extents.reset();
-        for (int v = 0; v < 8; v++)
+        for (auto& v : c)
         {
-            xformTool->modifyVertex(c[v]);
-            extents.expandToPoint(c[v]);
+            xformTool->modifyVertex(glm::value_ptr(v));
+            extents.expandToPoint(v);
         }
         // lengthPerPixel adjustment
         lengthAdj = +MAXFLOAT;
         for (int a = 0; a < 3; a++)
         {
             const float oldWidth = diExts.maxs[a] - diExts.mins[a];
-            const afvec3& s = c[0]; // all mins
+            const glm::vec3& s = c[0]; // all mins
             // mins, except: c[1] -> max[0], c[3] -> max[1], c[5] -> max[2]
-            const afvec3& e = c[(a * 2) + 1];
-            const float d[3] = {s[0] - e[0], s[1] - e[1], s[2] - e[2]};
-            const float newWidth = sqrtf(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+            const glm::vec3& e = c[(a * 2) + 1];
+            const float newWidth = glm::distance(s, e);
             if (oldWidth > 0.0f)
             {
                 const float scale = (newWidth / oldWidth);
@@ -232,12 +231,12 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
             if (set.meshMat.animRepos)
             {
                 const float* s = drawLods[level].sets[i].sphere;
-                afvec3 pos;
+                glm::vec3 pos;
                 pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
                 pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
                 pos[2] = s[2];
                 if (xformTool != NULL)
-                    xformTool->modifyVertex(pos);
+                    xformTool->modifyVertex(glm::value_ptr(pos));
                 ((AlphaGroupRenderNode*)set.node)->setPosition(pos);
             }
         }
@@ -349,10 +348,9 @@ void MeshSceneNode::notifyStyleChange()
             }
             else
             {
-                afvec3 setPos;
-                memcpy(setPos, drawSet.sphere, sizeof(afvec3));
+                glm::vec3 setPos = glm::make_vec3(drawSet.sphere);
                 if (xformTool != NULL)
-                    xformTool->modifyVertex(setPos);
+                    xformTool->modifyVertex(glm::value_ptr(setPos));
                 setNode.node =
                     new AlphaGroupRenderNode(drawMgr, xformPtr, normalize,
                                              mat.colorPtr, lod, set, extPtr, setPos,

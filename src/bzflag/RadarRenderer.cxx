@@ -27,6 +27,7 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "MeshObstacle.h"
+#include "OpenGLAPI.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
@@ -1098,10 +1099,7 @@ void RadarRenderer::renderBoxPyrMesh()
             int vertexCount = face->getVertexCount();
             glBegin(GL_TRIANGLE_FAN);
             for (int v = 0; v < vertexCount; v++)
-            {
-                const float* pos = face->getVertex(v);
-                glVertex2f(pos[0], pos[1]);
-            }
+                glVertex(glm::vec2(face->getVertex(v)));
             glEnd();
         }
     }

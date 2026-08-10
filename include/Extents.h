@@ -18,8 +18,11 @@
 #ifndef BZF_EXTENTS_H
 #define BZF_EXTENTS_H
 
+// 1st
 #include "common.h"
 
+// System headers
+#include <glm/vec3.hpp>
 
 class Extents
 {
@@ -33,7 +36,7 @@ public:
     void set(const float mins[3], const float maxs[3]);
 
     void expandToBox(const Extents& box); // expand to contain the box
-    void expandToPoint(const float[3]); // expand to contain the point
+    void expandToPoint(glm::vec3 point); // expand to contain the point
     void addMargin(float margin);     // widen the extents by "margin"
 
     float getWidth(int axis) const;
@@ -117,7 +120,7 @@ inline void Extents::expandToBox(const Extents& test)
 }
 
 
-inline void Extents::expandToPoint(const float point[3])
+inline void Extents::expandToPoint(glm::vec3 point)
 {
     // test mins
     if (point[0] < mins[0])

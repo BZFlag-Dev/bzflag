@@ -40,7 +40,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
     vertexCount = face->getVertexCount();
     vertices = new GLfloat3[vertexCount];
     for (i = 0; i < vertexCount; i++)
-        memcpy(vertices[i], face->getVertex(i), sizeof(float[3]));
+        memcpy(vertices[i], glm::value_ptr(face->getVertex(i)), sizeof(float[3]));
 
     // record sphere info
     GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };

@@ -16,6 +16,7 @@
 // system headers
 #include <math.h>
 #include <stdlib.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "Intersect.h"
@@ -249,7 +250,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     // record extents info
     for (int i = 0; i < 3; i++)
     {
-        const float* point = getVertex(i);
+        const glm::vec3 point = glm::make_vec3(getVertex(i));
         extents.expandToPoint(point);
     }
 

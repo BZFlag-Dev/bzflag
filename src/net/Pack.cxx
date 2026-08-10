@@ -15,6 +15,7 @@
 
 // System headers
 #include <string.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "network.h"
@@ -130,6 +131,11 @@ void*           nboPackVector(void* b, const float *v)
 
     ::memcpy( b, data, 3*sizeof(uint32_t));
     return (void*) (((char*)b)+3*sizeof(uint32_t));
+}
+
+void* nboPackVector(void* b, glm::vec3 v)
+{
+    return nboPackVector(b, glm::value_ptr(v));
 }
 
 void*           nboPackString(void* b, const void* m, int len)
@@ -300,6 +306,11 @@ const void*     nboUnpackVector(const void* b, float *v)
     }
 
     return (const char*)b + 3*sizeof(float);
+}
+
+const void* nboUnpackVector(const void* b, glm::vec3& v)
+{
+    return nboUnpackVector(b, glm::value_ptr(v));
 }
 
 const void*     nboUnpackString(const void* b, void* m, int len)

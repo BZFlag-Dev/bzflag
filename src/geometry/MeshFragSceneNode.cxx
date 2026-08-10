@@ -290,7 +290,7 @@ MeshFragSceneNode::MeshFragSceneNode(int faceCount_, const MeshFace** faces_)
         {
             GLfloat3Array v(face->getVertexCount());
             for (j = 0; j < face->getVertexCount(); j++)
-                memcpy(v[j], face->getVertex(j), sizeof(float[3]));
+                memcpy(v[j], glm::value_ptr(face->getVertex(j)), sizeof(float[3]));
             MeshSceneNodeGenerator::makeTexcoords(face->getPlane(), v, t);
         }
 
@@ -309,17 +309,17 @@ MeshFragSceneNode::MeshFragSceneNode(int faceCount_, const MeshFace** faces_)
                     vIndex = (j + k) % face->getVertexCount();
 
                 // get the vertices
-                memcpy(&vertices[aIndex * 3], face->getVertex(vIndex), sizeof(float[3]));
+                memcpy(&vertices[aIndex * 3], glm::value_ptr(face->getVertex(vIndex)), sizeof(float[3]));
 
                 // get the normals
                 if (face->useNormals())
-                    memcpy(&normals[aIndex * 3], face->getNormal(vIndex), sizeof(float[3]));
+                    memcpy(&normals[aIndex * 3], glm::value_ptr(face->getNormal(vIndex)), sizeof(float[3]));
                 else
                     memcpy(&normals[aIndex * 3], face->getPlane(), sizeof(float[3]));
 
                 // get the texcoords
                 if (face->useTexcoords())
-                    memcpy(&texcoords[aIndex * 2], face->getTexcoord(vIndex), sizeof(float[2]));
+                    memcpy(&texcoords[aIndex * 2], glm::value_ptr(face->getTexcoord(vIndex)), sizeof(float[2]));
                 else
                     memcpy(&texcoords[aIndex * 2], t[vIndex], sizeof(float[2]));
             }

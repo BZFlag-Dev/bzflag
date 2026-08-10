@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2025 Tim Riker
+ * Copyright (c) 1993-2023 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,30 +10,33 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __TRIANGULATE_H__
-#define __TRIANGULATE_H__
+#ifndef _OPENGLAPI_H
+#define _OPENGLAPI_H
 
 // 1st
 #include "common.h"
 
-/* system interface headers */
-#include <vector>
-#include <glm/fwd.hpp>
+// System headers
+#include <glm/gtc/type_ptr.hpp>
 
+// common headers
+#include "bzfgl.h"
 
-typedef struct
+inline void glVertex(glm::vec2 p)
 {
-    int indices[3];
-} TriIndices;
+    glVertex2fv(glm::value_ptr(p));
+};
 
-extern std::vector<TriIndices> triangulateFace(int count, const glm::vec3* const* verts);
+inline void glVertex(glm::vec3 p)
+{
+    glVertex3fv(glm::value_ptr(p));
+};
 
+#endif // _OPENGLAPI_H
 
-#endif  /* __TRIANGULATE_H__ */
-
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
-// tab-width: 4***
+// tab-width: 4 ***
 // c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***

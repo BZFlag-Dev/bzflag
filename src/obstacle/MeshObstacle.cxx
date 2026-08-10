@@ -58,18 +58,18 @@ MeshObstacle::MeshObstacle()
 }
 
 
-static void cfvec3ListToArray(const std::vector<cfvec3>& list,
-                              int& count, afvec3* &array)
+static void glmVec3ListToArray(const std::vector<glm::vec3>& list,
+                               int& count, glm::vec3* &array)
 {
     count = list.size();
-    array = new afvec3[count];
+    array = new glm::vec3[count];
     for (int i = 0; i < count; i++)
-        memcpy (array[i], list[i].data, sizeof(afvec3));
+        array[i] = list[i];
     return;
 }
 
-static void arrayToCafvec3List(const afvec3* array, int count,
-                               std::vector<cfvec3>& list)
+static void arrayToGlmVec3List(const glm::vec3* array, int count,
+                               std::vector<glm::vec3>& list)
 {
     list.clear();
     for (int i = 0; i < count; i++)
@@ -80,10 +80,10 @@ static void arrayToCafvec3List(const afvec3* array, int count,
 
 MeshObstacle::MeshObstacle(const MeshTransform& transform,
                            const std::vector<char>& checkTypesL,
-                           const std::vector<cfvec3>& checkList,
-                           const std::vector<cfvec3>& verticeList,
-                           const std::vector<cfvec3>& normalList,
-                           const std::vector<cfvec2>& texcoordList,
+                           const std::vector<glm::vec3>& checkList,
+                           const std::vector<glm::vec3>& verticeList,
+                           const std::vector<glm::vec3>& normalList,
+                           const std::vector<glm::vec2>& texcoordList,
                            int _faceCount, bool _noclusters,
                            bool bounce, bool drive, bool shoot, bool rico)
 {
@@ -97,23 +97,23 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
     checkTypes = new char[checkTypesL.size()];
     for (i = 0; i < checkTypesL.size(); i++)
         checkTypes[i] = checkTypesL[i];
-    cfvec3ListToArray (checkList, checkCount, checkPoints);
-    cfvec3ListToArray (verticeList, vertexCount, vertices);
-    cfvec3ListToArray (normalList, normalCount, normals);
+    glmVec3ListToArray (checkList, checkCount, checkPoints);
+    glmVec3ListToArray (verticeList, vertexCount, vertices);
+    glmVec3ListToArray (normalList, normalCount, normals);
 
     // modify according to the transform
     int j;
     for (j = 0; j < checkCount; j++)
-        xformtool.modifyVertex(checkPoints[j]);
+        xformtool.modifyVertex(glm::value_ptr(checkPoints[j]));
     for (j = 0; j < vertexCount; j++)
-        xformtool.modifyVertex(vertices[j]);
+        xformtool.modifyVertex(glm::value_ptr(vertices[j]));
     for (j = 0; j < normalCount; j++)
-        xformtool.modifyNormal(normals[j]);
+        xformtool.modifyNormal(glm::value_ptr(normals[j]));
 
     texcoordCount = texcoordList.size();
-    texcoords = new afvec2[texcoordCount];
+    texcoords = new glm::vec2[texcoordCount];
     for (i = 0; i < (unsigned int)texcoordCount; i++)
-        memcpy (texcoords[i], texcoordList[i].data, sizeof(afvec2));
+        texcoords[i] = texcoordList[i];
 
     faceSize = _faceCount;
     faceCount = 0;
@@ -169,7 +169,8 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     }
 
     // use the indices to makes lists of pointers
-    float **v, **n, **t;
+    glm::vec3 **v, **n;
+    glm::vec2 **t;
     makeFacePointers(_vertices, _normals, _texcoords, v, n, t);
 
     // override the flags if they are set for the whole mesh
@@ -208,8 +209,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     else if (triangulate)
     {
         // triangulate
-        std::vector<TriIndices> triIndices;
-        triangulateFace(count, v, triIndices);
+        auto triIndices = triangulateFace(count, v);
         delete face; // delete the old face
         const unsigned int triSize = triIndices.size();
         if (triSize == 0)
@@ -263,29 +263,29 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
                                     const std::vector<int>& _normals,
                                     const std::vector<int>& _texcoords,
-                                    float**& v, float**& n, float**& t)
+                                    glm::vec3**& v, glm::vec3**& n, glm::vec2**& t)
 {
     const int count = _vertices.size();
 
     // use the indices to makes lists of pointers
-    v = new float*[count];
+    v = new glm::vec3*[count];
     n = NULL;
     t = NULL;
 
     if (_normals.size() > 0)
-        n = new float*[count];
+        n = new glm::vec3*[count];
     if (_texcoords.size() > 0)
-        t = new float*[count];
+        t = new glm::vec2*[count];
 
     for (int i = 0; i < count; i++)
     {
         // invert the vertices if required
         int index = (inverted ? ((count - 1) - i) : i);
-        v[index] = (float*)vertices[_vertices[i]];
+        v[index] = &vertices[_vertices[i]];
         if (n != NULL)
-            n[index] = (float*)normals[_normals[i]];
+            n[index] = &normals[_normals[i]];
         if (t != NULL)
-            t[index] = (float*)texcoords[_texcoords[i]];
+            t[index] = &texcoords[_texcoords[i]];
     }
     return;
 }
@@ -310,10 +310,10 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 {
     MeshObstacle* copy;
     std::vector<char> ctlist;
-    std::vector<cfvec3> clist;
-    std::vector<cfvec3> vlist;
-    std::vector<cfvec3> nlist;
-    std::vector<cfvec2> tlist;
+    std::vector<glm::vec3> clist;
+    std::vector<glm::vec3> vlist;
+    std::vector<glm::vec3> nlist;
+    std::vector<glm::vec2> tlist;
 
     // empty arrays for copies of pure visual meshes
     if ((drawInfo != NULL) &&
@@ -329,9 +329,9 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
         int i;
         for (i = 0; i < checkCount; i++)
             ctlist.push_back(checkTypes[i]);
-        arrayToCafvec3List(checkPoints, checkCount, clist);
-        arrayToCafvec3List(vertices, vertexCount, vlist);
-        arrayToCafvec3List(normals, normalCount, nlist);
+        arrayToGlmVec3List(checkPoints, checkCount, clist);
+        arrayToGlmVec3List(vertices, vertexCount, vlist);
+        arrayToGlmVec3List(normals, normalCount, nlist);
         for (i = 0; i < texcoordCount; i++)
             tlist.push_back(texcoords[i]);
 
@@ -359,20 +359,12 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
     const int vcount = face->getVertexCount();
     for (int i = 0; i < vcount; i++)
     {
-        int index;
-        index = ((const afvec3*) face->getVertex(i)) - vertices;
-        vlist.push_back(index);
+        vlist.push_back(&face->getVertex(i) - vertices);
 
         if (face->useNormals())
-        {
-            index = ((const afvec3*) face->getNormal(i)) - normals;
-            nlist.push_back(index);
-        }
+            nlist.push_back(&face->getNormal(i) - normals);
         if (face->useTexcoords())
-        {
-            index = ((const afvec2*) face->getTexcoord(i)) - texcoords;
-            tlist.push_back(index);
-        }
+            tlist.push_back(&face->getTexcoord(i) - texcoords);
     }
 
     mesh->addFace(vlist, nlist, tlist, face->getMaterial(),
@@ -477,15 +469,16 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
         return false;
 
     int c, f;
-    float dir[3];
     bool hasOutsides = false;
+    glm::vec3 pt = glm::make_vec3(point);
 
     for (c = 0; c < checkCount; c++)
     {
+        const glm::vec3& checkPt = checkPoints[c];
         if (checkTypes[c] == CheckInside)
         {
-            vec3sub (dir, checkPoints[c], point);
-            Ray ray(point, dir);
+            glm::vec3 dir = checkPt - pt;
+            Ray ray(point, glm::value_ptr(dir));
             bool hitFace = false;
             for (f = 0; f < faceCount; f++)
             {
@@ -503,8 +496,8 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
         else if (checkTypes[c] == CheckOutside)
         {
             hasOutsides = true;
-            vec3sub (dir, point, checkPoints[c]);
-            Ray ray(checkPoints[c], dir);
+            glm::vec3 dir = pt - checkPt;
+            Ray ray(glm::value_ptr(checkPoints[c]), glm::value_ptr(dir));
             bool hitFace = false;
             for (f = 0; f < faceCount; f++)
             {
@@ -544,18 +537,18 @@ void MeshObstacle::get3DNormal(const float* UNUSED(p), float* UNUSED(n)) const
 
 void MeshObstacle::getNormal(const float* p, float* n) const
 {
-    const afvec3 center = { pos[0], pos[1], pos[2] + (0.5f * size[2]) };
-    afvec3 out;
-    vec3sub (out, p, center);
-    if (out[2] < 0.0f)
-        out[2] = 0.0f;
-    float len = vec3dot(out, out);
+    const glm::vec3 center{pos[0], pos[1], pos[2] + 0.5f * size[2]};
+    glm::vec3 out = glm::make_vec3(p) - center;
+    if (out.z < 0.0f)
+        out.z = 0.0f;
+    float len = glm::dot(out, out);
     if (len > 0.0f)
     {
-        len = 1 / sqrtf(len);
-        n[0] = out[0] * len;
-        n[1] = out[1] * len;
-        n[2] = out[2] * len;
+        len = glm::inversesqrt(len);
+        out *= len;
+        n[0] = out.x;
+        n[1] = out.y;
+        n[2] = out.z;
     }
     else
     {
@@ -616,25 +609,25 @@ int MeshObstacle::packSize() const
 {
     int fullSize = 5 * sizeof(int32_t);
     fullSize += sizeof(char) * checkCount;
-    fullSize += sizeof(afvec3) * checkCount;
-    fullSize += sizeof(afvec3) * vertexCount;
-    fullSize += sizeof(afvec3) * normalCount;
-    fullSize += sizeof(afvec2) * texcoordCount;
+    fullSize += sizeof(glm::vec3) * checkCount;
+    fullSize += sizeof(glm::vec3) * vertexCount;
+    fullSize += sizeof(glm::vec3) * normalCount;
+    fullSize += sizeof(glm::vec2) * texcoordCount;
     if ((drawInfo != NULL) && !drawInfo->isCopy())
     {
         const int drawInfoPackSize = drawInfo->packSize();
         // align the packing
-        const int align = sizeof(afvec2);
+        const int align = sizeof(glm::vec2);
         fullSize += align * ((drawInfoPackSize + (align - 1)) / align);
         // drawInfo fake txcd count
-        fullSize += sizeof(afvec2);
+        fullSize += sizeof(glm::vec2);
 
         if (debugLevel >= 4)
         {
             logDebugMessage(0,"DrawInfo packSize = %i, align = %i, full = %i\n",
                             drawInfoPackSize,
                             align * ((drawInfoPackSize + (align - 1)) / align),
-                            align * ((drawInfoPackSize + (align - 1)) / align) + (int)sizeof(afvec2));
+                            align * ((drawInfoPackSize + (align - 1)) / align) + (int)sizeof(glm::vec2));
         }
     }
     for (int f = 0; f < faceCount; f++)
@@ -678,23 +671,23 @@ void *MeshObstacle::pack(void *buf) const
         void* drawInfoStart = buf;
         buf = drawInfo->pack(buf);
         // align the packing
-        const int align = sizeof(afvec2);
+        const int align = sizeof(glm::vec2);
         const int length = (char*)buf - (char*)drawInfoStart;
         const int missing = (align - (length % align)) % align;
         for (i = 0; i < missing; i++)
             buf = nboPackUByte(buf, 0);
         // bump up the texture coordinate count
         const int fullLength = ((char*)buf - (char*)drawInfoStart);
-        const int extraTxcds = fullLength / sizeof(afvec2);
+        const int extraTxcds = fullLength / sizeof(glm::vec2);
         const int fakeTxcdCount = texcoordCount + extraTxcds + 1;
         nboPackInt(txcdStart, fakeTxcdCount); // NOTE: 'buf' is not being set
         // add the drawInfo length at the end
-        buf = nboPackInt(buf, fullLength + sizeof(afvec2));
-        buf = nboPackInt(buf, 0); // for alignment to afvec2
+        buf = nboPackInt(buf, fullLength + sizeof(glm::vec2));
+        buf = nboPackInt(buf, 0); // for alignment to glm::vec2
 
         logDebugMessage(4,"DrawInfo packing: length = %i, missing = %i\n", length, missing);
         logDebugMessage(4,"  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
-                        texcoordCount, fakeTxcdCount, fullLength + (int)sizeof(afvec2));
+                        texcoordCount, fakeTxcdCount, fullLength + (int)sizeof(glm::vec2));
     }
 
     buf = nboPackInt(buf, faceCount);
@@ -723,7 +716,7 @@ const void *MeshObstacle::unpack(const void *buf)
     buf = nboUnpackInt(buf, inTmp);
     checkCount = int(inTmp);
     checkTypes = new char[checkCount];
-    checkPoints = new afvec3[checkCount];
+    checkPoints = new glm::vec3[checkCount];
     for (i = 0; i < checkCount; i++)
     {
         unsigned char tmp;
@@ -734,19 +727,19 @@ const void *MeshObstacle::unpack(const void *buf)
 
     buf = nboUnpackInt(buf, inTmp);
     vertexCount = int(inTmp);
-    vertices = new afvec3[vertexCount];
+    vertices = new glm::vec3[vertexCount];
     for (i = 0; i < vertexCount; i++)
         buf = nboUnpackVector(buf, vertices[i]);
 
     buf = nboUnpackInt(buf, inTmp);
     normalCount = int(inTmp);
-    normals = new afvec3[normalCount];
+    normals = new glm::vec3[normalCount];
     for (i = 0; i < normalCount; i++)
         buf = nboUnpackVector(buf, normals[i]);
 
     buf = nboUnpackInt(buf, inTmp);
     texcoordCount = int(inTmp);
-    texcoords = new afvec2[texcoordCount];
+    texcoords = new glm::vec2[texcoordCount];
     // note where the texture coordinates begin; skip past them
     const void* texCoordPtr = buf;
     buf = (const char*)buf + sizeof(float) * 2 * texcoordCount;
@@ -788,13 +781,13 @@ const void *MeshObstacle::unpack(const void *buf)
     {
         nboUseErrorChecking(false);
         {
-            const void* drawInfoSize = texcoordEnd - sizeof(afvec2);
+            const void* drawInfoSize = texcoordEnd - sizeof(glm::vec2);
             int32_t rewindLen;
             nboUnpackInt(drawInfoSize, rewindLen);
 
             const bool useDrawInfo = BZDB.isTrue("useDrawInfo");
 
-            if (rewindLen <= (int)(texcoordCount * sizeof(afvec2)))
+            if (rewindLen <= (int)(texcoordCount * sizeof(glm::vec2)))
             {
                 // unpack the drawInfo
                 if (useDrawInfo)
@@ -807,9 +800,9 @@ const void *MeshObstacle::unpack(const void *buf)
 
                 // free the bogus texcoords
                 // FIXME - don't allocate storage we won't use
-                const int fakeTxcds = rewindLen / sizeof(afvec2);
+                const int fakeTxcds = rewindLen / sizeof(glm::vec2);
                 texcoordCount = texcoordCount - fakeTxcds;
-                afvec2* tmpTxcds = new afvec2[texcoordCount];
+                glm::vec2* tmpTxcds = new glm::vec2[texcoordCount];
                 delete[] texcoords;
                 int ptrDiff = (char*)tmpTxcds - (char*)texcoords;
                 texcoords = tmpTxcds;
@@ -840,7 +833,7 @@ const void *MeshObstacle::unpack(const void *buf)
                         for (int v = 0; v < face->getVertexCount(); v++)
                         {
                             face->texcoords[v] =
-                                (float*)((char*)face->texcoords[v] + ptrDiff);
+                                (glm::vec2*)((char*)face->texcoords[v] + ptrDiff);
                         }
                     }
                 }
@@ -1024,12 +1017,12 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
         out << "f";
         for (i = 0; i < vCount; i++)
         {
-            int vIndex = (const afvec3*)face->getVertex(i) - vertices;
+            int vIndex = &face->getVertex(i) - vertices;
             vIndex = vIndex - vertexCount;
             out << " " << vIndex;
             if (useTexcoords)
             {
-                int tIndex = (const afvec2*)face->getTexcoord(i) - texcoords;
+                int tIndex = &face->getTexcoord(i) - texcoords;
                 tIndex = tIndex - texcoordCount;
                 out << "/" << tIndex;
             }
@@ -1037,7 +1030,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
             {
                 if (!useTexcoords)
                     out << "/";
-                int nIndex = (const afvec3*)face->getNormal(i) - normals;
+                int nIndex = &face->getNormal(i) - normals;
                 nIndex = nIndex - normalCount;
                 out << "/" << nIndex;
             }

@@ -102,9 +102,9 @@ private:
 
     MeshFace*       backLink;
     MeshFace*       frontLink;
-    float       fvertices[4][3]; // front vertices
-    float       bvertices[4][3]; // back vertices
-    float       texcoords[4][2]; // shared texture coordinates
+    glm::vec3       fvertices[4]; // front vertices
+    glm::vec3       bvertices[4]; // back vertices
+    glm::vec2       texcoords[4]; // shared texture coordinates
 };
 
 //

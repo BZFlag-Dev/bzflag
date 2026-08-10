@@ -15,6 +15,7 @@
 
 // system headers
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "Intersect.h"
@@ -363,7 +364,7 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
     // record extents info
     for (int i = 0; i < 4; i++)
     {
-        const float* point = getVertex(i);
+        const glm::vec3 point = glm::make_vec3(getVertex(i));
         extents.expandToPoint(point);
     }
 

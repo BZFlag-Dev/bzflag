@@ -23,12 +23,13 @@
 // System headers
 #include <iostream>
 #include <string>
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "global.h"
 #include "BzMaterial.h"
 #include "Ray.h"
-#include "vectors.h"
 
 class MeshFace final : public Obstacle
 {
@@ -39,7 +40,7 @@ class MeshFace final : public Obstacle
 public:
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* mesh, int vertexCount,
-             float** vertices, float** normals, float** texcoords,
+             glm::vec3** vertices, glm::vec3** normals, glm::vec2** texcoords,
              const BzMaterial* material, int physics,
              bool noclusters, bool smoothBounce, bool drive, bool shoot, bool ricochet);
     ~MeshFace();
@@ -76,9 +77,9 @@ public:
     int getVertexCount() const;
     bool useNormals() const;
     bool useTexcoords() const;
-    const float* getVertex(int index) const;
-    const float* getNormal(int index) const;
-    const float* getTexcoord(int index) const;
+    const glm::vec3& getVertex(int index) const;
+    const glm::vec3& getNormal(int index) const;
+    const glm::vec2& getTexcoord(int index) const;
     const float* getPlane() const;
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
@@ -113,16 +114,16 @@ private:
 
     class MeshObstacle* mesh;
     int vertexCount;
-    float** vertices;
-    float** normals;
-    float** texcoords;
+    glm::vec3** vertices;
+    glm::vec3** normals;
+    glm::vec2** texcoords;
     const BzMaterial* bzMaterial;
     bool smoothBounce;
     bool noclusters;
     int phydrv;
 
-    afvec4 plane;
-    afvec4* edgePlanes;
+    glm::vec4 plane;
+    glm::vec4* edgePlanes;
 
     MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
     // not currently used for anything
@@ -189,7 +190,7 @@ inline int MeshFace::getPhysicsDriver() const
 
 inline const float* MeshFace::getPlane() const
 {
-    return plane;
+    return glm::value_ptr(plane);
 }
 
 inline int MeshFace::getVertexCount() const
@@ -197,19 +198,19 @@ inline int MeshFace::getVertexCount() const
     return vertexCount;
 }
 
-inline const float* MeshFace::getVertex(int index) const
+inline const glm::vec3& MeshFace::getVertex(int index) const
 {
-    return (const float*)vertices[index];
+    return *vertices[index];
 }
 
-inline const float* MeshFace::getNormal(int index) const
+inline const glm::vec3& MeshFace::getNormal(int index) const
 {
-    return (const float*)normals[index];
+    return *normals[index];
 }
 
-inline const float* MeshFace::getTexcoord(int index) const
+inline const glm::vec2& MeshFace::getTexcoord(int index) const
 {
-    return (const float*)texcoords[index];
+    return *texcoords[index];
 }
 
 inline bool MeshFace::useNormals() const

@@ -420,6 +420,10 @@ AC_CHECK_HEADERS( \
 	cstdio \
 	cstring
 )
+AC_CHECK_HEADERS(
+	[glm/glm.hpp],
+	,
+	[AC_MSG_ERROR([glm (from https://glm.g-truc.net) is needed])])
 AC_LANG(C)
 AC_CHECK_HEADERS( \
 	SDL2/SDL.h \
@@ -924,6 +928,11 @@ if test x$ac_ff_effect_directional = xyes; then
     AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
 fi
 AC_MSG_RESULT([$ac_ff_effect_directional])
+
+# For GLM
+dnl Enable GLM SIMD vectorization and forced alignment
+AC_DEFINE([GLM_FORCE_INLINE], [1], [Force inlining for GLM functions])
+AC_DEFINE([GLM_FORCE_INTRINSICS], [1], [Enable SIMD intrinsics for GLM])
 
 # if the client was enabled, make sure we have GL
 if test x$enable_client != xno; then

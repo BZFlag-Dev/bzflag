@@ -20,53 +20,50 @@
 // system headers
 #include <string.h>
 #include <vector>
-
-// common headers
-#include "vectors.h"
-
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // triangulation parameters
-static afvec3 Normal; // FIXME, uNormal, vNormal;
-//static afvec2* MVertsSpace = NULL;
-static const float* const *Verts = NULL;
+static glm::vec3 Normal; // FIXME, uNormal, vNormal;
+static const glm::vec3* const *Verts = nullptr;
 static int Count = 0;
 static int* WorkSet = NULL;
 
 
-static bool vec3norm(afvec3 v)
+static void vec3norm(glm::vec3& v)
 {
-    const float len = sqrtf(vec3dot(v, v));
+    const float len = glm::length(v);
     if (len < 1.0e-6f)
     {
-        v[0] = v[1] = v[2] = 0.0f;
-        return false;
+        v = glm::vec3(0.0f);
+        return;
     }
     else
     {
         const float scale = 1.0f / len;
-        v[0] *= scale;
-        v[1] *= scale;
-        v[2] *= scale;
+        v *= scale;
     }
-    return true;
 }
 
 
-static inline bool makeNormal()
+static inline void makeNormal()
 {
     // Newell method
-    Normal[0] = Normal[1] = Normal[2] = 0.0f;
+    glm::vec3 normal(0.0f);
     for (int i = 0; i < Count; i++)
     {
-        const float* v0 = Verts[i];
-        const float* v1 = Verts[(i + 1) % Count];
-        Normal[0] += ((v0[1] - v1[1]) * (v0[2] + v1[2]));
-        Normal[1] += ((v0[2] - v1[2]) * (v0[0] + v1[0]));
-        Normal[2] += ((v0[0] - v1[0]) * (v0[1] + v1[1]));
+        glm::vec3 v0 = *Verts[i];
+        glm::vec3 v1 = *Verts[(i + 1) % Count];
+
+        normal.x += ((v0.y - v1.y) * (v0.z + v1.z));
+        normal.y += ((v0.z - v1.z) * (v0.x + v1.x));
+        normal.z += ((v0.x - v1.x) * (v0.y + v1.y));
     }
 
     // normalize
-    return vec3norm(Normal);
+    vec3norm(normal);
+
+    Normal = normal;
 }
 
 
@@ -76,12 +73,12 @@ static inline bool isConvex(int w0, int w1, int w2)
     const int v0 = WorkSet[w0];
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
-    afvec3 e0, e1;
-    vec3sub(e0, Verts[v1], Verts[v0]);
-    vec3sub(e1, Verts[v2], Verts[v1]);
-    afvec3 cross;
-    vec3cross(cross, e0, e1);
-    if (vec3dot(cross, Normal) <= 0.0f)
+    const glm::vec3& p0 = *Verts[v0];
+    const glm::vec3& p1 = *Verts[v1];
+    const glm::vec3& p2 = *Verts[v2];
+    glm::vec3 e0 = p1 - p0;
+    glm::vec3 e1 = p2 - p1;
+    if (glm::dot(glm::cross(e0, e1), Normal) <= 0.0f)
         return false;
     return true;
 }
@@ -94,24 +91,26 @@ static inline bool isFaceClear(int w0, int w1, int w2)
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
 
+    const glm::vec3& vert0 = *Verts[v0];
+    const glm::vec3& vert1 = *Verts[v1];
+    const glm::vec3& vert2 = *Verts[v2];
     // setup the edges
-    afvec3 edges[3];
-    vec3sub(edges[0], Verts[v1], Verts[v0]);
-    vec3sub(edges[1], Verts[v2], Verts[v1]);
-    vec3sub(edges[2], Verts[v0], Verts[v2]);
+    glm::vec3 edges[3];
+    edges[0] = vert1 - vert0;
+    edges[1] = vert2 - vert1;
+    edges[2] = vert0 - vert2;
 
     // get the triangle normal
-    afvec3 normal;
-    vec3cross(normal, edges[0], edges[1]);
+    glm::vec3 normal = glm::cross(edges[0], edges[1]);
 
     // setup the planes
-    float planes[3][4];
-    vec3cross(planes[0], edges[0], normal);
-    vec3cross(planes[1], edges[1], normal);
-    vec3cross(planes[2], edges[2], normal);
-    planes[0][3] = -vec3dot(planes[0], Verts[v0]);
-    planes[1][3] = -vec3dot(planes[1], Verts[v1]);
-    planes[2][3] = -vec3dot(planes[2], Verts[v2]);
+    glm::vec4 planes[3];
+    glm::vec3 p0 = glm::cross(edges[0], normal);
+    glm::vec3 p1 = glm::cross(edges[1], normal);
+    glm::vec3 p2 = glm::cross(edges[2], normal);
+    planes[0] = glm::vec4(p0, -glm::dot(p0, vert0));
+    planes[1] = glm::vec4(p1, -glm::dot(p1, vert1));
+    planes[2] = glm::vec4(p2, -glm::dot(p2, vert2));
 
     for (int w = 0; w < Count; w++)
     {
@@ -120,9 +119,11 @@ static inline bool isFaceClear(int w0, int w1, int w2)
             continue; // FIXME: lazy
         }
         const int v = WorkSet[w];
+        const glm::vec3& vertV = *Verts[v];
+
         for (i = 0; i < 3; i++)
         {
-            const float dist = vec3dot(planes[i], Verts[v]) + planes[i][3];
+            const float dist = glm::dot(glm::vec3(planes[i]), vertV) + planes[i].w;
             if (dist > 0.0f)
             {
                 break; // this point is clear
@@ -140,19 +141,18 @@ static inline float getDot(int w0, int w1, int w2)
     const int v0 = WorkSet[w0];
     const int v1 = WorkSet[w1];
     const int v2 = WorkSet[w2];
-    afvec3 e0, e1;
-    vec3sub(e0, Verts[v1], Verts[v0]);
-    vec3sub(e1, Verts[v2], Verts[v1]);
+    glm::vec3 e0 = *Verts[v1] - *Verts[v0];
+    glm::vec3 e1 = *Verts[v2] - *Verts[v1];
+
     vec3norm(e0);
     vec3norm(e1);
-    return vec3dot(e0, e1);
+    return glm::dot(e0, e1);
 }
 
 
-void triangulateFace(int count, const float* const* verts,
-                     std::vector<TriIndices>& tris)
+std::vector<TriIndices> triangulateFace(int count, const glm::vec3* const* verts)
 {
-    tris.clear();
+    std::vector<TriIndices> tris;
 
     Verts = verts;
     Count = count;
@@ -231,7 +231,7 @@ void triangulateFace(int count, const float* const* verts,
 
     delete[] WorkSet;
 
-    return;
+    return tris;
 }
 
 

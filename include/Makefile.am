@@ -78,6 +78,7 @@ noinst_HEADERS =			\
 	ObstacleModifier.h		\
 	ObstacleSceneNodeGenerator.h	\
 	OccluderSceneNode.h		\
+	OpenGLAPI.h			\
 	OpenGLFramebuffer.h		\
 	OpenGLGState.h			\
 	OpenGLLight.h			\
@@ -147,7 +148,6 @@ noinst_HEADERS =			\
 	multicast.h			\
 	network.h			\
 	vectors.h			\
-	vectors_old.h			\
 	version.h			\
 	win32.h
 

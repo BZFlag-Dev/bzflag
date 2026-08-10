@@ -280,22 +280,17 @@ bool CustomBox::read(const char *cmd, std::istream& input)
 static void getEdgeLengths(const MeshTransform& xform, float lengths[3])
 {
     MeshTransform::Tool xformTool(xform);
-    float vo[3] = {-1.0f, -1.0f, 0.0f};
-    float vx[3] = {+1.0f, -1.0f, 0.0f};
-    float vy[3] = {-1.0f, +1.0f, 0.0f};
-    float vz[3] = {-1.0f, -1.0f, 1.0f};
-    xformTool.modifyVertex(vo);
-    xformTool.modifyVertex(vx);
-    xformTool.modifyVertex(vy);
-    xformTool.modifyVertex(vz);
-    float dx[3], dy[3], dz[3];
-    vec3sub(dx, vx, vo);
-    vec3sub(dy, vy, vo);
-    vec3sub(dz, vz, vo);
-    lengths[0] = sqrtf(vec3dot(dx, dx));
-    lengths[1] = sqrtf(vec3dot(dy, dy));
-    lengths[2] = sqrtf(vec3dot(dz, dz));
-    return;
+    glm::vec3 vo{-1.0f, -1.0f, 0.0f};
+    glm::vec3 vx{ 1.0f, -1.0f, 0.0f};
+    glm::vec3 vy{-1.0f,  1.0f, 0.0f};
+    glm::vec3 vz{-1.0f, -1.0f, 1.0f};
+    xformTool.modifyVertex(glm::value_ptr(vo));
+    xformTool.modifyVertex(glm::value_ptr(vx));
+    xformTool.modifyVertex(glm::value_ptr(vy));
+    xformTool.modifyVertex(glm::value_ptr(vz));
+    lengths[0] = glm::distance(vx, vo);
+    lengths[1] = glm::distance(vy, vo);
+    lengths[2] = glm::distance(vz, vo);
 }
 
 
@@ -326,28 +321,22 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef)
     float edgeLengths[3];
     getEdgeLengths(xform, edgeLengths);
 
-
-    std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> verts;
-    std::vector<cfvec3> norms;
-    std::vector<cfvec2> txcds;
-
     // add the checkpoint
-    checkTypes.push_back(MeshObstacle::CheckInside);
-    const float middle[3] = { 0.0f, 0.0f, 0.5f };
-    checkPoints.push_back(middle);
+    std::vector<char> checkTypes = { MeshObstacle::CheckInside };
+    std::vector<glm::vec3> checkPoints = { {0.0f, 0.0f, 0.5f } };
 
     // add the vertex coordinates
-    const float vertsData[8][3] =
+    std::vector<glm::vec3> verts =
     {
         {-1.0f, -1.0f, 0.0f}, {+1.0f, -1.0f, 0.0f},
         {+1.0f, +1.0f, 0.0f}, {-1.0f, +1.0f, 0.0f},
         {-1.0f, -1.0f, 1.0f}, {+1.0f, -1.0f, 1.0f},
         {+1.0f, +1.0f, 1.0f}, {-1.0f, +1.0f, 1.0f}
     };
-    for (i = 0; i < 8; i++)
-        verts.push_back(vertsData[i]);
+
+    std::vector<glm::vec3> norms;
+    std::vector<glm::vec2> txcds;
+
 
     // add the texture coordinates
     const int txcdAxis[6][2] =
@@ -359,7 +348,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef)
         {0, 1}, // ZP
         {0, 1}  // ZN
     };
-    const float txcdData[4][2] =
+    const glm::vec2 txcdData[4] =
     {
         {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
     };
@@ -367,7 +356,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef)
     {
         for (int corner = 0; corner < 4; corner++)
         {
-            float txcd[2];
+            glm::vec2 txcd;
             for (int a = 0; a < 2; a++)
             {
                 float scale;

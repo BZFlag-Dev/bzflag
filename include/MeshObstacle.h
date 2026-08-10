@@ -24,9 +24,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <glm/fwd.hpp>
 
 // Common headers
-#include "vectors.h"
 #include "Ray.h"
 #include "MeshFace.h"
 #include "MeshTransform.h"
@@ -39,10 +39,10 @@ public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
                  const std::vector<char>& checkTypes,
-                 const std::vector<cfvec3>& checkPoints,
-                 const std::vector<cfvec3>& vertices,
-                 const std::vector<cfvec3>& normals,
-                 const std::vector<cfvec2>& texcoords,
+                 const std::vector<glm::vec3>& checkPoints,
+                 const std::vector<glm::vec3>& vertices,
+                 const std::vector<glm::vec3>& normals,
+                 const std::vector<glm::vec2>& texcoords,
                  int faceCount, bool noclusters,
                  bool bounce, bool drive, bool shoot, bool ricochet);
 
@@ -102,10 +102,10 @@ public:
     bool containsPointNoOctree(const float point[3]) const;
 
     const char *getCheckTypes() const;
-    const afvec3 *getCheckPoints() const;
-    afvec3 *getVertices() const;
-    afvec3 *getNormals() const;
-    afvec2 *getTexcoords() const;
+    const glm::vec3 *getCheckPoints() const;
+    glm::vec3 *getVertices() const;
+    glm::vec3 *getNormals() const;
+    glm::vec2 *getTexcoords() const;
     int getCheckCount() const;
     int getVertexCount() const;
     int getNormalCount() const;
@@ -130,7 +130,7 @@ private:
     void makeFacePointers(const std::vector<int>& _vertices,
                           const std::vector<int>& _normals,
                           const std::vector<int>& _texcoords,
-                          float**& v, float**& n, float**& t);
+                          glm::vec3**& v, glm::vec3**& n, glm::vec2**& t);
 
 private:
     static const char* typeName;
@@ -139,13 +139,13 @@ private:
 
     int checkCount;
     char* checkTypes;
-    afvec3* checkPoints;
+    glm::vec3* checkPoints;
     int vertexCount;
-    afvec3* vertices;
+    glm::vec3* vertices;
     int normalCount;
-    afvec3* normals;
+    glm::vec3* normals;
     int texcoordCount;
-    afvec2* texcoords;
+    glm::vec2* texcoords;
     int faceCount, faceSize;
     MeshFace** faces;
     bool smoothBounce;
@@ -162,22 +162,22 @@ inline const char *MeshObstacle::getCheckTypes() const
     return checkTypes;
 }
 
-inline const afvec3 *MeshObstacle::getCheckPoints() const
+inline const glm::vec3 *MeshObstacle::getCheckPoints() const
 {
     return checkPoints;
 }
 
-inline afvec3 *MeshObstacle::getVertices() const
+inline glm::vec3 *MeshObstacle::getVertices() const
 {
     return vertices;
 }
 
-inline afvec3 *MeshObstacle::getNormals() const
+inline glm::vec3 *MeshObstacle::getNormals() const
 {
     return normals;
 }
 
-inline afvec2 *MeshObstacle::getTexcoords() const
+inline glm::vec2 *MeshObstacle::getTexcoords() const
 {
     return texcoords;
 }

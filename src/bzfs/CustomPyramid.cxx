@@ -282,36 +282,28 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
 {
     MeshTransform::Tool xformTool(xform);
-    float vo[3] = {-1.0f, -1.0f, 0.0f};
-    float vx[3] = {+1.0f, -1.0f, 0.0f};
-    float vy[3] = {-1.0f, +1.0f, 0.0f};
-    float vt[3] = {0.0f, 0.0f, 1.0f};
-    float vxp[3] = {+1.0f, 0.0f, 0.0f};
-    float vxn[3] = {-1.0f, 0.0f, 0.0f};
-    float vyp[3] = {0.0f, +1.0f, 0.0f};
-    float vyn[3] = {0.0f, -1.0f, 0.0f};
-    xformTool.modifyVertex(vo);
-    xformTool.modifyVertex(vx);
-    xformTool.modifyVertex(vy);
-    xformTool.modifyVertex(vt);
-    xformTool.modifyVertex(vxp);
-    xformTool.modifyVertex(vxn);
-    xformTool.modifyVertex(vyp);
-    xformTool.modifyVertex(vyn);
-    float dx[3], dy[3], dxp[3], dxn[3], dyp[3], dyn[3];
-    vec3sub(dx, vx, vo);
-    vec3sub(dy, vy, vo);
-    vec3sub(dxp, vxp, vt);
-    vec3sub(dxn, vxn, vt);
-    vec3sub(dyp, vyp, vt);
-    vec3sub(dyn, vyn, vt);
-    lengths[0] = sqrtf(vec3dot(dx, dx));
-    lengths[1] = sqrtf(vec3dot(dy, dy));
-    lengths[2] = sqrtf(vec3dot(dxp, dxp));
-    lengths[3] = sqrtf(vec3dot(dxn, dxn));
-    lengths[4] = sqrtf(vec3dot(dyp, dyp));
-    lengths[5] = sqrtf(vec3dot(dyn, dyn));
-    return;
+    glm::vec3 vo (-1.0f, -1.0f, 0.0f);
+    glm::vec3 vx ( 1.0f, -1.0f, 0.0f);
+    glm::vec3 vy (-1.0f,  1.0f, 0.0f);
+    glm::vec3 vt ( 0.0f,  0.0f, 1.0f);
+    glm::vec3 vxp( 1.0f,  0.0f, 0.0f);
+    glm::vec3 vxn(-1.0f,  0.0f, 0.0f);
+    glm::vec3 vyp( 0.0f,  1.0f, 0.0f);
+    glm::vec3 vyn( 0.0f, -1.0f, 0.0f);
+    xformTool.modifyVertex(glm::value_ptr(vo));
+    xformTool.modifyVertex(glm::value_ptr(vx));
+    xformTool.modifyVertex(glm::value_ptr(vy));
+    xformTool.modifyVertex(glm::value_ptr(vt));
+    xformTool.modifyVertex(glm::value_ptr(vxp));
+    xformTool.modifyVertex(glm::value_ptr(vxn));
+    xformTool.modifyVertex(glm::value_ptr(vyp));
+    xformTool.modifyVertex(glm::value_ptr(vyn));
+    lengths[0] = glm::distance(vx,  vo);
+    lengths[1] = glm::distance(vy,  vo);
+    lengths[2] = glm::distance(vxp, vt);
+    lengths[3] = glm::distance(vxn, vt);
+    lengths[4] = glm::distance(vyp, vt);
+    lengths[5] = glm::distance(vyn, vt);
 }
 
 
@@ -353,29 +345,23 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
     getEdgeLengths(xform, edgeLengths);
 
 
-    std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> verts;
-    std::vector<cfvec3> norms;
-    std::vector<cfvec2> txcds;
-
     // add the checkpoint
-    checkTypes.push_back(MeshObstacle::CheckInside);
-    const float middle[3] = { 0.0f, 0.0f, 0.5f };
-    checkPoints.push_back(middle);
+    std::vector<char> checkTypes = { MeshObstacle::CheckInside };
+    std::vector<glm::vec3> checkPoints = { {0.0f, 0.0f, 0.5f} };
 
     // add the vertex coordinates
-    const float vertsData[5][3] =
+    std::vector<glm::vec3> verts =
     {
         {-1.0f, -1.0f, 0.0f}, {+1.0f, -1.0f, 0.0f},
         {+1.0f, +1.0f, 0.0f}, {-1.0f, +1.0f, 0.0f},
         {+0.0f, +0.0f, 1.0f}
     };
-    for (i = 0; i < 5; i++)
-        verts.push_back(vertsData[i]);
+
+    std::vector<glm::vec3> norms;
+    std::vector<glm::vec2> txcds;
 
     // add the texture coordinates
-    const int txcdAxis[6][2] =
+    constexpr int txcdAxis[6][2] =
     {
         {1, 2}, // XP
         {1, 3}, // XN
@@ -383,7 +369,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
         {0, 5}, // YN
         {0, 1}  // ZN
     };
-    const float txcdData[7][2] =
+    const glm::vec2 txcdData[7] =
     {
         {0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f}, // triangles
         {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} // quad
@@ -404,7 +390,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
         }
         for (int corner = 0; corner < cornerCount; corner++)
         {
-            float txcd[2];
+            glm::vec2 txcd;
             for (int a = 0; a < 2; a++)
             {
                 float scale;

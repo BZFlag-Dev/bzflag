@@ -139,9 +139,6 @@ void MeshDrawInfo::clear()
     if (source == NULL)
     {
         delete[] corners;
-        delete[] vertices;
-        delete[] normals;
-        delete[] texcoords;
         int i;
         for (i = 0; i < lodCount; i++)
             lods[i].clear();
@@ -153,9 +150,6 @@ void MeshDrawInfo::clear()
     }
     delete matMap;
     delete xformTool;
-    delete[] rawVerts;
-    delete[] rawNorms;
-    delete[] rawTxcds;
     init();
     return;
 }
@@ -179,16 +173,16 @@ void MeshDrawInfo::init()
 
     cornerCount = 0;
     corners = NULL;
-    vertices = NULL;
-    normals = NULL;
-    texcoords = NULL;
+    vertices.clear();
+    normals.clear();
+    texcoords.clear();
 
     rawVertCount = 0;
-    rawVerts = NULL;
+    rawVerts.clear();
     rawNormCount = 0;
-    rawNorms = NULL;
+    rawNorms.clear();
     rawTxcdCount = 0;
-    rawTxcds = NULL;
+    rawTxcds.clear();
 
     lodCount = 0;
     lods = NULL;
@@ -310,18 +304,9 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
     if (!valid)
         return false;
 
-    int vCount;
-    const afvec3* verts;
-    if (rawVertCount > 0)
-    {
-        vCount = rawVertCount;
-        verts = rawVerts;
-    }
-    else
-    {
-        vCount = mesh->getVertexCount();
-        verts = mesh->getVertices();
-    }
+    const bool hasRaw = (rawVertCount > 0);
+    const int vCount = hasRaw ? rawVertCount : mesh->getVertexCount();
+    const glm::vec3* verts = hasRaw ? rawVerts.data() : mesh->getVertices();
 
     Extents tmpExts;
     const bool calcCenter = (sphere[0] == +MAXFLOAT) &&
@@ -352,7 +337,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
             float maxDistSqr = -MAXFLOAT;
             for (int v = 0; v < vCount; v++)
             {
-                const afvec3& p = verts[v];
+                const glm::vec3& p = verts[v];
                 if (p[2] < minZ)
                     minZ = p[2];
                 if (p[2] > maxZ)
@@ -413,7 +398,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
                         {
                             const unsigned short cIndex = array[idx];
                             const Corner& corner = corners[cIndex];
-                            const float* v = verts[corner.vertex];
+                            const glm::vec3& v = verts[corner.vertex];
                             exts.expandToPoint(v);
                         }
                     }
@@ -424,7 +409,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
                         {
                             const unsigned int cIndex = array[idx];
                             const Corner& corner = corners[cIndex];
-                            const float* v = verts[corner.vertex];
+                            const glm::vec3& v = verts[corner.vertex];
                             exts.expandToPoint(v);
                         }
                     }
@@ -461,32 +446,21 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
     if (!valid)
         return false;
 
-    const afvec3* verts;
-    const afvec3* norms;
-    const afvec2* txcds;
-    if (rawVertCount > 0)
-    {
-        verts = rawVerts;
-        norms = rawNorms;
-        txcds = rawTxcds;
-    }
-    else
-    {
-        verts = mesh->getVertices();
-        norms = mesh->getNormals();
-        txcds = mesh->getTexcoords();
-    }
+    const bool hasRaw = (rawVertCount > 0);
+    const glm::vec3* verts = hasRaw ? rawVerts.data() : mesh->getVertices();
+    const glm::vec3* norms = hasRaw ? rawNorms.data() : mesh->getNormals();
+    const glm::vec2* txcds = hasRaw ? rawTxcds.data() : mesh->getTexcoords();
 
     // make the element arrays
-    vertices = new afvec3[cornerCount];
-    normals = new afvec3[cornerCount];
-    texcoords = new afvec2[cornerCount];
+    vertices.resize(cornerCount);
+    normals.resize(cornerCount);
+    texcoords.resize(cornerCount);
     for (int i = 0; i < cornerCount; i++)
     {
         Corner& corner = corners[i];
-        memcpy(vertices[i],  verts[corner.vertex],   sizeof(afvec3));
-        memcpy(normals[i],   norms[corner.normal],   sizeof(afvec3));
-        memcpy(texcoords[i], txcds[corner.texcoord], sizeof(afvec2));
+        vertices[i]  = verts[corner.vertex];
+        normals[i]   = norms[corner.normal];
+        texcoords[i] = txcds[corner.texcoord];
     }
 
     // tally the triangle counts
@@ -883,9 +857,9 @@ bool MeshDrawInfo::parse(std::istream& input)
     std::vector<Corner> pCorners;
     std::vector<DrawLod> pLods;
     std::vector<DrawLod> pRadarLods;
-    std::vector<cfvec3> pVerts;
-    std::vector<cfvec3> pNorms;
-    std::vector<cfvec2> pTxcds;
+    std::vector<glm::vec3> pVerts;
+    std::vector<glm::vec3> pNorms;
+    std::vector<glm::vec2> pTxcds;
 
     setupDrawModeMap();
     finishLine(input); // flush the rest of the "drawInfo" line
@@ -974,7 +948,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "vertex") == 0)
         {
-            cfvec3 v;
+            glm::vec3 v;
             if ((parms >> v[0]) && (parms >> v[1]) && (parms >> v[2]))
                 pVerts.push_back(v);
             else
@@ -985,7 +959,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "normal") == 0)
         {
-            cfvec3 n;
+            glm::vec3 n;
             if ((parms >> n[0]) && (parms >> n[1]) && (parms >> n[2]))
                 pNorms.push_back(n);
             else
@@ -996,7 +970,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         }
         else if (strcasecmp(cmd.c_str(), "texcoord") == 0)
         {
-            cfvec2 t;
+            glm::vec2 t;
             if ((parms >> t[0]) && (parms >> t[1]))
                 pTxcds.push_back(t);
             else
@@ -1051,25 +1025,19 @@ bool MeshDrawInfo::parse(std::istream& input)
     if (!pVerts.empty())
     {
         rawVertCount = pVerts.size();
-        rawVerts = new afvec3[rawVertCount];
-        for (i = 0; i < rawVertCount; i++)
-            memcpy(rawVerts[i], pVerts[i].data, sizeof(afvec3));
+        rawVerts = std::move(pVerts);
     }
     // make raw norms
     if (!pNorms.empty())
     {
         rawNormCount = pNorms.size();
-        rawNorms = new afvec3[rawNormCount];
-        for (i = 0; i < rawNormCount; i++)
-            memcpy(rawNorms[i], pNorms[i].data, sizeof(afvec3));
+        rawNorms = std::move(pNorms);
     }
     // make raw texcoords
     if (!pTxcds.empty())
     {
         rawTxcdCount = pTxcds.size();
-        rawTxcds = new afvec2[rawTxcdCount];
-        for (i = 0; i < rawTxcdCount; i++)
-            memcpy(rawTxcds[i], pTxcds[i].data, sizeof(afvec2));
+        rawTxcds = std::move(pTxcds);
     }
 
     // ask for all display lists
@@ -1139,21 +1107,21 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
     // raw vertices
     for (i = 0; i < rawVertCount; i++)
     {
-        const afvec3& v = rawVerts[i];
+        const glm::vec3& v = rawVerts[i];
         out << indent << "  vertex " << v[0] << " " << v[1] << " "
             << v[2] << std::endl;
     }
     // raw normals
     for (i = 0; i < rawNormCount; i++)
     {
-        const afvec3& n = rawNorms[i];
+        const glm::vec3& n = rawNorms[i];
         out << indent << "  normal " << n[0] << " " << n[1] << " "
             << n[2] << std::endl;
     }
     // raw texcoords
     for (i = 0; i < rawTxcdCount; i++)
     {
-        const afvec2& t = rawTxcds[i];
+        const glm::vec2& t = rawTxcds[i];
         out << indent << "  texcoord " << t[0] << " " << t[1] << std::endl;
     }
 
@@ -1295,13 +1263,13 @@ int MeshDrawInfo::packSize() const
 
     // raw vertices
     fullSize += sizeof(int32_t); // count
-    fullSize += sizeof(afvec3) * rawVertCount;
+    fullSize += sizeof(glm::vec3) * rawVertCount;
     // raw normals
     fullSize += sizeof(int32_t); // count
-    fullSize += sizeof(afvec3) * rawNormCount;
+    fullSize += sizeof(glm::vec3) * rawNormCount;
     // raw texcoords
     fullSize += sizeof(int32_t); // count
-    fullSize += sizeof(afvec2) * rawTxcdCount;
+    fullSize += sizeof(glm::vec2) * rawTxcds.size();
 
     // lods
     fullSize += sizeof(int32_t); // count
@@ -1424,19 +1392,19 @@ const void* MeshDrawInfo::unpack(const void* buf)
     // raw vertices
     buf = nboUnpackInt (buf, s32);
     rawVertCount = s32;
-    rawVerts = new afvec3[rawVertCount];
+    rawVerts.resize(rawVertCount);
     for (i = 0; i < rawVertCount; i++)
         buf = nboUnpackVector(buf, rawVerts[i]);
     // raw normals
     buf = nboUnpackInt (buf, s32);
     rawNormCount = s32;
-    rawNorms = new afvec3[rawNormCount];
+    rawNorms.resize(rawNormCount);
     for (i = 0; i < rawNormCount; i++)
         buf = nboUnpackVector(buf, rawNorms[i]);
     // raw texcoords
     buf = nboUnpackInt (buf, s32);
     rawTxcdCount = s32;
-    rawTxcds = new afvec2[rawTxcdCount];
+    rawTxcds.resize(rawTxcdCount);
     for (i = 0; i < rawTxcdCount; i++)
     {
         buf = nboUnpackFloat(buf, rawTxcds[i][0]);

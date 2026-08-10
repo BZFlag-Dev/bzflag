@@ -21,9 +21,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <glm/fwd.hpp>
 
 // Common headers
-#include "vectors.h"
 #include "Extents.h"
 #include "BzMaterial.h"
 #include "MeshTransform.h"
@@ -86,9 +86,9 @@ public:
     int getLodCount() const;
     const DrawLod* getDrawLods() const;
 
-    const afvec3* getVertices() const;
-    const afvec3* getNormals() const;
-    const afvec2* getTexcoords() const;
+    const glm::vec3* getVertices() const;
+    const glm::vec3* getNormals() const;
+    const glm::vec2* getTexcoords() const;
 
     int getRadarCount() const;
     const DrawLod* getRadarLods() const;
@@ -134,16 +134,16 @@ private:
     // elements
     int cornerCount;
     Corner* corners;
-    afvec3* vertices;
-    afvec3* normals;
-    afvec2* texcoords;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texcoords;
 
     int rawVertCount;
-    afvec3* rawVerts;
+    std::vector<glm::vec3> rawVerts;
     int rawNormCount;
-    afvec3* rawNorms;
+    std::vector<glm::vec3> rawNorms;
     int rawTxcdCount;
-    afvec2* rawTxcds;
+    std::vector<glm::vec2> rawTxcds;
 
     int lodCount;
     DrawLod* lods;
@@ -195,17 +195,17 @@ inline const DrawLod* MeshDrawInfo::getDrawLods() const
 {
     return lods;
 }
-inline const afvec3* MeshDrawInfo::getVertices() const
+inline const glm::vec3* MeshDrawInfo::getVertices() const
 {
-    return vertices;
+    return vertices.data();
 }
-inline const afvec3* MeshDrawInfo::getNormals() const
+inline const glm::vec3* MeshDrawInfo::getNormals() const
 {
-    return normals;
+    return normals.data();
 }
-inline const afvec2* MeshDrawInfo::getTexcoords() const
+inline const glm::vec2* MeshDrawInfo::getTexcoords() const
 {
-    return texcoords;
+    return texcoords.data();
 }
 inline int MeshDrawInfo::getRadarCount() const
 {

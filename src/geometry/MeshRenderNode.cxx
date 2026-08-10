@@ -13,6 +13,10 @@
 // implementation header
 #include "MeshRenderNode.h"
 
+// System headers
+#include <cstring>
+#include <glm/gtc/type_ptr.hpp>
+
 // common implementation headers
 #include "RenderNode.h"
 #include "MeshDrawMgr.h"
@@ -113,23 +117,23 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
         const GLfloat* _color,
         int _lod, int _set,
         const Extents* _exts,
-        const GLfloat _pos[3],
+        glm::vec3 _pos,
         int _triangles) :
     OpaqueRenderNode(_drawMgr, _xformMatrix, _normalize,
                      _color, _lod, _set, _exts, _triangles)
 {
-    memcpy(pos, _pos, sizeof(GLfloat[3]));
+    pos = _pos;
     return;
 }
 
 const GLfloat* AlphaGroupRenderNode::getPosition() const
 {
-    return pos;
+    return glm::value_ptr(pos);
 }
 
-void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
+void AlphaGroupRenderNode::setPosition(glm::vec3 _pos)
 {
-    memcpy(pos, _pos, sizeof(GLfloat[3]));
+    pos = _pos;
     return;
 }
 

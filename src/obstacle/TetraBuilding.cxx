@@ -80,27 +80,22 @@ MeshObstacle* TetraBuilding::makeMesh()
     // setup the coordinates
     int i;
     std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> verts;
-    std::vector<cfvec3> norms;
-    std::vector<cfvec2> texcds;
+    std::vector<glm::vec3> checkPoints;
+    std::vector<glm::vec3> verts;
+    std::vector<glm::vec3> norms;
+    std::vector<glm::vec2> texcds;
+
+    verts.reserve(4);
+    for (i = 0; i < 4; i++)
+        verts.push_back(glm::make_vec3(vertices[i]));
 
     // setup the inside check point
-    float center[3] = {0.0f, 0.0f, 0.0f};
+    glm::vec3 center(0.0f);
     for (i = 0; i < 4; i++)
-    {
-        center[0] += vertices[i][0];
-        center[1] += vertices[i][1];
-        center[2] += vertices[i][2];
-    }
-    center[0] *= 0.25f;
-    center[1] *= 0.25f;
-    center[2] *= 0.25f;
+        center += verts[i];
+    center *= 0.25f;
     checkPoints.push_back(center);
     checkTypes.push_back(MeshObstacle::CheckInside);
-
-    for (i = 0; i < 4; i++)
-        verts.push_back(vertices[i]);
 
     mesh = new MeshObstacle(transform,
                             checkTypes, checkPoints, verts, norms, texcds,
@@ -134,19 +129,14 @@ MeshObstacle* TetraBuilding::makeMesh()
 
 void TetraBuilding::checkVertexOrder()
 {
-    int v, a;
-
     // make sure the the planes are facing outwards
-    float edge[3][3]; // edges from vertex 0
-    for (v = 0; v < 3; v++)
-    {
-        for (a = 0; a < 3; a++)
-            edge[v][a] = vertices[v+1][a] - vertices[0][a];
-    }
-    float cross[3];
-    vec3cross(cross, edge[0], edge[1]);
+    const glm::vec3 v0 = glm::make_vec3(vertices[0]);
+    const glm::vec3 e0 = glm::make_vec3(vertices[1]) - v0;
+    const glm::vec3 e1 = glm::make_vec3(vertices[2]) - v0;
+    const glm::vec3 e2 = glm::make_vec3(vertices[3]) - v0;
+    const glm::vec3 cross = glm::cross(e0, e1);
 
-    const float dot = vec3dot (cross, edge[2]);
+    const float dot = glm::dot(cross, e2);
 
     // swap vertices 1 & 2 if we are out of order
     if (dot < 0.0f)

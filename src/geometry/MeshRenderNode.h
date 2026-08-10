@@ -16,6 +16,9 @@
 // Inherits from
 #include "RenderNode.h"
 
+// System headers
+#include <glm/vec3.hpp>
+
 // common implementation headers
 #include "bzfgl.h"
 
@@ -56,12 +59,12 @@ public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
                          GLfloat *xformMatrix, bool normalize,
                          const GLfloat* color, int lod, int set,
-                         const Extents* exts, const float pos[3],
+                         const Extents* exts, glm::vec3 pos,
                          int triangles);
     const GLfloat* getPosition() const override;
-    void setPosition(const GLfloat* pos);
+    void setPosition(glm::vec3 pos);
 private:
-    float pos[3];
+    glm::vec3 pos;
 };
 
 
