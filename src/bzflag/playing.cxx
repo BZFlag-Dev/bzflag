@@ -4283,8 +4283,7 @@ void setLookAtMarker(void)
     // get info about my tank
     const float c = cosf(- myTank->getAngle());
     const float s = sinf(- myTank->getAngle());
-    const float *p = myTank->getPosition();
-    const fvec3 myPos(p[0],p[1],p[2]);
+    const glm::vec3 myPos = glm::make_vec3(myTank->getPosition());
 
     // initialize best target
     Player *bestTarget = NULL;
@@ -4297,10 +4296,11 @@ void setLookAtMarker(void)
             continue;
 
         // compute position in my local coordinate system
-        const fvec3 rPos(remotePlayers[i]->getPosition()[0],remotePlayers[i]->getPosition()[1],
-                         remotePlayers[i]->getPosition()[2]);
-        const float x = (c * (rPos.x - myPos.x)) - (s * (rPos.y - myPos.y));
-        const float y = (s * (rPos.x - myPos.x)) + (c * (rPos.y - myPos.y));
+        const glm::vec3 rPos = glm::make_vec3(remotePlayers[i]->getPosition());
+        const glm::vec3 vec = rPos - myPos;
+
+        const float x = c * vec.x - s * vec.y;
+        const float y = s * vec.x + c * vec.y;
 
         // ignore things behind me
         if (x < 0.0f)
@@ -4314,9 +4314,7 @@ void setLookAtMarker(void)
         if (inLookRange(a, d, bestDistance, remotePlayers[i]))
         {
             // check and see if we can cast a ray from our point to the object
-            fvec3 vec = rPos - myPos;
-
-            Ray ray = Ray(myPos, vec);
+            Ray ray = Ray(glm::value_ptr(myPos), glm::value_ptr(vec));
 
             // get the list of objects that fall in this ray
             const ObsList *olist = COLLISIONMGR.rayTest (&ray, d);
@@ -4370,8 +4368,8 @@ void setLookAtMarker(void)
     if (myTank->getFlag() == Flags::Colorblindness)
         markercolor = RogueTeam;
 
-    hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
-                                Float3ToVec3(Team::getTankColor(markercolor)),
+    hud->AddEnhancedNamedMarker(glm::make_vec3(bestTarget->getPosition()),
+                                glm::make_vec3(Team::getTankColor(markercolor)),
                                 label, isFriendly(bestTarget), 2.0f);
 }
 
@@ -6822,7 +6820,7 @@ static void     prepareTheHUD()
     // prep the HUD
     if (myTank)
     {
-        const float* myPos = myTank->getPosition();
+        const glm::vec3 myPos = glm::make_vec3(myTank->getPosition());
         hud->setHeading(myTank->getAngle());
         hud->setAltitude(myPos[2]);
         if (world->allowTeamFlags())
@@ -6836,10 +6834,11 @@ static void     prepareTheHUD()
                         && ((flag.status != FlagOnTank) ||
                             (flag.owner != myTank->getId())))
                 {
-                    const float* flagPos = flag.position;
-                    float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
+                    const glm::vec3 flagPos = glm::make_vec3(flag.position);
+                    glm::vec2 d = glm::vec2(flagPos) - glm::vec2(myPos);
+                    float heading = atan2f(d.y, d.x);
                     hud->addMarker(heading, myTeamColor);
-                    hud->AddEnhancedMarker(Float3ToVec3(flagPos), Float3ToVec3(myTeamColor),
+                    hud->AddEnhancedMarker(flagPos, glm::make_vec3(myTeamColor),
                                            false, BZDBCache::flagPoleSize * 2.0f);
                 }
             }
@@ -6847,12 +6846,12 @@ static void     prepareTheHUD()
         if (myTank->getAntidoteLocation())
         {
             // marker for my antidote flag
-            const GLfloat* antidotePos = myTank->getAntidoteLocation();
-            float heading = atan2f(antidotePos[1] - myPos[1],
-                                   antidotePos[0] - myPos[0]);
-            const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
-            hud->addMarker(heading, antidoteColor);
-            hud->AddEnhancedMarker(Float3ToVec3(antidotePos), Float3ToVec3(antidoteColor), false,
+            const glm::vec3 antidotePos = glm::make_vec3(myTank->getAntidoteLocation());
+            glm::vec2 d = glm::vec2(antidotePos) - glm::vec2(myPos);
+            float heading = atan2f(d.y, d.x);
+            const glm::vec3 antidoteColor{1.0f, 1.0f, 0.0f};
+            hud->addMarker(heading, glm::value_ptr(antidoteColor));
+            hud->AddEnhancedMarker(antidotePos, antidoteColor, false,
                                    BZDBCache::flagPoleSize * 2.0f);
         }
     }
@@ -7351,9 +7350,9 @@ static void     playingLoop()
                 const Player* targetdPlayer = myTank->getTarget();
                 if (targetdPlayer && targetdPlayer->isAlive() && targetdPlayer->getFlag() != Flags::Stealth)
                 {
-                    hud->AddLockOnMarker(Float3ToVec3(myTank->getTarget()->getPosition()),
-                                         myTank->getTarget()->getCallSign(),
-                                         !isKillable(myTank->getTarget()));
+                    hud->AddLockOnMarker(glm::make_vec3(targetdPlayer->getPosition()),
+                                         targetdPlayer->getCallSign(),
+                                         !isKillable(targetdPlayer));
                 }
                 else // if we should not have a target, force that target to be cleared
                     myTank->setTarget(NULL);

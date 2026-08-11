@@ -1460,7 +1460,7 @@ void Player::setDeadReckoning()
 void Player::setExplodePos( const float * p)
 {
     if (tankNode)
-        tankNode->explodePos = fvec3(p[0],p[1],p[2]);
+        tankNode->explodePos = glm::make_vec3(p);
 }
 
 

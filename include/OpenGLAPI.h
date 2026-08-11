@@ -22,6 +22,17 @@
 // common headers
 #include "bzfgl.h"
 
+
+inline void glColor(glm::vec3 c)
+{
+    glColor3fv(glm::value_ptr(c));
+};
+
+inline void glColor(glm::vec4 c)
+{
+    glColor4fv(glm::value_ptr(c));
+};
+
 inline void glVertex(glm::vec2 p)
 {
     glVertex2fv(glm::value_ptr(p));
@@ -30,6 +41,16 @@ inline void glVertex(glm::vec2 p)
 inline void glVertex(glm::vec3 p)
 {
     glVertex3fv(glm::value_ptr(p));
+};
+
+inline void glTranslate(glm::vec3 v)
+{
+    glTranslatef(v.x, v.y, v.z);
+};
+
+inline void glSetFogColor(glm::vec4 fogColor)
+{
+    glFogfv(GL_FOG_COLOR, glm::value_ptr(fogColor));
 };
 
 #endif // _OPENGLAPI_H

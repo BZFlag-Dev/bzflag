@@ -18,6 +18,7 @@
 /* system interface headers */
 #include <vector>
 #include <string>
+#include <glm/vec3.hpp>
 
 /* common interface headers */
 #include "TimeKeeper.h"
@@ -52,20 +53,15 @@ typedef std::vector<HUDMarker> MarkerList;
 class EnhancedHUDMarker
 {
 public:
-    EnhancedHUDMarker()
-        : pos(0.0f, 0.0f, 0.0f)
-        , color(0.0f, 0.0f, 0.0f)
-        , friendly(false)
-    {}
-    EnhancedHUDMarker(const fvec3& p, const fvec3& c)
+    EnhancedHUDMarker() {}
+    EnhancedHUDMarker(glm::vec3 p, glm::vec3 c)
         : pos(p)
         , color(c)
-        , friendly(false)
     {}
-    fvec3 pos;
-    fvec3 color;
+    glm::vec3 pos{0.0f, 0.0f, 0.0f};
+    glm::vec3 color{0.0f, 0.0f, 0.0f};
     std::string name;
-    bool friendly;
+    bool friendly = false;
 };
 typedef std::vector<EnhancedHUDMarker> EnhancedMarkerList;
 
@@ -106,11 +102,11 @@ public:
     void      setRestartKeyLabel(const std::string&);
     void      setTimeLeft(uint32_t timeLeftInSeconds);
 
-    void      AddEnhancedMarker(const fvec3& pos, const fvec3& color,
+    void      AddEnhancedMarker(glm::vec3 pos, glm::vec3 color,
                                 bool friendly = false, float zShift = 0.0f);
-    void      AddEnhancedNamedMarker(const fvec3& pos, const fvec3& color, std::string name,
+    void      AddEnhancedNamedMarker(glm::vec3 pos, glm::vec3 color, std::string name,
                                      bool friendly = false, float zShift = 0.0f);
-    void      AddLockOnMarker(const fvec3& pos, std::string name,
+    void      AddLockOnMarker(glm::vec3 pos, std::string name,
                               bool friendly = false, float zShift = 0.0f);
 
     void      saveMatrixes(const float* mm, const float* pm);

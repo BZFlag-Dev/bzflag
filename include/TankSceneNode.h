@@ -20,6 +20,10 @@
 // Inherits from
 #include "SceneNode.h"
 
+// System headers
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 // Common headers
 #include "OpenGLLight.h"
 #include "TankGeometryMgr.h"
@@ -34,26 +38,26 @@ public:
     class DeathParams
     {
     public:
-        DeathParams( float param, fvec4 c): part()
+        DeathParams(float param, glm::vec4 c): part()
         {
-            scale = fvec3(1,1,1);
+            scale = glm::vec3(1.0f);
             explodeParam = param;
             color = c;
             draw = true;
         }
 
         TankGeometryEnums::TankPart part;
-        fvec3 pos;
-        fvec3 rot;
-        fvec3 scale;
+        glm::vec3 pos;
+        glm::vec3 rot;
+        glm::vec3 scale;
         float explodeParam;
-        fvec4 color;
+        glm::vec4 color;
         bool  draw;
     };
 
     virtual bool SetDeathRenderParams ( DeathParams &/*params*/ ) = 0;
     virtual bool ShowExplosion ( void ) = 0;
-    virtual bool GetDeathVector ( fvec3 &/*vel*/ ) = 0;
+    virtual bool GetDeathVector(glm::vec3 &/*vel*/) = 0;
 };
 
 class TankIDLSceneNode final : public SceneNode
@@ -155,7 +159,7 @@ public:
         return deathOverride;
     }
 
-    fvec3       explodePos;
+    glm::vec3       explodePos;
 protected:
     TankDeathOverride   *deathOverride;
 

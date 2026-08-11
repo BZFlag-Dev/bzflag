@@ -27,13 +27,18 @@
 #ifndef BZF_SCENE_NODE_H
 #define BZF_SCENE_NODE_H
 
+// 1st
 #include "common.h"
+
+// System headers
+#include <vector>
+
+// Common headers
 #include "bzfgl.h"
 #include "bzfio.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
 #include "Extents.h"
-#include "vectors.h"
 #include <vector>
 
 #if !defined(_WIN32)

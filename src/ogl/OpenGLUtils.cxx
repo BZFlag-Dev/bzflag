@@ -19,7 +19,6 @@
 // common headers
 #include "bzfgl.h"
 #include "bzfio.h"
-#include "vectors.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
 #include "DynamicColor.h"
@@ -37,7 +36,7 @@
 //============================================================================//
 
 void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
-                  fvec4& color, const fvec4*& colorPtr)
+                  glm::vec4& color, const glm::vec4*& colorPtr)
 {
     bzmat->setReference();
 
@@ -107,7 +106,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     // color
     if (useDiffuseColor)
     {
-        color = bzmat->getDiffuse();
+        color = glm::make_vec4(bzmat->getDiffuse());
         colorAlpha = (color.a < 1.0f);
     }
     else
@@ -115,7 +114,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
         // set it to white, this should only happen when
         // we've gotten a user texture, and there's a
         // request to not use the material's diffuse color.
-        color = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
+        color = glm::vec4(1.0f);
     }
 
     // dynamic color
@@ -123,7 +122,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     if (dyncol != NULL)
     {
         const float* c = dyncol->getColor();
-        colorPtr = new fvec4(c[0],c[1],c[2],c[3]);
+        colorPtr = new glm::vec4(glm::make_vec4(c));
         colorAlpha = dyncol->canHaveAlpha(); // override
     }
     else

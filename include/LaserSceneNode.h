@@ -20,6 +20,9 @@
 // Inherits from
 #include "SceneNode.h"
 
+// System headers
+#include <glm/vec4.hpp>
+
 class LaserSceneNode final : public SceneNode
 {
 public:
@@ -55,8 +58,8 @@ protected:
         const LaserSceneNode* sceneNode;
         static GLfloat  geom[6][2];
     };
-    fvec4 color;
-    fvec4 centerColor;
+    glm::vec4 color;
+    glm::vec4 centerColor;
     bool first;
     friend class LaserRenderNode;
 

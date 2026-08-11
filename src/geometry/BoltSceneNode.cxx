@@ -16,11 +16,15 @@
 // system headers
 #include <stdlib.h>
 #include <math.h>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "OpenGLAPI.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -58,7 +62,7 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool sup
     move(pos, vel);
     setSize(size);
     setColor(1.0f, 1.0f, 1.0f);
-    teamColor = fvec4(1,1,1,1);
+    teamColor = glm::vec4(1.0f);
 }
 
 BoltSceneNode::~BoltSceneNode()
@@ -358,10 +362,10 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
     glDisable(GL_TEXTURE_2D);
     //glEnable(GL_LIGHTING);
 
-    fvec4 noseColor = sceneNode->teamColor;
-    fvec4 finColor(noseColor.r*0.5f,noseColor.g*0.5f,noseColor.b*0.5f,1);
-    fvec4 coneColor(0.125f,0.125f,0.125f,1);
-    fvec4 bodyColor(1,1,1,1);
+    glm::vec4 noseColor = sceneNode->teamColor;
+    glm::vec4 finColor(noseColor.r * 0.5f, noseColor.g * 0.5f, noseColor.b * 0.5f, 1.0f);
+    glm::vec4 coneColor(0.125f, 0.125f, 0.125f, 1.0f);
+    glm::vec4 bodyColor(1.0f);
 
     glPushMatrix();
 
@@ -378,7 +382,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
     addTriangleCount(slices * 2);
 
     // body
-    myColor4fv(bodyColor);
+    myColor4fv(glm::value_ptr(bodyColor));
     glTranslatef(0, 0, -bodyLen);
     gluCylinder(q,maxRad,maxRad,bodyLen,slices,1);
     addTriangleCount(slices);
@@ -388,13 +392,13 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
     addTriangleCount(slices);
 
     // waist
-    myColor4fv(coneColor);
+    myColor4fv(glm::value_ptr(coneColor));
     glTranslatef(0, 0, -waistLen);
     gluCylinder(q,waistRad,waistRad,waistLen,slices,1);
     addTriangleCount(slices);
 
     // booster
-    myColor3fv(bodyColor);
+    myColor3fv(glm::value_ptr(bodyColor));
     glTranslatef(0, 0, -bevelLen);
     gluCylinder(q,maxRad,waistRad,bevelLen,slices,1);
     addTriangleCount(slices);
@@ -408,13 +412,13 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
     addTriangleCount(slices);
 
     // engine
-    myColor3fv(coneColor);
+    myColor3fv(glm::value_ptr(coneColor));
     glTranslatef(0, 0, -engineLen);
     gluCylinder(q,engineRad,waistRad,engineLen,slices,1);
     addTriangleCount(slices);
 
     // fins
-    myColor3fv(finColor);
+    myColor3fv(glm::value_ptr(finColor));
     glTranslatef(0, 0, engineLen + bevelLen);
 
     for ( int i = 0; i < 4; i++)
@@ -457,30 +461,22 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
     float coreBleed = 4.5f;
     float minimumChannelVal = 0.45f;
 
-    fvec3 coreColor;
-    coreColor.r =  sceneNode->color[0] * coreBleed;
-    coreColor.g =  sceneNode->color[1] * coreBleed;
-    coreColor.b =  sceneNode->color[2] * coreBleed;
-    if (coreColor.r < minimumChannelVal)
-        coreColor.r = minimumChannelVal;
-    if (coreColor.g < minimumChannelVal)
-        coreColor.g = minimumChannelVal;
-    if (coreColor.b < minimumChannelVal)
-        coreColor.b = minimumChannelVal;
+    glm::vec3 coreColor = glm::make_vec3(sceneNode->color) * coreBleed;
+    coreColor = glm::max(coreColor, glm::vec3(minimumChannelVal));
 
-    myColor4fv(fvec4(coreColor, 0.85f * alphaMod));
+    myColor4fv(glm::value_ptr(glm::vec4(coreColor, 0.85f * alphaMod)));
     renderGeoPill(baseRadius,len,16);
 
     float radInc = 1.5f * baseRadius - baseRadius;
     glPushMatrix();
     glTranslatef(0, 0, -radInc * 0.5f);
-    fvec4 c;
+    glm::vec4 c;
     c.x = sceneNode->color[0];
     c.y = sceneNode->color[1];
     c.z = sceneNode->color[2];
     c.w = 0.5f;
 
-    myColor4fv(c);
+    myColor4fv(glm::value_ptr(c));
     renderGeoPill(1.5f * baseRadius, len + radInc, 25);
     glPopMatrix();
 
@@ -488,7 +484,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
     glPushMatrix();
     glTranslatef(0, 0, -radInc*0.5f);
     c.w = 0.25f;
-    myColor4fv(c);
+    myColor4fv(glm::value_ptr(c));
     renderGeoPill(2.7f * baseRadius, len + radInc, 32);
     glPopMatrix();
 
@@ -496,7 +492,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
     glPushMatrix();
     glTranslatef(0, 0,-radInc*0.5f);
     c.w = 0.125f;
-    myColor4fv(c);
+    myColor4fv(glm::value_ptr(c));
     renderGeoPill(3.8f * baseRadius, len + radInc, 48);
     glPopMatrix();
 
@@ -581,7 +577,7 @@ void            BoltSceneNode::BoltRenderNode::render()
     const bool blackFog = RENDERER.isFogActive() && BZDBCache::blend &&
                           ((shotLength > 0) || experimental);
     if (blackFog)
-        glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+        glSetFogColor(glm::vec4(0.0f));
 
     const float* sphere = sceneNode->getSphere();
     glPushMatrix();
@@ -685,8 +681,8 @@ void            BoltSceneNode::BoltRenderNode::render()
                 if (texInfo.id >= 0)
                     texInfo.texture->execute();
 
-                fvec3 vel(sceneNode->velocity[0],sceneNode->velocity[1],sceneNode->velocity[2]);
-                const fvec3  dir = vel * (-1.0f / sceneNode->length);
+                glm::vec3 vel = glm::make_vec3(sceneNode->velocity);
+                const glm::vec3 dir = vel * (-1.0f / sceneNode->length);
 
                 const float invLenPlusOne = 1.0f / (float)(shotLength + 1);
                 const float shiftScale = 90.0f / (150.0f + (float)shotLength);
@@ -695,10 +691,7 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float sizeStep  = Size  * invLenPlusOne;
                 const float alphaStep = alpha * invLenPlusOne;
 
-                fvec3 pos;
-                pos.x = sphere[0];
-                pos.y = sphere[1];
-                pos.z = sphere[2];
+                glm::vec3 pos = glm::make_vec3(sphere);
 
                 int uvCell = rand() % 16;
 
@@ -723,7 +716,7 @@ void            BoltSceneNode::BoltRenderNode::render()
                     glPopMatrix();
                     glPushMatrix();
 
-                    glTranslatef(pos.x, pos.y, pos.z);
+                    glTranslate(pos);
                     RENDERER.getViewFrustum().executeBillboard();
                     glScalef(s, s, s);
 
@@ -857,7 +850,7 @@ void            BoltSceneNode::BoltRenderNode::render()
     glPopMatrix();
 
     if (blackFog)
-        glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+        glSetFogColor(RENDERER.getFogColor());
 
     if (RENDERER.isLastFrame())
     {

@@ -1212,7 +1212,9 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     }
 
     // apply explosion transform
-    TankDeathOverride::DeathParams params(explodeFraction,fvec4(color[0],color[1],color[2],color[3]));
+    TankDeathOverride::DeathParams params(
+        explodeFraction,
+        glm::make_vec4(color));
 
     if (isExploding)
     {
