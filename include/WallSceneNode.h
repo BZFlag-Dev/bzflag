@@ -24,6 +24,10 @@
 #ifndef BZF_WALL_SCENE_NODE_H
 #define BZF_WALL_SCENE_NODE_H
 
+#include <vector>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 #include "common.h"
 #include "SceneNode.h"
 
@@ -89,16 +93,16 @@ protected:
     const OpenGLGState* getWallGState() const;
 
     static int      splitWall(const GLfloat* plane,
-                              const GLfloat3Array& vertices,
-                              const GLfloat2Array& uvs,
+                              const std::vector<glm::vec3>& vertices,
+                              const std::vector<glm::vec2>& uvs,
                               SceneNode*& front, SceneNode*& back); // const
 
     GLfloat     plane[4];   // unit normal, distance to origin
 private:
     static void splitEdge(float d1, float d2,
-                          const GLfloat* p1, const GLfloat* p2,
-                          const GLfloat* uv1, const GLfloat* uv2,
-                          GLfloat* p, GLfloat* uv); //const
+                          glm::vec3 p1,  glm::vec3 p2,
+                          glm::vec2 uv1, glm::vec2 uv2,
+                          glm::vec3& p, glm::vec2& uv);
 
 private:
     int         numLODs;

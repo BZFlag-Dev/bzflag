@@ -17,10 +17,6 @@
  * GLfloat3
  *  Arrays of two and three GLfloat's
  *
- * GLfloat2Array
- * GLfloat3Array
- *  Arrays of GLfloat2's and GLfloat3's
- *
  * Probably shouldn't use names like this (GLfloat...).  Oh well.
  */
 
@@ -180,76 +176,6 @@ inline void     SceneNode::setOccluder(bool value)
 
 typedef GLfloat     GLfloat2[2];
 typedef GLfloat     GLfloat3[3];
-
-class GLfloat2Array
-{
-public:
-    GLfloat2Array(int s) : size(s)
-    {
-        data = new GLfloat2[size];
-    }
-    GLfloat2Array(const GLfloat2Array&);
-    ~GLfloat2Array()
-    {
-        delete[] data;
-    }
-    GLfloat2Array&  operator=(const GLfloat2Array&);
-    GLfloat*        operator[](int i)
-    {
-        return data[i];
-    }
-    const GLfloat*  operator[](int i) const
-    {
-        return data[i];
-    }
-    int         getSize() const
-    {
-        return size;
-    }
-    const GLfloat2* getArray() const
-    {
-        return data;
-    }
-
-private:
-    int         size;
-    GLfloat2*       data;
-};
-
-class GLfloat3Array
-{
-public:
-    GLfloat3Array(int s) : size(s)
-    {
-        data = new GLfloat3[size];
-    }
-    GLfloat3Array(const GLfloat3Array&);
-    ~GLfloat3Array()
-    {
-        delete[] data;
-    }
-    GLfloat3Array&  operator=(const GLfloat3Array&);
-    GLfloat*        operator[](int i)
-    {
-        return data[i];
-    }
-    const GLfloat*  operator[](int i) const
-    {
-        return data[i];
-    }
-    int         getSize() const
-    {
-        return size;
-    }
-    const GLfloat3* getArray() const
-    {
-        return data;
-    }
-
-private:
-    int         size;
-    GLfloat3*       data;
-};
 
 #endif // BZF_SCENE_NODE_H
 

@@ -17,10 +17,13 @@
 #include <math.h>
 #include <stdlib.h>
 #include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "Intersect.h"
 #include "StateDatabase.h"
+#include "OpenGLAPI.h"
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
@@ -30,7 +33,7 @@
 //
 
 TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
-                                     const GLfloat base[3], const GLfloat uEdge[3], const GLfloat vEdge[3],
+                                     glm::vec3 base, glm::vec3 uEdge, glm::vec3 vEdge,
                                      const GLfloat* _normal, float uRepeats, float vRepeats) :
     wall(_wall), style(0), de(eCount), normal(_normal),
     vertex((eCount+1) * (eCount+2) / 2),
@@ -43,28 +46,21 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
         for (int i = 0; i <= k; n++, i++)
         {
             const float s = (float)i / (float)eCount;
-            vertex[n][0] = base[0] + s * uEdge[0] + t * vEdge[0];
-            vertex[n][1] = base[1] + s * uEdge[1] + t * vEdge[1];
-            vertex[n][2] = base[2] + s * uEdge[2] + t * vEdge[2];
-            uv[n][0] = 0.0f + s * uRepeats;
-            uv[n][1] = 0.0f + t * vRepeats;
+            vertex[n] = base + s * uEdge + t * vEdge;
+            uv[n] = glm::vec2(s * uRepeats, t * vRepeats);
         }
     }
 
     if (BZDB.isTrue("remapTexCoords"))
     {
-        const float uLen = sqrtf((uEdge[0] * uEdge[0]) +
-                                 (uEdge[1] * uEdge[1]) +
-                                 (uEdge[2] * uEdge[2]));
-        const float vLen = sqrtf((vEdge[0] * vEdge[0]) +
-                                 (vEdge[1] * vEdge[1]) +
-                                 (vEdge[2] * vEdge[2]));
+        const float uLen = glm::length(uEdge);
+        const float vLen = glm::length(vEdge);
         const float uScale = 10.0f / floorf(10.0f * uLen / uRepeats);
         const float vScale = 10.0f / floorf(10.0f * vLen / vRepeats);
         if (fabsf(normal[2]) > 0.999f)
         {
             // horizontal surface
-            for (int i = 0; i < vertex.getSize(); i++)
+            for (size_t i = 0; i < vertex.size(); i++)
             {
                 uv[i][0] = uScale * vertex[i][0];
                 uv[i][1] = vScale * vertex[i][1];
@@ -77,9 +73,9 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
             const float nx = normal[0] / nh;
             const float ny = normal[1] / nh;
             const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
-            for (int i = 0; i < vertex.getSize(); i++)
+            for (size_t i = 0; i < vertex.size(); i++)
             {
-                const float* v = vertex[i];
+                const glm::vec3& v = vertex[i];
                 const float uGeoScale = (nx * v[1]) - (ny * v[0]);
                 const float vGeoScale = v[2] * vs;
                 uv[i][0] = uScale * uGeoScale;
@@ -110,8 +106,8 @@ TriWallSceneNode::Geometry::~Geometry()
     glEnd();                                \
     k++;                                \
   }
-#define EMITV(_i)   glVertex3fv(vertex[_i])
-#define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
+#define EMITV(_i)   glVertex(vertex[_i])
+#define EMITVT(_i)  glTexCoord(uv[_i]); glVertex(vertex[_i])
 
 const GLfloat* TriWallSceneNode::Geometry::getPosition() const
 {
@@ -133,9 +129,9 @@ void            TriWallSceneNode::Geometry::render()
 void            TriWallSceneNode::Geometry::renderShadow()
 {
     glBegin(GL_TRIANGLE_STRIP);
-    glVertex3fv(vertex[(de + 1) * (de + 2) / 2 - 1]);
-    glVertex3fv(vertex[0]);
-    glVertex3fv(vertex[de]);
+    glVertex(vertex[(de + 1) * (de + 2) / 2 - 1]);
+    glVertex(vertex[0]);
+    glVertex(vertex[de]);
     glEnd();
     addTriangleCount(1);
 }
@@ -155,7 +151,7 @@ void            TriWallSceneNode::Geometry::drawVT() const
 
 const GLfloat*      TriWallSceneNode::Geometry::getVertex(int i) const
 {
-    return vertex[i];
+    return glm::value_ptr(vertex[i]);
 }
 
 
@@ -163,41 +159,32 @@ const GLfloat*      TriWallSceneNode::Geometry::getVertex(int i) const
 // TriWallSceneNode
 //
 
-TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
-                                   const GLfloat uEdge[3],
-                                   const GLfloat vEdge[3],
+TriWallSceneNode::TriWallSceneNode(glm::vec3 base,
+                                   glm::vec3 uEdge,
+                                   glm::vec3 vEdge,
                                    float uRepeats,
                                    float vRepeats,
                                    bool makeLODs)
 {
     // record plane info
-    GLfloat myPlane[4], mySphere[4];
-    myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-    myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-    myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-    myPlane[3] = -(myPlane[0] * base[0] + myPlane[1] * base[1]
-                   + myPlane[2] * base[2]);
+    const glm::vec3 norm = glm::cross(uEdge, vEdge);
+    const float d = -glm::dot(norm, base);
+    const GLfloat myPlane[4] = { norm.x, norm.y, norm.z, d };
     setPlane(myPlane);
 
     // record bounding sphere info -- ought to calculate center and
     // and radius of circumscribing sphere but it's late and i'm tired.
     // i'll just calculate something easy.  it hardly matters as it's
     // hard to tightly bound a triangle with a sphere.
-    mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
-    mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
-    mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
-    mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
-                  + mySphere[2]*mySphere[2];
-    mySphere[0] += base[0];
-    mySphere[1] += base[1];
-    mySphere[2] += base[2];
+    const glm::vec3 midOffset = 0.5f * (uEdge + vEdge);
+    const float radiusSq = glm::length2(midOffset);
+    const glm::vec3 center = base + midOffset;
+    GLfloat mySphere[4] = { center.x, center.y, center.z, radiusSq };
     setSphere(mySphere);
 
     // get length of sides
-    const float uLength = sqrtf(uEdge[0] * uEdge[0] +
-                                uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]);
-    const float vLength = sqrtf(vEdge[0] * vEdge[0] +
-                                vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]);
+    const float uLength = glm::length(uEdge);
+    const float vLength = glm::length(vEdge);
     float area = 0.5f * uLength * vLength;
 
     // If negative then these values aren't a number of times to repeat

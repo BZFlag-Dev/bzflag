@@ -48,6 +48,16 @@ inline void glTranslate(glm::vec3 v)
     glTranslatef(v.x, v.y, v.z);
 };
 
+inline void glNormal(glm::vec3 n)
+{
+    glNormal3fv(glm::value_ptr(n));
+};
+
+inline void glTexCoord(glm::vec2 t)
+{
+    glTexCoord2fv(glm::value_ptr(t));
+};
+
 inline void glSetFogColor(glm::vec4 fogColor)
 {
     glFogfv(GL_FOG_COLOR, glm::value_ptr(fogColor));

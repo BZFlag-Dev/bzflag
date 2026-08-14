@@ -419,12 +419,12 @@ void            WallSceneNode::setColor()
 }
 
 int WallSceneNode::splitWall(const GLfloat* splitPlane,
-                             const GLfloat3Array& vertices,
-                             const GLfloat2Array& texcoords,
+                             const std::vector<glm::vec3>& vertices,
+                             const std::vector<glm::vec2>& texcoords,
                              SceneNode*& front, SceneNode*& back) // const
 {
     int i;
-    const int count = vertices.getSize();
+    const int count = vertices.size();
     const float fudgeFactor = 0.001f;
     const unsigned char BACK_SIDE = (1 << 0);
     const unsigned char FRONT_SIDE = (1 << 1);
@@ -449,15 +449,15 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
         dists = staticDists;
     }
 
+    const glm::vec3 splitNormal = glm::make_vec3(splitPlane);
+
     // determine on which side of the plane each point lies
     int bothCount = 0;
     int backCount = 0;
     int frontCount = 0;
     for (i = 0; i < count; i++)
     {
-        const GLfloat d = (vertices[i][0] * splitPlane[0]) +
-                          (vertices[i][1] * splitPlane[1]) +
-                          (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+        const GLfloat d = glm::dot(vertices[i], splitNormal) + splitPlane[3];
         if (d < -fudgeFactor)
         {
             array[i] = BACK_SIDE;
@@ -536,49 +536,51 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     }
 
     // make space for new polygons
-    GLfloat3Array vertexFront(frontCount);
-    GLfloat2Array uvFront(frontCount);
-    GLfloat3Array vertexBack(backCount);
-    GLfloat2Array uvBack(backCount);
+    std::vector<glm::vec3> vertexFront(frontCount);
+    std::vector<glm::vec2> uvFront(frontCount);
+    std::vector<glm::vec3> vertexBack(backCount);
+    std::vector<glm::vec2> uvBack(backCount);
 
     // fill in the splitting vertices
     int frontIndex = 0;
     int backIndex = 0;
     if (firstFront != lastBack)
     {
-        GLfloat splitVertex[3], splitUV[2];
+        glm::vec3 splitVertex;
+        glm::vec2 splitUV;
         splitEdge(dists[firstFront], dists[lastBack],
                   vertices[firstFront], vertices[lastBack],
                   texcoords[firstFront], texcoords[lastBack],
                   splitVertex, splitUV);
-        memcpy(vertexFront[0], splitVertex, sizeof(GLfloat[3]));
-        memcpy(uvFront[0], splitUV, sizeof(GLfloat[2]));
+        vertexFront[0]   = splitVertex;
+        uvFront[0]       = splitUV;
         frontIndex++; // bump up the head
         const int last = backCount - 1;
-        memcpy(vertexBack[last], splitVertex, sizeof(GLfloat[3]));
-        memcpy(uvBack[last], splitUV, sizeof(GLfloat[2]));
+        vertexBack[last] = splitVertex;
+        uvBack[last]     = splitUV;
     }
     if (firstBack != lastFront)
     {
-        GLfloat splitVertex[3], splitUV[2];
+        glm::vec3 splitVertex;
+        glm::vec2 splitUV;
         splitEdge(dists[firstBack], dists[lastFront],
                   vertices[firstBack], vertices[lastFront],
                   texcoords[firstBack], texcoords[lastFront],
                   splitVertex, splitUV);
-        memcpy(vertexBack[0], splitVertex, sizeof(GLfloat[3]));
-        memcpy(uvBack[0], splitUV, sizeof(GLfloat[2]));
+        vertexBack[0]     = splitVertex;
+        uvBack[0]         = splitUV;
         backIndex++; // bump up the head
         const int last = frontCount - 1;
-        memcpy(vertexFront[last], splitVertex, sizeof(GLfloat[3]));
-        memcpy(uvFront[last], splitUV, sizeof(GLfloat[2]));
+        vertexFront[last] = splitVertex;
+        uvFront[last]     = splitUV;
     }
 
     // fill in the old front side vertices
     const int endFront = (lastFront + 1) % count;
     for (i = firstFront; i != endFront; i = (i + 1) % count)
     {
-        memcpy(vertexFront[frontIndex], vertices[i], sizeof(GLfloat[3]));
-        memcpy(uvFront[frontIndex], texcoords[i], sizeof(GLfloat[2]));
+        vertexFront[frontIndex] = vertices[i];
+        uvFront[frontIndex]     = texcoords[i];
         frontIndex++;
     }
 
@@ -586,8 +588,8 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     const int endBack = (lastBack + 1) % count;
     for (i = firstBack; i != endBack; i = (i + 1) % count)
     {
-        memcpy(vertexBack[backIndex], vertices[i], sizeof(GLfloat[3]));
-        memcpy(uvBack[backIndex], texcoords[i], sizeof(GLfloat[2]));
+        vertexBack[backIndex]   = vertices[i];
+        uvBack[backIndex]       = texcoords[i];
         backIndex++;
     }
 
@@ -607,9 +609,9 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
 
 
 void WallSceneNode::splitEdge(float d1, float d2,
-                              const GLfloat* p1, const GLfloat* p2,
-                              const GLfloat* uv1, const GLfloat* uv2,
-                              GLfloat* p, GLfloat* uv) // const
+                              glm::vec3 p1,  glm::vec3 p2,
+                              glm::vec2 uv1, glm::vec2 uv2,
+                              glm::vec3& p, glm::vec2& uv) // const
 {
     // compute fraction along edge where split occurs
     float t1 = (d2 - d1);
@@ -617,13 +619,10 @@ void WallSceneNode::splitEdge(float d1, float d2,
         t1 = -(d1 / t1);
 
     // compute vertex
-    p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
-    p[1] = p1[1] + (t1 * (p2[1] - p1[1]));
-    p[2] = p1[2] + (t1 * (p2[2] - p1[2]));
+    p = glm::mix(p1, p2, t1);
 
     // compute texture coordinate
-    uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
-    uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
+    uv = glm::mix(uv1, uv2, t1);
 }
 
 

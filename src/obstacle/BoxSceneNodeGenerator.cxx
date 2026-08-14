@@ -35,55 +35,49 @@ WallSceneNode*      BoxSceneNodeGenerator::getNextNode(
 {
     if (getNodeNumber() == 6) return NULL;
 
-    GLfloat base[3], sCorner[3], tCorner[3];
+    glm::vec3 base, sCorner, tCorner;
     switch (incNodeNumber())
     {
     case 1:
-        box->getCorner(0, base);
-        box->getCorner(1, sCorner);
-        box->getCorner(4, tCorner);
+        base    = box->getCorner(0);
+        sCorner = box->getCorner(1);
+        tCorner = box->getCorner(4);
         break;
     case 2:
-        box->getCorner(1, base);
-        box->getCorner(2, sCorner);
-        box->getCorner(5, tCorner);
+        base    = box->getCorner(1);
+        sCorner = box->getCorner(2);
+        tCorner = box->getCorner(5);
         break;
     case 3:
-        box->getCorner(2, base);
-        box->getCorner(3, sCorner);
-        box->getCorner(6, tCorner);
+        base    = box->getCorner(2);
+        sCorner = box->getCorner(3);
+        tCorner = box->getCorner(6);
         break;
     case 4:
-        box->getCorner(3, base);
-        box->getCorner(0, sCorner);
-        box->getCorner(7, tCorner);
+        base    = box->getCorner(3);
+        sCorner = box->getCorner(0);
+        tCorner = box->getCorner(7);
         break;
     case 5:                         //This is the top polygon
-        box->getCorner(4, base);
-        box->getCorner(5, sCorner);
-        box->getCorner(7, tCorner);
+        base    = box->getCorner(4);
+        sCorner = box->getCorner(5);
+        tCorner = box->getCorner(7);
         break;
     case 6:                         //This is the bottom polygon
         //Don't generate the bottom polygon if on the ground (or lower)
         if (box->getPosition()[2] > 0.0f)
         {
-            box->getCorner(0, base);
-            box->getCorner(3, sCorner);
-            box->getCorner(1, tCorner);
+            base    = box->getCorner(0);
+            sCorner = box->getCorner(3);
+            tCorner = box->getCorner(1);
         }
         else
             return NULL;
         break;
     }
 
-    GLfloat sEdge[3];
-    GLfloat tEdge[3];
-    sEdge[0] = sCorner[0] - base[0];
-    sEdge[1] = sCorner[1] - base[1];
-    sEdge[2] = sCorner[2] - base[2];
-    tEdge[0] = tCorner[0] - base[0];
-    tEdge[1] = tCorner[1] - base[1];
-    tEdge[2] = tCorner[2] - base[2];
+    const glm::vec3 sEdge = sCorner - base;
+    const glm::vec3 tEdge = tCorner - base;
     return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 }
 

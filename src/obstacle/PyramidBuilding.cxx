@@ -330,9 +330,10 @@ bool            PyramidBuilding::getHitNormal(
     return true;
 }
 
-void            PyramidBuilding::getCorner(int index,
-        float* _pos) const
+glm::vec3 PyramidBuilding::getCorner(int index) const
 {
+    glm::vec3 _pos;
+
     const float* base = getPosition();
     const float c = cosf(getRotation());
     const float s = sinf(getRotation());
@@ -382,6 +383,8 @@ void            PyramidBuilding::getCorner(int index,
             _pos[2] = top;
         break;
     }
+
+    return _pos;
 }
 
 float           PyramidBuilding::shrinkFactor(float z,

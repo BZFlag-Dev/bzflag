@@ -65,9 +65,9 @@ WallSceneNode*      TeleporterSceneNodeGenerator::getNextNode(
         if (getNodeNumber () >= 16)
             return NULL;
 
-        GLfloat base[3];
-        GLfloat sEdge[3];
-        GLfloat tEdge[3];
+        glm::vec3 base;
+        glm::vec3 sEdge;
+        glm::vec3 tEdge;
         const float *pos = teleporter->getPosition ();
         const float *size = teleporter->getSize ();
         const float c = cosf (teleporter->getRotation ());
@@ -283,9 +283,9 @@ WallSceneNode*      TeleporterSceneNodeGenerator::getNextNode(
         if (getNodeNumber () >= 12)
             return NULL;
 
-        GLfloat base[3];
-        GLfloat sEdge[3];
-        GLfloat tEdge[3];
+        glm::vec3 base;
+        glm::vec3 sEdge;
+        glm::vec3 tEdge;
         const float *pos = teleporter->getPosition ();
         const float c = cosf (teleporter->getRotation ());
         const float s = sinf (teleporter->getRotation ());

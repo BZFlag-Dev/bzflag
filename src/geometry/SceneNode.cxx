@@ -174,54 +174,6 @@ const GLfloat* SceneNode::getPlane() const
 }
 
 
-//
-// GLfloat2Array
-//
-
-GLfloat2Array::GLfloat2Array(const GLfloat2Array& a) :
-    size(a.size)
-{
-    data = new GLfloat2[size];
-    ::memcpy(data, a.data, size * sizeof(GLfloat2));
-}
-
-GLfloat2Array&      GLfloat2Array::operator=(const GLfloat2Array& a)
-{
-    if (this != &a)
-    {
-        delete[] data;
-        size = a.size;
-        data = new GLfloat2[size];
-        ::memcpy(data, a.data, size * sizeof(GLfloat2));
-    }
-    return *this;
-}
-
-
-//
-// GLfloat3Array
-//
-
-GLfloat3Array::GLfloat3Array(const GLfloat3Array& a) :
-    size(a.size)
-{
-    data = new GLfloat3[size];
-    ::memcpy(data, a.data, size * sizeof(GLfloat3));
-}
-
-GLfloat3Array&      GLfloat3Array::operator=(const GLfloat3Array& a)
-{
-    if (this != &a)
-    {
-        delete[] data;
-        size = a.size;
-        data = new GLfloat3[size];
-        ::memcpy(data, a.data, size * sizeof(GLfloat3));
-    }
-    return *this;
-}
-
-
 void SceneNode::getRenderNodes(std::vector<RenderSet>&)
 {
     return; // do nothing

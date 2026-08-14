@@ -191,8 +191,9 @@ bool            BoxBuilding::getHitNormal(
                                   getHeight(), normal) >= 0.0f;
 }
 
-void            BoxBuilding::getCorner(int index, float* _pos) const
+glm::vec3 BoxBuilding::getCorner(int index) const
 {
+    glm::vec3 _pos;
     const float* base = getPosition();
     const float c = cosf(getRotation());
     const float s = sinf(getRotation());
@@ -220,6 +221,8 @@ void            BoxBuilding::getCorner(int index, float* _pos) const
     _pos[2] = base[2];
     if (index >= 4)
         _pos[2] += getHeight();
+
+    return _pos;
 }
 
 bool            BoxBuilding::isFlatTop() const

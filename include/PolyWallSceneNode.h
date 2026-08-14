@@ -21,11 +21,16 @@
 // Inherits from
 #include "WallSceneNode.h"
 
+// System headers
+#include <vector>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 class PolyWallSceneNode final : public WallSceneNode
 {
 public:
-    PolyWallSceneNode(const GLfloat3Array& vertices,
-                      const GLfloat2Array& uvs);
+    PolyWallSceneNode(const std::vector<glm::vec3>& vertices,
+                      const std::vector<glm::vec2>& uvs);
     ~PolyWallSceneNode();
 
     int         split(const float*, SceneNode*&, SceneNode*&) const override;
@@ -41,8 +46,8 @@ protected:
     {
     public:
         Geometry(PolyWallSceneNode*,
-                 const GLfloat3Array& vertices,
-                 const GLfloat2Array& uvs,
+                 const std::vector<glm::vec3>& vertices,
+                 const std::vector<glm::vec2>& uvs,
                  const GLfloat* normal);
         ~Geometry();
         void        setStyle(int _style)
@@ -59,8 +64,8 @@ protected:
         int     style;
         const GLfloat*  normal;
     public:
-        GLfloat3Array   vertex;
-        GLfloat2Array   uv;
+        std::vector<glm::vec3> vertex;
+        std::vector<glm::vec2> uv;
     };
 
 private:

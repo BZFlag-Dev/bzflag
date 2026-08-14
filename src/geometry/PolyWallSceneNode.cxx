@@ -17,6 +17,14 @@
 #include <assert.h>
 #include <math.h>
 
+#include <glm/geometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
+
+// Common headers
+#include "OpenGLAPI.h"
+
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
@@ -25,8 +33,8 @@
 //
 
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
-                                      const GLfloat3Array& _vertex,
-                                      const GLfloat2Array& _uv,
+                                      const std::vector<glm::vec3>& _vertex,
+                                      const std::vector<glm::vec2>& _uv,
                                       const GLfloat* _normal) :
     wall(_wall),
     normal(_normal),
@@ -54,27 +62,26 @@ void            PolyWallSceneNode::Geometry::render()
         drawVT();
     else
         drawV();
-    addTriangleCount(vertex.getSize() - 2);
+    addTriangleCount(static_cast<int>(vertex.size()) - 2);
     return;
 }
 
 void            PolyWallSceneNode::Geometry::drawV() const
 {
-    const int count = vertex.getSize();
     glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-        glVertex3fv(vertex[i]);
+    for (const auto &v : vertex)
+        glVertex(v);
     glEnd();
 }
 
 void            PolyWallSceneNode::Geometry::drawVT() const
 {
-    const int count = vertex.getSize();
+    const int count = vertex.size();
     glBegin(GL_TRIANGLE_FAN);
     for (int i = 0; i < count; i++)
     {
-        glTexCoord2fv(uv[i]);
-        glVertex3fv(vertex[i]);
+        glTexCoord(uv[i]);
+        glVertex(vertex[i]);
     }
     glEnd();
 }
@@ -83,39 +90,32 @@ void            PolyWallSceneNode::Geometry::drawVT() const
 // PolyWallSceneNode
 //
 
-PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
-                                     const GLfloat2Array& uv)
+PolyWallSceneNode::PolyWallSceneNode(const std::vector<glm::vec3>& vertex,
+                                     const std::vector<glm::vec2>& uv)
 {
-    const int count = vertex.getSize();
-    assert(uv.getSize() == count);
+    const int count = vertex.size();
+    assert(uv.size() == count);
 
     // figure out plane (find non-colinear edges and get cross product)
-    GLfloat uEdge[3], vEdge[3], myPlane[4];
-    GLfloat uLen, vLen, nLen;
-    uEdge[0] = vertex[0][0] - vertex[count - 1][0];
-    uEdge[1] = vertex[0][1] - vertex[count - 1][1];
-    uEdge[2] = vertex[0][2] - vertex[count - 1][2];
-    uLen = uEdge[0] * uEdge[0] + uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2];
     int i;
+    glm::vec3 uEdge = vertex[0] - vertex[count - 1];
+    float uLen = glm::length2(uEdge);
+    glm::vec3 norm(0.0f);
     for (i = 1; i < count; i++)
     {
-        vEdge[0] = vertex[i][0] - vertex[i - 1][0];
-        vEdge[1] = vertex[i][1] - vertex[i - 1][1];
-        vEdge[2] = vertex[i][2] - vertex[i - 1][2];
-        vLen = vEdge[0] * vEdge[0] + vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2];
-        myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-        myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-        myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-        nLen = myPlane[0] * myPlane[0] + myPlane[1] * myPlane[1]
-               + myPlane[2] * myPlane[2];
+        glm::vec3 vEdge = vertex[i] - vertex[i - 1];
+        float vLen = glm::length2(vEdge);
+        norm = glm::cross(uEdge, vEdge);
+        float nLen = glm::length2(norm);
         if (nLen > 1.0e-5f * uLen * vLen) break;
-        uEdge[0] = vEdge[0];
-        uEdge[1] = vEdge[1];
-        uEdge[2] = vEdge[2];
+        uEdge = vEdge;
         uLen = vLen;
     }
-    myPlane[3] = -(myPlane[0] * vertex[0][0] + myPlane[1] * vertex[0][1] +
-                   myPlane[2] * vertex[0][2]);
+    GLfloat myPlane[4];
+    myPlane[0] = norm.x;
+    myPlane[1] = norm.y;
+    myPlane[2] = norm.z;
+    myPlane[3] = -glm::dot(norm, vertex[0]);
     setPlane(myPlane);
 
     // choose axis to ignore (the one with the largest normal component)
@@ -132,7 +132,7 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
         ignoreAxis = 2;
 
     // project vertices onto plane
-    GLfloat2Array flat(vertex.getSize());
+    std::vector<glm::vec2> flat(count);
     switch (ignoreAxis)
     {
     case 0:
@@ -173,24 +173,19 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
     setNumLODs(1, area);
 
     // compute bounding sphere, put center at average of vertices
-    GLfloat mySphere[4];
-    mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
+    glm::vec3 center(0.0f);
+    for (i = 0; i < count; i++)
+        center += vertex[i];
+    center /= static_cast<float>(count);
+
+    float radiusSq = 0.0f;
     for (i = 0; i < count; i++)
     {
-        mySphere[0] += vertex[i][0];
-        mySphere[1] += vertex[i][1];
-        mySphere[2] += vertex[i][2];
+        float r = glm::distance2(center, vertex[i]);
+        if (r > radiusSq) radiusSq = r;
     }
-    mySphere[0] /= (float)count;
-    mySphere[1] /= (float)count;
-    mySphere[2] /= (float)count;
-    for (i = 0; i < count; i++)
-    {
-        GLfloat r = (mySphere[0] - vertex[i][0]) * (mySphere[0] - vertex[i][0]) +
-                    (mySphere[1] - vertex[i][1]) * (mySphere[1] - vertex[i][1]) +
-                    (mySphere[2] - vertex[i][2]) * (mySphere[2] - vertex[i][2]);
-        if (r > mySphere[3]) mySphere[3] = r;
-    }
+
+    GLfloat mySphere[4] = { center.x, center.y, center.z, radiusSq };
     setSphere(mySphere);
 }
 

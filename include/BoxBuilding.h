@@ -22,6 +22,7 @@
 
 // System headers
 #include <string>
+#include <glm/fwd.hpp>
 
 class BoxBuilding : public Obstacle
 {
@@ -62,7 +63,7 @@ public:
         float height,
         float* normal) const override final;
 
-    void        getCorner(int index, float* pos) const;
+    glm::vec3 getCorner(int index) const;
 
     int packSize() const override;
     void *pack(void*) const override;

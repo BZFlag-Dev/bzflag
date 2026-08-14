@@ -17,22 +17,26 @@
 #ifndef BZF_QUAD_WALL_SCENE_NODE_H
 #define BZF_QUAD_WALL_SCENE_NODE_H
 
+#include <vector>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 // Inherits from
 #include "WallSceneNode.h"
 
 class QuadWallSceneNode final : public WallSceneNode
 {
 public:
-    QuadWallSceneNode(const GLfloat base[3],
-                      const GLfloat sEdge[3],
-                      const GLfloat tEdge[3],
+    QuadWallSceneNode(glm::vec3 base,
+                      glm::vec3 sEdge,
+                      glm::vec3 tEdge,
                       float uRepeats = 1.0,
                       float vRepeats = 1.0,
                       bool makeLODs = true,
                       bool fixedUVs = false);
-    QuadWallSceneNode(const GLfloat base[3],
-                      const GLfloat sEdge[3],
-                      const GLfloat tEdge[3],
+    QuadWallSceneNode(glm::vec3 base,
+                      glm::vec3 sEdge,
+                      glm::vec3 tEdge,
                       float uOffset,
                       float vOffset,
                       float uRepeats,
@@ -55,9 +59,9 @@ public:
     void    getRenderNodes(std::vector<RenderSet>& rnodes) override;
 
 private:
-    void        init(const GLfloat base[3],
-                     const GLfloat uEdge[3],
-                     const GLfloat vEdge[3],
+    void        init(glm::vec3 base,
+                     glm::vec3 uEdge,
+                     glm::vec3 vEdge,
                      float uOffset,
                      float vOffset,
                      float uRepeats,
@@ -70,9 +74,9 @@ protected:
     public:
         Geometry(QuadWallSceneNode*,
                  int uCount, int vCount,
-                 const GLfloat base[3],
-                 const GLfloat uEdge[3],
-                 const GLfloat vEdge[3],
+                 glm::vec3 base,
+                 glm::vec3 uEdge,
+                 glm::vec3 vEdge,
                  const GLfloat* normal,
                  float uOffset, float vOffset,
                  float uRepeats, float vRepeats,
@@ -96,8 +100,8 @@ protected:
         int     dsq, dsr;
         const GLfloat*  normal;
     public:
-        GLfloat3Array   vertex;
-        GLfloat2Array   uv;
+        std::vector<glm::vec3> vertex;
+        std::vector<glm::vec2> uv;
         int      triangles;
     };
 

@@ -272,24 +272,34 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
         const World* world)
 {
-    float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
     const float level = world->getWaterLevel();
-    plane[3] = -level;
 
     // don't draw it if it isn't active
     if (level < 0.0f)
         return;
 
+    const glm::vec4 plane(0.0f, 0.0f, 1.0f, -level);
+
     // setup the vertex and texture coordinates
-    float size = BZDBCache::worldSize;
-    GLfloat3Array v(4);
-    GLfloat3Array n(0);
-    GLfloat2Array t(4);
-    v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
-    v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
-    v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
-    t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
-    t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
+    float halfSize = BZDBCache::worldSize * 0.5f;
+
+    std::vector<glm::vec3> v =
+    {
+        {-halfSize, -halfSize, level}, // 0: Bottom-Left
+        { halfSize, -halfSize, level}, // 1: Bottom-Right
+        { halfSize,  halfSize, level}, // 2: Top-Right
+        {-halfSize,  halfSize, level}  // 3: Top-Left
+    };
+
+    std::vector<glm::vec2> t =
+    {
+        {0.0f, 0.0f},
+        {2.0f, 0.0f},
+        {2.0f, 2.0f},
+        {0.0f, 2.0f}
+    };
+
+    std::vector<glm::vec3> n; // Empty normals vector
 
     // get the material
     const BzMaterial* mat = world->getWaterMaterial();
@@ -297,14 +307,12 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
     const bool noShadow = mat->getNoShadow();
 
     MeshPolySceneNode* node =
-        new MeshPolySceneNode(plane, noRadar, noShadow, v, n, t);
+        new MeshPolySceneNode(glm::value_ptr(plane), noRadar, noShadow, v, n, t);
 
     // setup the material
     MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
 
     db->addStaticNode(node, false);
-
-    return;
 }
 
 

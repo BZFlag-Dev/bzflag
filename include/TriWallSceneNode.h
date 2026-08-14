@@ -17,15 +17,19 @@
 #ifndef BZF_TRI_WALL_SCENE_NODE_H
 #define BZF_TRI_WALL_SCENE_NODE_H
 
+#include <vector>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 // Inherits from
 #include "WallSceneNode.h"
 
 class TriWallSceneNode final : public WallSceneNode
 {
 public:
-    TriWallSceneNode(const GLfloat base[3],
-                     const GLfloat sEdge[3],
-                     const GLfloat tEdge[3],
+    TriWallSceneNode(glm::vec3 base,
+                     glm::vec3 sEdge,
+                     glm::vec3 tEdge,
                      float uRepeats = 1.0,
                      float vRepeats = 1.0,
                      bool makeLODs = true);
@@ -52,9 +56,9 @@ protected:
     public:
         Geometry(TriWallSceneNode*,
                  int eCount,
-                 const GLfloat base[3],
-                 const GLfloat uEdge[3],
-                 const GLfloat vEdge[3],
+                 glm::vec3 base,
+                 glm::vec3 uEdge,
+                 glm::vec3 vEdge,
                  const GLfloat* normal,
                  float uRepeats, float vRepeats);
         ~Geometry();
@@ -75,8 +79,8 @@ protected:
         int     de;
         const GLfloat*  normal;
     public:
-        GLfloat3Array   vertex;
-        GLfloat2Array   uv;
+        std::vector<glm::vec3> vertex;
+        std::vector<glm::vec2> uv;
         int      triangles;
     };
 
