@@ -17,6 +17,8 @@
 // system headers
 #include <math.h>
 #include <string.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "MeshFace.h"
@@ -37,43 +39,28 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
     extents = face->getExtents();
 
     // record vertex info
-    vertexCount = face->getVertexCount();
-    vertices = new GLfloat3[vertexCount];
+    const int vertexCount = face->getVertexCount();
+    vertices.resize(vertexCount);
     for (i = 0; i < vertexCount; i++)
-        memcpy(vertices[i], glm::value_ptr(face->getVertex(i)), sizeof(float[3]));
+        vertices[i] = face->getVertex(i);
 
     // record sphere info
-    GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    for (i = 0; i < vertexCount; i++)
-    {
-        const float* v = vertices[i];
-        mySphere[0] += v[0];
-        mySphere[1] += v[1];
-        mySphere[2] += v[2];
-    }
-    mySphere[0] /= (float)vertexCount;
-    mySphere[1] /= (float)vertexCount;
-    mySphere[2] /= (float)vertexCount;
+    glm::vec3 pos(0.0f);
+    for (const auto&v : vertices)
+        pos += v;
+    if (vertexCount > 0)
+        pos /= static_cast<float>(vertexCount);
 
-    for (i = 0; i < vertexCount; i++)
+    float maxRadiusSq = 0.0f;
+    for (const auto& v : vertices)
     {
-        const float* v = vertices[i];
-        const float dx = mySphere[0] - v[0];
-        const float dy = mySphere[1] - v[1];
-        const float dz = mySphere[2] - v[2];
-        GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
-        if (r > mySphere[3])
-            mySphere[3] = r;
+        float rSq = glm::distance2(pos, v);
+        if (rSq > maxRadiusSq)
+            maxRadiusSq = rSq;
     }
+    GLfloat mySphere[4] = { pos.x, pos.y, pos.z, maxRadiusSq };
     setSphere(mySphere);
 
-    return;
-}
-
-
-OccluderSceneNode::~OccluderSceneNode()
-{
-    delete[] vertices;
     return;
 }
 
@@ -110,7 +97,11 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     if (!extents.touches(exts))
         return false;
 
-    return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
+    return testPolygonInAxisBox(
+            static_cast<int>(vertices.size()),
+            reinterpret_cast<const float (*)[3]>(vertices.data()),
+            plane,
+            exts);
 }
 
 void OccluderSceneNode::addShadowNodes(SceneRenderer&)
@@ -130,12 +121,12 @@ void OccluderSceneNode::renderRadar()
 
 int OccluderSceneNode::getVertexCount () const
 {
-    return vertexCount;
+    return vertices.size();
 }
 
 const GLfloat* OccluderSceneNode::getVertex (int vertex) const
 {
-    return vertices[vertex];
+    return glm::value_ptr(vertices[vertex]);
 }
 
 

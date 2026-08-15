@@ -29,7 +29,7 @@ class OccluderSceneNode final : public SceneNode
 
 public:
     OccluderSceneNode(const MeshFace* face);
-    ~OccluderSceneNode();
+    ~OccluderSceneNode() = default;
 
     // virtual functions from SceneNode
     bool cull(const ViewFrustum&) const override;
@@ -45,8 +45,7 @@ public:
     const GLfloat* getVertex (int vertex) const override;
 
 private:
-    int vertexCount;
-    GLfloat3* vertices;
+    std::vector<glm::vec3> vertices;
     GLfloat     plane[4];   // unit normal, distance to origin
 };
 

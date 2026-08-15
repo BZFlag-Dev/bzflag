@@ -174,9 +174,6 @@ inline void     SceneNode::setOccluder(bool value)
 }
 
 
-typedef GLfloat     GLfloat2[2];
-typedef GLfloat     GLfloat3[3];
-
 #endif // BZF_SCENE_NODE_H
 
 // Local Variables: ***
