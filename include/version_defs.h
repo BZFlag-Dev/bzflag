@@ -30,9 +30,6 @@
 // version numbers - also update as needed:
 //  ChangeLog
 //  README
-//  configure.ac
-//  Xcode/BZFlag.xcodeproj/project.pbxproj
-//  Xcode/BZFlag-Info.plist
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION 2
 #endif

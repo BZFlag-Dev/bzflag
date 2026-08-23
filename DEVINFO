@@ -444,10 +444,8 @@ cannot proceed.  A checklist of items to be completed follows:
 - Man files and bzfs.conf files are updated with latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating README, ChangeLog, configure.ac,
-  version_defs.h, Xcode/BZFlag.xcodeproj/project.pbxproj,
-  Xcode/BZFlag-Info.plist, and the title.png image.  Version numbers in all
-  other platform-specific README.* files should also be verified.
+  This minimally includes updating README, ChangeLog, version_defs.h,
+  and title.png, and misc/updateversion.py has been run.
 
 - Edit updateConfigFile in clientConfig.cxx to update any necessary
   configuration settings, and remove the 'break;' from the latest switch
