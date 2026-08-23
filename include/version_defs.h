@@ -31,7 +31,6 @@
 //  ChangeLog
 //  README
 //  configure.ac
-//  include/version.h
 //  Xcode/BZFlag.xcodeproj/project.pbxproj
 //  Xcode/BZFlag-Info.plist
 #ifndef BZ_MAJOR_VERSION
