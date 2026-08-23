@@ -455,7 +455,8 @@ cannot proceed.  A checklist of items to be completed follows:
   increment it one more time in buildDate.cxx, bzfquery.*, and
   bzls.lua to distinguish the new release from development versions.
 
-- BZ_BUILD_TYPE is changed to STABLE in buildDate.cxx.
+- BZ_BUILD_TYPE is changed to STABLE and BZ_BUILD_TYPE_REVISION is
+  changed to 0 in buildDate.cxx.
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.
