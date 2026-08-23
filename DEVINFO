@@ -376,11 +376,11 @@ global.
 
 Version numbers
 ===============
-The BZFlag versioning info is defined in:   include/version.h
+The BZFlag versioning info is defined in: include/version_defs.h
 
 There are a number of #defines in that file that define the Major,
-Minor, and Revision versions, as well as the build type, build date,
-build user, and network protocol version.
+Minor, and Revision versions, as well as the build type, build type
+revision, and network protocol version.
 
 The BZFlag version number is in the format of:
 
@@ -418,10 +418,10 @@ __DATE__ macro.
 
 BuildType is a string that represents the intended use of the build.
 For development releases, the build type is normally "DEVEL".  For
-testing releases, the build type can be "ALPHA", "BETA", "RC1" etc.
-For final release versions the build type should be "STABLE" or
-"MAINT".  The build type provides a human readable keyword for the
-version and intended or expected stability of the build.
+testing releases, the build type can be "ALPHA", "BETA", or "RC".
+For final release versions the build type should be "STABLE".  The
+build type provides a human readable keyword for the version and
+intended or expected stability of the build.
 
 BuildOS is the operating system that the building system is running;
 on systems that use the automake build system this is automatically
@@ -445,7 +445,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, ChangeLog, configure.ac,
-  buildDate.cxx, Version.rc, Xcode/BZFlag.xcodeproj/project.pbxproj,
+  version_defs.h, Xcode/BZFlag.xcodeproj/project.pbxproj,
   Xcode/BZFlag-Info.plist, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
@@ -457,10 +457,7 @@ cannot proceed.  A checklist of items to be completed follows:
   increment it one more time in buildDate.cxx, bzfquery.*, and
   bzls.lua to distinguish the new release from development versions.
 
-- BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
-
-- Update package/win32/nsis/*.nsi (for windows) with appropriate
-  version numbers.
+- BZ_BUILD_TYPE is changed to STABLE in buildDate.cxx.
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.

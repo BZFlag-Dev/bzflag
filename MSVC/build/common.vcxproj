@@ -528,6 +528,7 @@
     <ClInclude Include="..\..\include\CommandManager.h" />
     <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\include\mathRoutine.h" />
+    <ClInclude Include="..\..\include\version_defs.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="..\..\include\ConfigFileManager.h" />
     <ClInclude Include="..\..\include\Country.h" />
