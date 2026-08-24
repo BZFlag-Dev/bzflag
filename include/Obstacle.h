@@ -186,6 +186,18 @@ public:
                               float halfWidth, float halfBreadth,
                               float height, float* normal) const;
 
+    // Defines sort category priority (0 = Normal, 1 = MeshFace, 2 = MeshObstacle)
+    enum class SortPriority
+    {
+        Normal = 0,
+        MeshFace = 1,
+        MeshObstacle = 2
+    };
+    virtual SortPriority getSortPriority() const
+    {
+        return SortPriority::Normal;
+    }
+
     /** This function returns @c true if tanks can pass through this object,
         @c false if they can't. */
     bool isDriveThrough() const;
@@ -397,6 +409,10 @@ inline void Obstacle::incObjCounter()
 inline void Obstacle::resetObjCounter()
 {
     objCounter = 0;
+}
+inline int operator-(Obstacle::SortPriority a, Obstacle::SortPriority b)
+{
+    return static_cast<int>(a) - static_cast<int>(b);
 }
 
 #endif // BZF_OBSTACLE_H

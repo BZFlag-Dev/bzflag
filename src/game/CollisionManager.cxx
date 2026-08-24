@@ -140,45 +140,29 @@ static int compareObstacles (const void* a, const void* b)
     const Obstacle* obsA = *((const Obstacle* const *)a);
     const Obstacle* obsB = *((const Obstacle* const *)b);
 
-    bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
-    bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
+    const auto priorityA = obsA->getSortPriority();
+    const auto priorityB = obsB->getSortPriority();
 
-    if (isMeshA)
+    // Group by category: Normal (0) -> MeshFace (1) -> MeshObstacle (2)
+    const int delta = priorityA - priorityB;
+    if (delta != 0)
+        return delta;
+
+    // Both objects are in the same category
+    switch (priorityA)
     {
-        if (!isMeshB)
-            return +1;
-        else
-            return compareHeights(obsA, obsB);
+    case Obstacle::SortPriority::Normal:
+        // Normal obstacles: reverse height ordering (highest to lowest)
+        return compareHeights(obsB, obsA);
+
+    case Obstacle::SortPriority::MeshFace:
+        return compareFaceHeights(obsA, obsB);
+
+    case Obstacle::SortPriority::MeshObstacle:
+        return compareHeights(obsA, obsB);
     }
 
-    if (isMeshB)
-    {
-        if (!isMeshA)
-            return -1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    bool isFaceA = (obsA->getType() == MeshFace::getClassName());
-    bool isFaceB = (obsB->getType() == MeshFace::getClassName());
-
-    if (isFaceA)
-    {
-        if (!isFaceB)
-            return +1;
-        else
-            return compareFaceHeights(obsA, obsB);
-    }
-
-    if (isFaceB)
-    {
-        if (!isFaceA)
-            return -1;
-        else
-            return compareFaceHeights(obsA, obsB);
-    }
-
-    return compareHeights(obsB, obsA); // reversed
+    return 0;
 }
 
 

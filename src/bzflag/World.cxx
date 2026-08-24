@@ -282,48 +282,23 @@ static int compareObstacles(const void* a, const void* b)
     // - and finally, the mesh objects (checkpoints really)
     const Obstacle* obsA = *((const Obstacle* const *)a);
     const Obstacle* obsB = *((const Obstacle* const *)b);
-    const char* typeA = obsA->getType();
-    const char* typeB = obsB->getType();
 
-    bool isMeshA = (typeA == MeshObstacle::getClassName());
-    bool isMeshB = (typeB == MeshObstacle::getClassName());
+    auto priorityA = obsA->getSortPriority();
+    auto priorityB = obsB->getSortPriority();
 
-    if (isMeshA)
-    {
-        if (!isMeshB)
-            return +1;
-        else
-            return compareHeights(obsA, obsB);
-    }
+    // If categories differ, sort by priority rank
+    const int delta = priorityA - priorityB;
+    if (delta != 0)
+        return delta;
 
-    if (isMeshB)
-    {
-        if (!isMeshA)
-            return -1;
-        else
-            return compareHeights(obsA, obsB);
-    }
+    // Same category height ordering:
+    // MeshFace (1) and MeshObstacle (2) -> Normal height ordering
+    // Normal obstacles (0)             -> Reversed height ordering
 
-    bool isFaceA = (typeA == MeshFace::getClassName());
-    bool isFaceB = (typeB == MeshFace::getClassName());
-
-    if (isFaceA)
-    {
-        if (!isFaceB)
-            return +1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    if (isFaceB)
-    {
-        if (!isFaceA)
-            return -1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    return compareHeights(obsB, obsA); // reversed
+    if (priorityA == Obstacle::SortPriority::Normal)
+        return compareHeights(obsB, obsA); // Reversed for normal obstacles
+    else
+        return compareHeights(obsA, obsB);
 }
 
 static int compareHitNormal (const void* a, const void* b)
@@ -381,9 +356,8 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     for (i = 0; i < olist->count; i++)
     {
         const Obstacle* obs = olist->list[i];
-        const char* type = obs->getType();
-        if ((type == MeshFace::getClassName()) ||
-                (type == MeshObstacle::getClassName()))
+        // Stop as soon as we reach mesh objects in the sorted list
+        if (obs->getSortPriority() != Obstacle::SortPriority::Normal)
             break;
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
@@ -406,8 +380,8 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     for (/* do nothing */; i < olist->count; i++)
     {
         Obstacle* obs = olist->list[i];
-        const char* type = obs->getType();
-        if (type == MeshObstacle::getClassName())
+        // Stop when we hit MeshObstacle items in the sorted list
+        if (obs->getSortPriority() == Obstacle::SortPriority::MeshObstacle)
             break;
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
