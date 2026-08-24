@@ -88,6 +88,10 @@ public:
     bool isCrossing(const float* p, float angle,
                     float halfWidth, float halfBreadth, float height,
                     float* plane) const override;
+    SortPriority getSortPriority() const override
+    {
+        return SortPriority::MeshObstacle;
+    }
 
     bool getHitNormal(const float* pos1, float azimuth1,
                       const float* pos2, float azimuth2,

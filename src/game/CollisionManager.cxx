@@ -103,85 +103,6 @@ static void squeezeChildren (ColDetNode** children)
 }
 
 
-static inline int compareHeights (const Obstacle* obsA, const Obstacle* obsB)
-{
-    const Extents& eA = obsA->getExtents();
-    const Extents& eB = obsB->getExtents();
-
-    if (eA.maxs[2] > eB.maxs[2])
-        return -1;
-    else
-        return +1;
-}
-
-static inline int compareFaceHeights (const Obstacle* obsA, const Obstacle* obsB)
-{
-    const Extents& eA = obsA->getExtents();
-    const Extents& eB = obsB->getExtents();
-
-    if (fabsf(eA.maxs[2] - eB.maxs[2]) < 1.0e-3)
-    {
-        if (eA.mins[2] > eB.mins[2])
-            return -1;
-        else
-            return +1;
-    }
-    else if (eA.maxs[2] > eB.maxs[2])
-        return -1;
-    else
-        return +1;
-}
-
-static int compareObstacles (const void* a, const void* b)
-{
-    // - normal object come first (from lowest to highest)
-    // - then come the mesh face (highest to lowest)
-    // - and finally, the mesh objects (checkpoints really)
-    const Obstacle* obsA = *((const Obstacle* const *)a);
-    const Obstacle* obsB = *((const Obstacle* const *)b);
-
-    bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
-    bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
-
-    if (isMeshA)
-    {
-        if (!isMeshB)
-            return +1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    if (isMeshB)
-    {
-        if (!isMeshA)
-            return -1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    bool isFaceA = (obsA->getType() == MeshFace::getClassName());
-    bool isFaceB = (obsB->getType() == MeshFace::getClassName());
-
-    if (isFaceA)
-    {
-        if (!isFaceB)
-            return +1;
-        else
-            return compareFaceHeights(obsA, obsB);
-    }
-
-    if (isFaceB)
-    {
-        if (!isFaceA)
-            return -1;
-        else
-            return compareFaceHeights(obsA, obsB);
-    }
-
-    return compareHeights(obsB, obsA); // reversed
-}
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // CollisionManager
@@ -478,7 +399,7 @@ void CollisionManager::load ()
     }
 
     // do the type/height sort
-    qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareObstacles);
+    qsort(FullList.list, FullList.count, sizeof(Obstacle*), Obstacle::compareObstacles);
 
     // generate the octree
     setExtents (&FullList);

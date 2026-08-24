@@ -318,6 +318,69 @@ bool Obstacle::getHitNormal(const float*, float, const float*, float,
     return false;
 }
 
+static inline int compareHeights(const Obstacle* obsA, const Obstacle* obsB)
+{
+    const Extents& eA = obsA->getExtents();
+    const Extents& eB = obsB->getExtents();
+    if (eA.maxs[2] > eB.maxs[2])
+        return -1;
+    else
+        return +1;
+}
+
+static inline int compareFaceHeights(const Obstacle* obsA, const Obstacle* obsB)
+{
+    const Extents& eA = obsA->getExtents();
+    const Extents& eB = obsB->getExtents();
+
+    // Primary sort on max Z; secondary sort on min Z for sub-millimeter ties
+    if (std::abs(eA.maxs[2] - eB.maxs[2]) < 1.0e-3f)
+    {
+        if (eA.mins[2] > eB.mins[2])
+            return -1;
+        else
+            return +1;
+    }
+    else if (eA.maxs[2] > eB.maxs[2])
+        return -1;
+    else
+        return +1;
+}
+
+int Obstacle::compareObstacles(const void* a, const void* b)
+{
+    // - normal object come first (from lowest to highest)
+    // - then come the mesh face (highest to lowest)
+    // - and finally, the mesh objects (checkpoints really)
+    const Obstacle* obsA = *((const Obstacle* const *)a);
+    const Obstacle* obsB = *((const Obstacle* const *)b);
+
+    const auto priorityA = obsA->getSortPriority();
+    const auto priorityB = obsB->getSortPriority();
+
+    // Group by category: Normal (0) -> MeshFace (1) -> MeshObstacle (2)
+    const int delta = static_cast<int>(priorityA) - static_cast<int>(priorityB);
+    if (delta != 0)
+        return delta;
+
+    // Same category height ordering:
+    // MeshFace (1) and MeshObstacle (2) -> Normal height ordering
+    // Normal obstacles (0)              -> Reversed height ordering
+    switch (priorityA)
+    {
+        case Obstacle::SortPriority::Normal:
+            return compareHeights(obsB, obsA); // Reversed for normal obstacles
+
+        case Obstacle::SortPriority::MeshFace:
+            return compareFaceHeights(obsA, obsB);
+
+        case Obstacle::SortPriority::MeshObstacle:
+            return compareHeights(obsA, obsB);
+    }
+
+    return 0;
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -186,6 +186,18 @@ public:
                               float halfWidth, float halfBreadth,
                               float height, float* normal) const;
 
+    // Defines sort category priority (0 = Normal, 1 = MeshFace, 2 = MeshObstacle)
+    enum class SortPriority
+    {
+        Normal = 0,
+        MeshFace = 1,
+        MeshObstacle = 2
+    };
+    virtual SortPriority getSortPriority() const
+    {
+        return SortPriority::Normal;
+    }
+
     /** This function returns @c true if tanks can pass through this object,
         @c false if they can't. */
     bool isDriveThrough() const;
@@ -244,6 +256,8 @@ public:
     static const float maxExtent;
 
 
+    // Static C-style comparator for sorting Obstacle pointers
+    static int compareObstacles(const void* a, const void* b);
 
 protected:
     /** This function checks if a moving horizontal rectangle will hit a
