@@ -105,13 +105,14 @@ const char*     getAppVersion()
     if (!appVersion.size())
     {
         std::ostringstream  appVersionStream;
-        appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
-                         << "-" << BZ_BUILD_TYPE
+        appVersionStream
+                << getMajorMinorRevVersion() << "." << getBuildDate()
+                << "-" << BZ_BUILD_TYPE
 #if BZ_BUILD_TYPE_REVISION > 0
-                         << BZ_BUILD_TYPE_REVISION;
+                << BZ_BUILD_TYPE_REVISION;
 #endif
-                         << "-" << BZ_BUILD_OS
-                         << "-SDL2";
+                << "-" << BZ_BUILD_OS
+                << "-SDL2";
         appVersion = appVersionStream.str();
     }
     return appVersion.c_str();
