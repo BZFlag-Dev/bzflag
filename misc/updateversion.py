@@ -100,7 +100,7 @@ def main():
 		if not os.path.isfile(path):
 			sys.exit("ERROR: %s not found" % rel(path))
 
-	# Now that we checked they exist, update the version number in each
+	# Now that we verified they exist, update the version number in each
 	print("Updating files:")
 	for path, pattern, replacement in replacements:
 		update_file(path, pattern, replacement)

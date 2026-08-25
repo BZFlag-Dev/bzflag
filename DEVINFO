@@ -427,9 +427,6 @@ BuildOS is the operating system that the building system is running;
 on systems that use the automake build system this is automatically
 generated.
 
-If a build includes SDL or SDL2, the build string ends in "-SDL" or
-"-SDL2", respectively.
-
 Making a Release
 ================
 In order to make a release, there are handful of steps that need to be
