@@ -66,6 +66,13 @@ def main():
 
 	# Define our replacements as an array of tuples, with the absolute file path, regex pattern, and regex replacement
 	replacements = [
+		# BZFlag-x.y.z and BZFlag-x.y.z.app (multiple occurrences)
+		(
+			os.path.join(ROOT, "README"),
+			r"BZFlag [0-9]+\.[0-9]+\.[0-9]+",
+			r"BZFlag " + new_version
+		),
+
 		# AC_INIT([BZFlag],[x.y.z],[...],[bzflag])
 		(
 			os.path.join(ROOT, "configure.ac"),

@@ -27,9 +27,8 @@
 #  define BZ_PROTO_VERSION  "0221"
 #endif
 
-// version numbers - also update as needed:
-//  ChangeLog
-//  README
+// Update the ChangeLog when you bump the version. Run misc/updateversion.py
+// to update the version in some other files.
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION 2
 #endif
