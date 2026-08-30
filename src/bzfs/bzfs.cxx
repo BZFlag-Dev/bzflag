@@ -2330,12 +2330,6 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
                      "Communication error joining game [Rejected].");
         return;
     }
-    else if (t == ObserverTeam && playerData->player.isBot())
-    {
-        rejectPlayer(playerIndex, RejectServerFull,
-                     "This game is full.  Try again later.");
-        return;
-    }
     else if (numplayersobs == maxPlayers)
     {
         // server is full
@@ -2384,26 +2378,24 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     // send new player updates on each player, all existing flags, and all teams.
     // don't send robots any game info.  watch out for connection being closed
     // because of an error.
-    if (!playerData->player.isBot())
+    sendTeamUpdate(playerIndex);
+    sendFlagUpdate(playerIndex);
+    GameKeeper::Player *otherData;
+    for (int i = 0; i < curMaxPlayers && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
     {
-        sendTeamUpdate(playerIndex);
-        sendFlagUpdate(playerIndex);
-        GameKeeper::Player *otherData;
-        for (int i = 0; i < curMaxPlayers
-                && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
-            if (i != playerIndex)
-            {
-                otherData = GameKeeper::Player::getPlayerByIndex(i);
-                if (otherData)
-                {
-                    sendPlayerUpdate(otherData, playerIndex);
-                    if (otherData->player.isAutoPilot())
-                        sendAutopilotStatus(otherData, playerIndex);
-                }
-            }
-
-        broadcastHandicaps(playerIndex);
+        if (i == playerIndex)
+            continue;
+            
+        otherData = GameKeeper::Player::getPlayerByIndex(i);
+        if (!otherData)
+            continue;
+            
+        sendPlayerUpdate(otherData, playerIndex);
+        if (otherData->player.isAutoPilot())
+            sendAutopilotStatus(otherData, playerIndex);
     }
+
+    broadcastHandicaps(playerIndex);
 
     // if new player connection was closed (because of an error) then stop here
     if (!GameKeeper::Player::getPlayerByIndex(playerIndex))

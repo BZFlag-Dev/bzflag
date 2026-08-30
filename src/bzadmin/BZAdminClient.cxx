@@ -94,7 +94,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
         if (strcmp(startupInfo.token, "badtoken") == 0)
             startupInfo.token[0] = '\0';
     }
-    sLink.sendEnter(TankPlayer, myTeam, startupInfo.callsign, "bzadmin", startupInfo.token);
+    sLink.sendEnter(ComputerPlayer, myTeam, startupInfo.callsign, "bzadmin", startupInfo.token);
     if (sLink.getState() != ServerLink::Okay)
     {
         std::cerr << "Rejected." << std::endl;
