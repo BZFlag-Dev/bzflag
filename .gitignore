@@ -47,6 +47,10 @@ dependencies/
 .vs
 *.aps
 
+# JetBrains files
+.idea
+*.iml
+
 # GNU Autotools
 Makefile.in
 Makefile
