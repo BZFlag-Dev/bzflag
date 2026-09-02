@@ -122,6 +122,22 @@ public:
     void print(std::ostream& out, const std::string& indent) const override;
     void printOBJ(std::ostream& out, const std::string& indent) const override;
 
+    /**
+      * @brief Cache structure for pre-computed 2D radar geometry and visibility.
+      */
+    struct RadarFaceCache
+    {
+        float vx[4];         // Pre-transformed 2D X coordinates for up to 4 vertices (16 bytes)
+        float vy[4];         // Pre-transformed 2D Y coordinates for up to 4 vertices (16 bytes)
+
+        float posZ;          // Cached Z-axis position (4 bytes)
+        float sizeZ;         // Cached Z-axis height extent (4 bytes)
+        uint8_t vertexCount; // Number of vertices (capped at 4 for fast path, 255 = fetch from mesh) (1 byte)
+        bool  noRadar;       // True if face should be skipped during enhanced radar rendering (1 byte)
+        int   isDeath;       // True if face represents a death/hazard zone tint (1 byte)
+    };
+    std::vector<RadarFaceCache> radarCache;
+
 private:
     void makeFacePointers(const std::vector<int>& _vertices,
                           const std::vector<int>& _normals,

@@ -28,6 +28,7 @@
 #include "MeshDrawInfo.h"
 #include "MeshTransform.h"
 #include "StateDatabase.h"
+#include "PhysicsDriver.h"
 
 // local headers
 #include "Triangulate.h"
@@ -392,10 +393,52 @@ void MeshObstacle::finalize()
     for (f = 0; f < faceCount; f++)
         faces[f]->edges = NULL;
 
-    // set the extents
+    // Reset cache container while retaining allocated capacity to avoid dynamic memory reallocation
+    radarCache.clear();
+    radarCache.reserve(faceCount);
+
+    // Populate pre-computed 2D vertex positions, height extents, and material flags for each face
     for (f = 0; f < faceCount; f++)
     {
-        const Extents& exts = faces[f]->getExtents();
+        const auto& face = *faces[f];
+        const Extents& exts = face.getExtents();
+
+        RadarFaceCache cache;
+
+        // Skip rendering on radar if the face points downward/flat (plane normal Z <= 0)
+        // or if explicitly marked invisible to radar via its material property
+        if (face.getPlane()[2] <= 0.0f)
+            cache.noRadar = true;
+        else
+        {
+            const BzMaterial* bzmat = face.getMaterial();
+            cache.noRadar = (bzmat && bzmat->getNoRadar());
+        }
+
+        // Cache 3D height parameters (center Z and Z extent) for elevation checks
+        cache.posZ        = face.getPosition()[2];
+        cache.sizeZ       = face.getSize()[2];
+
+        // Query physical driver to determine if this face acts as a hazard/death zone
+        const int phydrvId          = face.getPhysicsDriver();
+        const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(phydrvId);
+        cache.isDeath               = phydrv ? phydrv->getIsDeath() : false;
+
+        // Clamp total face count to uint8 range (255 max)
+        cache.vertexCount = std::min(face.getVertexCount(), 255);
+
+        // Store up to 4 vertex positions in contiguous local array for fast-path rendering
+        for (int v = 0; v < std::min(cache.vertexCount, uint8_t(4)); ++v)
+        {
+            const float* vpos = face.getVertex(v);
+            cache.vx[v] = vpos[0];
+            cache.vy[v] = vpos[1];
+        }
+
+        // Append to cache vector (contiguous memory write)
+        radarCache.push_back(cache);
+
+        // Expand total bounding box volume to encompass current face extents
         extents.expandToBox(exts);
     }
 

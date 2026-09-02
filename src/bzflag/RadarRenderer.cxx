@@ -1065,42 +1065,75 @@ void RadarRenderer::renderBoxPyrMesh()
     for (i = 0; i < count; i++)
     {
         const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
+        const auto* cachePtr = mesh->radarCache.data();
         int faces = mesh->getFaceCount();
+
+        // Check if mesh-level Z and height should override face values.
+        // If true, compute z, bh, colorScale, and transScale ONCE per mesh instead of per face.
+        const bool useMeshZ = BZDBCache::useMeshForRadar;
+        float cs = 0.0f, ts = 0.0f;
+
+        if (useMeshZ)
+        {
+            const float z  = mesh->getPosition()[2];
+            const float bh = mesh->getSize()[2];
+            cs = colorScale(z, bh);
+            ts = transScale(z, bh);
+        }
 
         for (int f = 0; f < faces; f++)
         {
-            const MeshFace* face = mesh->getFace(f);
-            if (enhanced)
-            {
-                if (face->getPlane()[2] <= 0.0f)
-                    continue;
-                const BzMaterial* bzmat = face->getMaterial();
-                if ((bzmat != NULL) && bzmat->getNoRadar())
-                    continue;
-            }
-            float z = face->getPosition()[2];
-            float bh = face->getSize()[2];
+            // Access pre-computed face properties from contiguous memory
+            const auto& cache = cachePtr[f];
 
-            if (BZDBCache::useMeshForRadar)
+            // In enhanced radar mode, skip rendering faces marked as non-visible to radar
+            if (enhanced && cache.noRadar)
+                continue;
+
+            if (!useMeshZ)
             {
-                z = mesh->getPosition()[2];
-                bh = mesh->getSize()[2];
+                // Retrieve cached Z-position and building height bounds
+                const float z  = cache.posZ;
+                const float bh = cache.sizeZ;
+                // Compute per-face color and transparency
+                cs = colorScale(z, bh);
+                ts = transScale(z, bh);
             }
 
-            const float cs = colorScale(z, bh);
-            // draw death faces with a soupcon of red
-            const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
-            if ((phydrv != NULL) && phydrv->getIsDeath())
-                glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
+            // Apply distinct radar color tinting (death zones get a reddish tint)
+            if (cache.isDeath)
+                glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, ts);
             else
-                glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
-            // draw the face as a triangle fan
-            int vertexCount = face->getVertexCount();
+                glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, ts);
+
+            int vertexCount = cache.vertexCount;
+            const MeshFace* face = nullptr;
+
+            // Lazy pointer lookup: only query the original MeshFace if the polygon has more than 4 vertices
+            if (vertexCount > 4)
+                face = mesh->getFace(f);
+
+            // Sentinel check: a stored count of 255 indicates the face exceeds byte capacity,
+            // so we fetch the true total vertex count dynamically from the MeshFace object
+            if (vertexCount == 255)
+                vertexCount = face->getVertexCount();
+
+            // Render the radar outline/fill using a 2D triangle fan
             glBegin(GL_TRIANGLE_FAN);
-            for (int v = 0; v < vertexCount; v++)
+
+            // FAST PATH: Stream up to 4 pre-cached 2D coordinates directly from L1/L2 CPU cache
+            const int inlinedCount = std::min(vertexCount, 4);
+            for (int v = 0; v < inlinedCount; v++)
+                glVertex2f(cache.vx[v], cache.vy[v]);
+
+            // FALLBACK PATH: For complex n-gons (> 4 vertices), fetch the remaining 2D coordinates from MeshFace
+            if (vertexCount > 4)
             {
-                const float* pos = face->getVertex(v);
-                glVertex2f(pos[0], pos[1]);
+                for (int v = 4; v < vertexCount; v++)
+                {
+                    const float* pos = face->getVertex(v);
+                    glVertex2f(pos[0], pos[1]);
+                }
             }
             glEnd();
         }
