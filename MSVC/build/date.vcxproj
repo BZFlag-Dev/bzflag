@@ -231,6 +231,7 @@ del __bd.cxx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\version.h" />
+    <ClInclude Include="..\..\include\version_defs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
