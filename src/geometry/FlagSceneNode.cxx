@@ -130,9 +130,7 @@ void WaveGeometry::waveFlag(float dt)
         ripple2 -= TWO_PI;
     float sinRipple2  = sinf(ripple2);
     float sinRipple2S = sinf((float)(ripple2 + 1.16 * M_PI));
-    float wave0[maxChunks];
-    float wave1[maxChunks];
-    float wave2[maxChunks];
+    float base = BZDBCache::flagPoleSize;
     for (auto i = 0; i <= flagChunks; i++)
     {
         const float x      = float(i) / float(flagChunks);
@@ -140,21 +138,17 @@ void WaveGeometry::waveFlag(float dt)
         const float angle1 = (float)(ripple1 - 4.0 * M_PI * x);
         const float angle2 = (float)(angle1 - 0.28 * M_PI);
 
-        wave0[i] = damp * sinf(angle1);
-        wave1[i] = damp * (sinf(angle2) + sinRipple2S);
-        wave2[i] = wave0[i] + damp * sinRipple2;
-    }
-    float base = BZDBCache::flagPoleSize;
-    for (auto i = 0; i <= flagChunks; i++)
-    {
-        const float x      = float(i) / float(flagChunks);
-        const float shift1 = wave0[i];
+        const float wave0 = damp * sinf(angle1);
+        const float wave1 = damp * (sinf(angle2) + sinRipple2S);
+        const float wave2 = wave0 + damp * sinRipple2;
+
+        const float shift1 = wave0;
         verts[i*2][0] = verts[i*2+1][0] = Width * x;
         if (realFlag)
         {
             // flag pole is Z axis
-            verts[i*2][1] = wave1[i];
-            verts[i*2+1][1] = wave2[i];
+            verts[i*2][1] = wave1;
+            verts[i*2+1][1] = wave2;
             verts[i*2][2] = base + Height - shift1;
             verts[i*2+1][2] = base - shift1;
         }
@@ -163,8 +157,8 @@ void WaveGeometry::waveFlag(float dt)
             // flag pole is Y axis
             verts[i*2][1] = base + Height - shift1;
             verts[i*2+1][1] = base - shift1;
-            verts[i*2][2] = wave1[i];
-            verts[i*2+1][2] = wave2[i];
+            verts[i*2][2] = wave1;
+            verts[i*2+1][2] = wave2;
         }
         txcds[i*2][0] = txcds[i*2+1][0] = x;
         txcds[i*2][1] = 1.0f;
