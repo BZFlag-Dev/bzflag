@@ -361,11 +361,23 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     }
     else
     {
+        const int STACK_LIMIT = 16;
+        float stack_areas[STACK_LIMIT];
+        float stack_twinAreas[STACK_LIMIT];
+
+        float* areas = stack_areas;
+        float* twinAreas = stack_twinAreas;
+
+        if (vertexCount > STACK_LIMIT)
+        {
+            areas     = new float[vertexCount];
+            twinAreas = new float[vertexCount];
+        }
+
         // FIXME: this isn't quite right
         // normal smoothing to fake curved surfaces
         int i;
         // calculate the triangle ares
-        float* areas = new float[vertexCount];
         for (i = 0; i < vertexCount; i++)
         {
             int next = (i + 1) % vertexCount;
@@ -376,20 +388,25 @@ void MeshFace::get3DNormal(const float* p, float* n) const
             areas[i] = sqrtf(vec3dot(cross, cross));
         }
         float smallestArea = MAXFLOAT;
-        float* twinAreas = new float[vertexCount];
         for (i = 0; i < vertexCount; i++)
         {
             int next = (i + 1) % vertexCount;
             twinAreas[i] = areas[i] + areas[next];
+            if (twinAreas[i] < smallestArea)
+                smallestArea = twinAreas[i];
             if (twinAreas[i] < 1.0e-10f)
             {
                 memcpy (n, normals[next], sizeof(float[3]));
-                delete[] areas;
-                delete[] twinAreas;
-                return;
+                break;
             }
-            if (twinAreas[i] < smallestArea)
-                smallestArea = twinAreas[i];
+        }
+        if (vertexCount > STACK_LIMIT)
+            delete[] areas;
+        if (smallestArea < 1.0e-10f)
+        {
+            if (vertexCount > STACK_LIMIT)
+                delete[] twinAreas;
+            return;
         }
         float normal[3] = {0.0f, 0.0f, 0.0f};
         for (i = 0; i < vertexCount; i++)
@@ -400,21 +417,18 @@ void MeshFace::get3DNormal(const float* p, float* n) const
             normal[1] = normal[1] + (normals[next][1] * factor);
             normal[2] = normal[2] + (normals[next][2] * factor);
         }
+        if (vertexCount > STACK_LIMIT)
+            delete[] twinAreas;
         float len = sqrtf(vec3dot(normal, normal));
         if (len < 1.0e-10)
         {
             memcpy (n, plane, sizeof(float[3]));
-            delete[] areas;
-            delete[] twinAreas;
             return;
         }
         len = 1.0f / len;
         n[0] = normal[0] * len;
         n[1] = normal[1] * len;
         n[2] = normal[2] * len;
-
-        delete[] areas;
-        delete[] twinAreas;
     }
 
     return;
@@ -460,13 +474,24 @@ bool MeshFace::inBox(const float* p, float _angle,
     if ((extents.mins[2] > (p[2] + height)) || (extents.maxs[2] < p[2]))
         return false;
 
+    // Avoid dynamic allocation via fixed stack buffer
+    const int STACK_LIMIT = 16;
+    afvec3 stack_v[STACK_LIMIT];
+    afvec3* v = stack_v; // translated vertices
+    afvec3* heap_v = NULL;
+
+    if (vertexCount > STACK_LIMIT)
+    {
+        heap_v = new afvec3[vertexCount];
+        v = heap_v;
+    }
+
     // translate the face so that the box is an origin box
     // centered at 0,0,0  (this assumes that it is cheaper
     // to move the polygon then the box, tris and quads will
     // probably be the dominant polygon types).
 
     float pln[4]; // translated plane
-    afvec3* v = new afvec3[vertexCount]; // translated vertices
     const float cos_val = cosf(-_angle);
     const float sin_val = sinf(-_angle);
     for (i = 0; i < vertexCount; i++)
@@ -501,7 +526,7 @@ bool MeshFace::inBox(const float* p, float _angle,
     }
     if ((min > dx) || (max < -dx))
     {
-        delete[] v;
+        delete[] heap_v;
         return false;
     }
 
@@ -517,7 +542,7 @@ bool MeshFace::inBox(const float* p, float _angle,
     }
     if ((min > dy) || (max < -dy))
     {
-        delete[] v;
+        delete[] heap_v;
         return false;
     }
 
@@ -534,7 +559,7 @@ bool MeshFace::inBox(const float* p, float _angle,
 
     bool hit = testPolygonInAxisBox(vertexCount, v, pln, box);
 
-    delete[] v;
+    delete[] heap_v;
 
     return hit;
 }
