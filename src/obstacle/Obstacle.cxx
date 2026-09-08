@@ -368,14 +368,14 @@ int Obstacle::compareObstacles(const void* a, const void* b)
     // Normal obstacles (0)              -> Reversed height ordering
     switch (priorityA)
     {
-        case Obstacle::SortPriority::Normal:
-            return compareHeights(obsB, obsA); // Reversed for normal obstacles
+    case Obstacle::SortPriority::Normal:
+        return compareHeights(obsB, obsA); // Reversed for normal obstacles
 
-        case Obstacle::SortPriority::MeshFace:
-            return compareFaceHeights(obsA, obsB);
+    case Obstacle::SortPriority::MeshFace:
+        return compareFaceHeights(obsA, obsB);
 
-        case Obstacle::SortPriority::MeshObstacle:
-            return compareHeights(obsA, obsB);
+    case Obstacle::SortPriority::MeshObstacle:
+        return compareHeights(obsA, obsB);
     }
 
     return 0;
