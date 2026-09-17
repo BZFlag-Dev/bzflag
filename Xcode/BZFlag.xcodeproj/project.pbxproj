@@ -1808,6 +1808,7 @@
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		03E42D191B322DFC006EE763 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = "<group>"; };
 		03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C0F2ECB303F12A1005D1551 /* version_defs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version_defs.h; sourceTree = "<group>"; };
 		C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = customPollTypeSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = customPollTypeSample.cpp; sourceTree = "<group>"; };
 		C333EFD31E2B9F5500B4B182 /* README.customPollTypeSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.customPollTypeSample.txt; sourceTree = "<group>"; };
@@ -2233,6 +2234,7 @@
 		0305D561166C9DAE00557FC4 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				2C0F2ECB303F12A1005D1551 /* version_defs.h */,
 				0305D562166C9DAE00557FC4 /* AccessList.h */,
 				0305D563166C9DAE00557FC4 /* Address.h */,
 				0305D564166C9DAE00557FC4 /* AnsiCodes.h */,

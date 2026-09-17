@@ -16,8 +16,10 @@
 // 1st
 #include "common.h"
 
+#include "version_defs.h"
+
 #ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION   "2.4"
+#define BZ_CONFIG_DIR_VERSION   BZ_STR(BZ_MAJOR_VERSION) "." BZ_STR(BZ_MINOR_VERSION)
 #endif
 
 #ifndef BZ_CONFIG_FILE_NAME

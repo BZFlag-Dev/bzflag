@@ -5,17 +5,12 @@
 ;--------------------------------
 ;BZFlag Version Variables
 
-  !define VER_MAJOR 2
-  !define VER_MINOR 4
-  !define VER_REVISION 31
-
-  ;!define TYPE "release"
-  ;!define TYPE "alpha"
-  ;!define TYPE "beta"
-  !define TYPE "devel"
-  ;!define TYPE "RC"
-
-  !define TYPE_REVISION "0"
+  ; Read the values out of version_defs.h
+  !searchparse /file ..\..\..\include\version_defs.h `#  define BZ_MAJOR_VERSION ` VER_MAJOR
+  !searchparse /file ..\..\..\include\version_defs.h `#  define BZ_MINOR_VERSION ` VER_MINOR
+  !searchparse /file ..\..\..\include\version_defs.h `#  define BZ_REV ` VER_REVISION
+  !searchparse /file ..\..\..\include\version_defs.h `#  define BZ_BUILD_TYPE "` BUILD_TYPE `"`
+  !searchparse /file ..\..\..\include\version_defs.h `#  define BZ_BUILD_TYPE_REVISION ` BUILD_TYPE_REVISION
 
   ;Allow manually specifying a date for the installer. This only works if the
   ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
@@ -35,12 +30,12 @@
 ;Automatically generated version variables
 
   ; Include the date for alpha/beta/RC builds
-  !if ${TYPE} != "release"
-	!if ${TYPE} != "devel"
-		!define VERSION_TAIL "-${TYPE}${TYPE_REVISION}"
-	!else
-		!define VERSION_TAIL ""
-	!endif
+  !if ${BUILD_TYPE} != "STABLE"
+    !if ${BUILD_TYPE} != "DEVEL"
+      !define VERSION_TAIL "-${BUILD_TYPE}${BUILD_TYPE_REVISION}"
+    !else
+      !define VERSION_TAIL ""
+    !endif
     !ifndef DATE_OVERRIDE
       !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d${VERSION_TAIL}"
     !else
@@ -285,7 +280,7 @@ Section "!BZFlag (Required)" BZFlag
     SetOutPath $INSTDIR\documentation
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\BZFlag [game] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzflag.html" "" "" 0
-	CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\Credits.lnk" "$INSTDIR\documentation\Authors.txt" "" "" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\Credits.lnk" "$INSTDIR\documentation\Authors.txt" "" "" 0
 
   !insertmacro MUI_STARTMENU_WRITE_END
 
