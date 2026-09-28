@@ -311,7 +311,7 @@ Help2Menu::Help2Menu() : HelpMenu("General")
     listHUD.push_back(createLabel("red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"));
     listHUD.push_back(createLabel("player on another team scores a win, while being destroyed or destroying a"));
     listHUD.push_back(createLabel("teammate scores a loss.  Individual and aggregate team scores are tallied."));
-    listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues),so they cannot shoot"));
+    listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues), so they cannot shoot"));
     listHUD.push_back(createLabel("teammates and they don't have a team score."));
     listHUD.push_back(createLabel(""));
     listHUD.push_back(createLabel("There are four styles of play, determined by the server configuration:  capture-"));
