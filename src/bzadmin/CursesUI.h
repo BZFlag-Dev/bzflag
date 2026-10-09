@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,27 +13,30 @@
 #ifndef CURSESUI_H
 #define CURSESUI_H
 
-/* bzflag special common - 1st one */
-#include "common.h"
+// Inherits from
+#include "BZAdminUI.h"
 
+// System headers
 #include <iostream>
 #include <map>
 #include <string>
 #include <utility>
 
+// Common headers
 #include "Address.h"
 #include "AutoCompleter.h"
-#include "BZAdminUI.h"
+#include "global.h"
+
+// Local headers
 #include "curses_wrapper.h"
 #include "CursesMenu.h"
-#include "global.h"
 #include "UIMap.h"
 
 #define CMDLENGTH (MessageLen - 3)
 
 
 /** This class is an interface for bzadmin that uses ncurses. */
-class CursesUI : public BZAdminUI
+class CursesUI final : public BZAdminUI
 {
 protected:
 
@@ -46,24 +49,24 @@ public:
     ~CursesUI();
 
     /** This function prints a message in the main window. */
-    virtual void outputMessage(const std::string& msg, ColorCode color);
+    void outputMessage(const std::string& msg, ColorCode color) override;
 
     /** This function is called by the client when a new packet has arrived. */
-    virtual void handleNewPacket(uint16_t msgType);
+    void handleNewPacket(uint16_t msgType) override;
 
     /** See if the user has entered a command, if it has, store it in str and
         return true. */
-    virtual bool checkCommand(std::string& str);
+    bool checkCommand(std::string& str) override;
 
     /** Tell the UI that a player has been added. */
-    virtual void addedPlayer(PlayerId p);
+    void addedPlayer(PlayerId p) override;
 
     /** Warn the UI that a player will be removed. */
-    virtual void removingPlayer(PlayerId p);
+    void removingPlayer(PlayerId p) override;
 
     /** Get the current target (the player that messages should be sent to,
         or 0 for public messages). */
-    virtual PlayerId getTarget() const;
+    PlayerId getTarget() const override;
 
     /** This function returns a pointer to a dynamically allocated
         CursesUI object. */

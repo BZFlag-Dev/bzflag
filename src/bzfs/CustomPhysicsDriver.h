@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,14 +19,14 @@
 /* common headers */
 #include "PhysicsDriver.h"
 
-class CustomPhysicsDriver : public WorldFileObject
+class CustomPhysicsDriver final : public WorldFileObject
 {
 public:
     CustomPhysicsDriver();
     ~CustomPhysicsDriver();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToManager() const;
-    bool usesManager()
+    bool read(const char *cmd, std::istream& input) override;
+    void writeToManager() const override;
+    bool usesManager() override
     {
         return true;
     }

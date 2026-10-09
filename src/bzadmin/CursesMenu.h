@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,13 +16,17 @@
 /* bzflag special common - 1st one */
 #include "common.h"
 
+// System headers
 #include <map>
 #include <string>
 #include <vector>
 
+// Common headers
+#include "PlayerInfo.h"
+
+// Local headers
 #include "BZAdminClient.h"
 #include "curses_wrapper.h"
-#include "PlayerInfo.h"
 
 
 class CursesMenu;
@@ -89,7 +93,7 @@ protected:
 /** This menu item type looks like a normal CursesMenuItem, but when it
     receives an "enter" key press it goes to a submenu.
 */
-class SubmenuCMItem : public CursesMenuItem
+class SubmenuCMItem final : public CursesMenuItem
 {
 public:
     /** @c str is the text of this menu item, @c callback is the callback that
@@ -98,7 +102,7 @@ public:
     SubmenuCMItem(const std::string& str, MenuCallback callback);
     /** If @c c is a key code for the enter key, this function will change
         the rebuilder function of @c menu to @c cb. Other keys are ignored. */
-    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    bool handleKey(int c, std::string& str, CursesMenu& menu) override;
 protected:
     MenuCallback cb;
 };
@@ -110,7 +114,7 @@ protected:
     for example be used to change the contents of the menu.
     @see MenuCallback
 */
-class CallbackCMItem : public CursesMenuItem
+class CallbackCMItem final : public CursesMenuItem
 {
 public:
     /** @c str is the text of this menu item, @c callback is the callback that
@@ -118,7 +122,7 @@ public:
     CallbackCMItem(const std::string& str, MenuCallback callback);
     /** If @c c is a key code for the enter key, this function will call the
         callback. If it's something else it will be ignored. */
-    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    bool handleKey(int c, std::string& str, CursesMenu& menu) override;
 protected:
     MenuCallback cb;
 };
@@ -126,7 +130,7 @@ protected:
 
 /** This menu item type just sends a command to the server when it received
     an enter key press. */
-class CommandCMItem : public CursesMenuItem
+class CommandCMItem final : public CursesMenuItem
 {
 public:
     /** @c str is the text that will be shown on the menu item, @c cmd is
@@ -138,7 +142,7 @@ public:
     /** If @c c is a key code for the enter key, this function will put
         the @c command in @c str and return @c false. If it's something
         else it will be ignored. */
-    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    bool handleKey(int c, std::string& str, CursesMenu& menu) override;
 protected:
     std::string command;
     bool forceUpdate;
@@ -147,7 +151,7 @@ protected:
 
 /** This menu item type displays the value of a boolean variable and
     lets the user toggle it. */
-class BoolCMItem : public CursesMenuItem
+class BoolCMItem final : public CursesMenuItem
 {
 public:
     /** This creates a BoolCMItem which displays and edits the value of
@@ -156,11 +160,11 @@ public:
     BoolCMItem(std::string name, bool& variable, std::string trueText = "true",
                std::string falseText = "false");
     /** This function displays the name of the variable and it's value. */
-    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-                          bool selected);
+    void showItem(WINDOW* menuWin, int line, int col, int width,
+                  bool selected) override;
     /** This function handles key presses from the user. Space toggles the
         variable value, any other key is ignored. */
-    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    bool handleKey(int c, std::string& str, CursesMenu& menu) override;
 protected:
     bool& varRef;
     std::string trueTxt, falseTxt;
@@ -169,18 +173,18 @@ protected:
 
 /** This menu item type displays the filter status of a message type and
     lets the user toggle it. */
-class FilterCMItem : public CursesMenuItem
+class FilterCMItem final : public CursesMenuItem
 {
 public:
     /** This creates a FilterCMItem which displays and edits the filter status
         of the message type @c msgType in the client @c client. */
     FilterCMItem(const std::string& msgType, BZAdminClient& c);
     /** This function displays the name of the message type and it's status. */
-    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-                          bool selected);
+    void showItem(WINDOW* menuWin, int line, int col, int width,
+                  bool selected) override;
     /** This function handles key presses from the user. Space toggles the
         variable value, any other key is ignored. */
-    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    bool handleKey(int c, std::string& str, CursesMenu& menu) override;
 protected:
     std::string messageType;
     BZAdminClient& client;
@@ -191,7 +195,7 @@ protected:
 /** This menu item type displays the value of a BZDB variable and lets
     the user edit it. It doesn't know if the player has permission to
     edit the values, but if not the server will complain. */
-class BZDBCMItem : public CursesMenuItem
+class BZDBCMItem final : public CursesMenuItem
 {
 public:
     /** This creates a BZDBCMItem which displays the variable with the name
@@ -199,16 +203,16 @@ public:
     BZDBCMItem(const std::string& variable);
     /** This function displays the name and the value of this item's
         BZDB variable. */
-    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-                          bool selected);
+    void showItem(WINDOW* menuWin, int line, int col, int width,
+                  bool selected) override;
     /** This function handles key presses when this item is selected. It has code
         that allows the user to edit the value of this items BZDB variable.
         When the user has edited the value and hits the enter key, a @c /set
         command will be placed in @c str and @c true will be returned. */
-    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    bool handleKey(int c, std::string& str, CursesMenu& menu) override;
     /** This stops editing the variable value without touching BZDB
         (same effect as when the user hits the escape key). */
-    virtual void deselect();
+    void deselect() override;
 protected:
     bool editing;
     std::string editString;
@@ -217,12 +221,12 @@ protected:
 
 /** This menu item type displays information about a player. In the future it
     might also allow the user to ban and kick the player. */
-class PlayerCMItem : public CursesMenuItem
+class PlayerCMItem final : public CursesMenuItem
 {
 public:
     PlayerCMItem(const PlayerIdMap& players, PlayerId playerId);
-    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-                          bool selected);
+    void showItem(WINDOW* menuWin, int line, int col, int width,
+                  bool selected) override;
 protected:
     const PlayerIdMap& playerMap;
     PlayerId id;
@@ -278,7 +282,7 @@ public:
         next time it gets the chance. */
     void forceUpdate();
 
-    /** This function updates the menu if neccessary. */
+    /** This function updates the menu if necessary. */
     void rebuild();
 
     /** Return a reference to the map of message types that will cause the menu

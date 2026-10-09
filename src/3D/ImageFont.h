@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -40,7 +40,7 @@ public:
     virtual bool isBuilt() const = 0;
 
     virtual void filter(bool dofilter) = 0;
-    virtual void drawString(float scale, GLfloat color[3], const char *str, int len) = 0;
+    virtual void drawString(float scale, GLfloat color[4], const char *str, int len) = 0;
 
     float getStrLength(float scale, const char *str, int len) const;
     float getStrLength(float scale, const std::string &str) const;

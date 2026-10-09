@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,37 +39,37 @@ class ServerListFilterHelpMenu;
 class ServerMenu;
 
 
-class ServerMenuDefaultKey : public MenuDefaultKey
+class ServerMenuDefaultKey final : public MenuDefaultKey
 {
 public:
     ServerMenuDefaultKey(ServerMenu* _menu) :
         menu(_menu), serverListFilterMenu(NULL) {}
     ~ServerMenuDefaultKey();
 
-    bool keyPress(const BzfKeyEvent&);
-    bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&) override;
+    bool keyRelease(const BzfKeyEvent&) override;
 
 private:
     ServerMenu* menu;
     ServerListFilterMenu* serverListFilterMenu;
 };
 
-class ServerMenu : public HUDDialog
+class ServerMenu final : public HUDDialog
 {
 public:
     ServerMenu();
     ~ServerMenu() {}
 
-    HUDuiDefaultKey* getDefaultKey()
+    HUDuiDefaultKey* getDefaultKey() override
     {
         return &defaultKey;
     }
     int getSelected() const;
     void setSelected(int, bool forcerefresh=false);
-    void show();
-    void execute();
-    void dismiss();
-    void resize(int width, int height);
+    void show() override;
+    void execute() override;
+    void dismiss() override;
+    void resize(int width, int height) override;
     void updateStatus();
     void setFindLabel(const std::string& label);
 

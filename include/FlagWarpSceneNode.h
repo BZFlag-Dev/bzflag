@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@
 // Inherits
 #include "SceneNode.h"
 
-class FlagWarpSceneNode : public SceneNode
+class FlagWarpSceneNode final : public SceneNode
 {
 public:
     FlagWarpSceneNode(const GLfloat pos[3]);
@@ -32,19 +32,20 @@ public:
     GLfloat     getDistance(const GLfloat*) const;
     void        move(const GLfloat pos[3]);
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
 protected:
-    class FlagWarpRenderNode : public RenderNode
+    class FlagWarpRenderNode final : public RenderNode
     {
     public:
         FlagWarpRenderNode(const FlagWarpSceneNode*);
         ~FlagWarpRenderNode();
-        void        render();
+        void        render() override;
         const glm::vec3 getPosition() const override;
     private:
         const FlagWarpSceneNode* sceneNode;
+        static float ring[12][2];
     };
     friend class FlagWarpRenderNode;
 

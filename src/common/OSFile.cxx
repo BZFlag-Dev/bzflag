@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -365,7 +365,7 @@ std::string OSFile::getFileName()
     return info->title;
 }
 
-// this CAN return npos, cus the file may not have an extenstion, if it just happens to end in a '.' then well, your really weird Mr. File.
+// this CAN return npos, cus the file may not have an extension, if it just happens to end in a '.' then well, your really weird Mr. File.
 std::string OSFile::getExtension()
 {
     std::string::size_type dot = info->stdName.rfind('.');
@@ -550,9 +550,7 @@ bool OSDir::getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive)
     if (info->namePos == -1)
     {
         info->nameList.clear();
-        //FIXME -- just do the #ifdef'ing here?
-        windowsAddFileStack(getFullOSPath(), realMask, bRecursive);
-        linuxAddFileStack(getFullOSPath(), realMask, bRecursive);
+        addFileStack(getFullOSPath(), realMask, bRecursive);
 
         info->namePos = 0;
     }
@@ -592,9 +590,7 @@ bool OSDir::getNextDir(OSDir &oDir, bool bRecursive)
     if (info->namePos == -1)
     {
         info->nameList.clear();
-        //FIXME -- just do the #ifdef'ing here?
-        windowsAddFileStack(getFullOSPath(), realMask, bRecursive, true);
-        linuxAddFileStack(getFullOSPath(), realMask, bRecursive, true);
+        addFileStack(getFullOSPath(), realMask, bRecursive, true);
 
         info->namePos = 0;
     }
@@ -620,9 +616,9 @@ bool OSDir::getNextDir(OSDir &oDir, bool bRecursive)
     return true;
 }
 
-bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly)
-{
 #ifdef _WIN32
+bool OSDir::addFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly)
+{
     struct _finddata_t fileInfo;
 
     long    hFile;
@@ -659,13 +655,13 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
                     if (isSubDir)
                     {
                         info->nameList.push_back(FilePath);
-                        windowsAddFileStack(FilePath, fileMask, bRecursive, true);
+                        addFileStack(FilePath, fileMask, bRecursive, true);
                     }
                 }
                 else
                 {
                     if (isSubDir && bRecursive)
-                        windowsAddFileStack(FilePath, fileMask, bRecursive, false);
+                        addFileStack(FilePath, fileMask, bRecursive, false);
                     else if (!(fileInfo.attrib & _A_SUBDIR))
                         info->nameList.push_back(FilePath);
                 }
@@ -675,16 +671,8 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
         }
     }
     return true;
-#else
-    // quell warnings
-    if (!bRecursive || !bDirsOnly)
-    {
-        fileMask.size();
-        pathName.size();
-    }
-    return false;
-#endif
 }
+#endif
 
 // linux mask filter functions
 // we don't need these for windows as it can do it right in findNextFile
@@ -789,17 +777,9 @@ static int match_mask (const char *mask, const char *string)
 }
 #endif
 
-bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly)
+#ifndef _WIN32
+bool OSDir::addFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly)
 {
-#ifdef _WIN32
-    // quell warnings
-    if (!bRecursive)
-    {
-        fileMask.size();
-        pathName.size();
-    }
-    return false;
-#else
     DIR  *directory;
     dirent  *fileInfo;
     struct stat  statbuf;
@@ -832,12 +812,12 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
             {
                 info->nameList.push_back(FilePath);
                 if (bRecursive)
-                    linuxAddFileStack(FilePath, fileMask, bRecursive);
+                    addFileStack(FilePath, fileMask, bRecursive);
             }
             else
             {
                 if (isSubDir && bRecursive)
-                    linuxAddFileStack(FilePath, fileMask, bRecursive);
+                    addFileStack(FilePath, fileMask, bRecursive);
                 else if (match_mask(fileMask.c_str(), fileInfo->d_name))
                     info->nameList.push_back(FilePath);
             }
@@ -845,8 +825,8 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
     }
     closedir(directory);
     return true;
-#endif// !Win32
 }
+#endif// !Win32
 
 // Local Variables: ***
 // mode: C++ ***

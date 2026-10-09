@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -620,7 +620,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
             // the tele names are setup with default names if
             // they are not named (even for those in the world
-            // groupd def). invalid teleporters are also named
+            // grouped def). invalid teleporters are also named
             if (type == teleType)
                 makeTeleName(obs, i);
 

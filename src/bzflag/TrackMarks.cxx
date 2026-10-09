@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -145,13 +145,13 @@ inline TrackEntry* TrackList::removeNode(TrackEntry* te)
 
 
 
-class TrackRenderNode : public RenderNode
+class TrackRenderNode final : public RenderNode
 {
 public:
     TrackRenderNode(const TrackEntry* te, TrackType type);
     ~TrackRenderNode();
-    void render();
-    void renderShadow()
+    void render() override;
+    void renderShadow() override
     {
         return;
     }
@@ -163,12 +163,12 @@ private:
 };
 
 
-class TrackSceneNode : public SceneNode
+class TrackSceneNode final : public SceneNode
 {
 public:
     TrackSceneNode(const TrackEntry*, TrackType, const OpenGLGState*);
     ~TrackSceneNode();
-    void addRenderNodes(SceneRenderer&);
+    void addRenderNodes(SceneRenderer&) override;
     void update(); // set the sphere properties
 
 private:
@@ -694,6 +694,9 @@ static void drawPuddle(const TrackEntry& te)
 
 static void drawTreads(const TrackEntry& te)
 {
+    if (!TrackFadeTime)
+        return;
+
     const float ratio = (te.lifeTime / TrackFadeTime);
 
     glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);

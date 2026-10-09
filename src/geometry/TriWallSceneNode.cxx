@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -102,6 +102,11 @@ TriWallSceneNode::Geometry::~Geometry()
 #define EMITV(_i)   glVertex3fv(vertex[_i])
 #define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
+const glm::vec3 TriWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getCenter();
+}
+
 void            TriWallSceneNode::Geometry::render()
 {
     wall->setColor();
@@ -123,12 +128,6 @@ void            TriWallSceneNode::Geometry::renderShadow()
     glEnd();
     addTriangleCount(1);
 }
-
-const glm::vec3 TriWallSceneNode::Geometry::getPosition() const
-{
-    return wall->getCenter();
-}
-
 
 void            TriWallSceneNode::Geometry::drawV() const
 {

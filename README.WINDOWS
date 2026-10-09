@@ -5,7 +5,7 @@ README for Windows (32- and 64-bit) platforms
 BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
 files are provided for it. The current compiler used is Visual C++ 2017 (VC15).
 You can download Visual Studio Community 2017 for free from here:
-https://www.visualstudio.com/downloads/
+https://aka.ms/vs/15/release/vs_community.exe
 
 **Targets**
 There are a total of 4 build targets in the VC projects. There are targets
@@ -20,10 +20,10 @@ bzflag-dependencies repository. Either grab a pre-built binary package from
 the releases section, or build the dependencies from source as described at
 the repository. The BZFlag build expects that the dependencies are located at
 the root of the bzflag source directory, such that libraries and headers are in
-<bzflag source>/dependencies/output-<system>-<configuration>-<architecture>.
+<bzflag source>/dependencies/windows-<configuration>-<architecture>.
   https://github.com/BZFlag-Dev/bzflag-dependencies
 
-NSIS 3.03 is needed to build an installer, which is built as part of a release
+NSIS is needed to build an installer, which is built as part of a release
 build.
   http://nsis.sourceforge.net/
 

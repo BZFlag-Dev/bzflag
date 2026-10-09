@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -242,7 +242,8 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
     if (isValidClearance(pos, radius, height, team))
     {
         // sort from highest to lowest
-        qsort(rayList.list, rayList.count, sizeof(Obstacle*), compareDescending);
+        if (rayList.count)
+            qsort(rayList.list, rayList.count, sizeof(Obstacle*), compareDescending);
         // no interference, try dropping
         for (i = 0; i < rayList.count; i++)
         {
@@ -328,7 +329,8 @@ void HoldingList::copy(const ObsList* olist)
         list = new Obstacle*[size];
     }
     count = olist->count;
-    memcpy(list, olist->list, count * sizeof(Obstacle*));
+    if (count)
+        memcpy(list, olist->list, count * sizeof(Obstacle*));
     return;
 }
 

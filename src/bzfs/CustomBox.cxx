@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -297,7 +297,7 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[3])
 }
 
 
-void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomBox::writeToGroupDef(GroupDefinition *groupdef)
 {
     if (isOldBox && transform.isEmpty())
     {

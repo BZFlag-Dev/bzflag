@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,6 +13,9 @@
 #ifndef __FORCE_FEEDBACK_H__
 #define __FORCE_FEEDBACK_H__
 
+// 1st
+#include "common.h"
+
 /* All functions in this namespace start playing a force feedback
  * effect if we have a FF-enabled joystick connected and the user
  * has enabled force feedback.
@@ -24,7 +27,6 @@ void death();
 void shotFired();
 void laserFired();
 void shockwaveFired();
-void solidMatterFriction();
 
 }
 

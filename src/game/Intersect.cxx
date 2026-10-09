@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -340,8 +340,8 @@ static float timeRayHitsPlane(const float pb[3], const float db[3],
     for (i = 0; i < 3; i++)
         velocity += n[i] * db[i];
 
-    // if velocity is greater than 0 no way to trespass the plane
-    if (velocity > 0.0f)
+    // if velocity is greater or equal than 0 no way to trespass the plane
+    if (velocity >= 0.0f)
         return -1.0f;
 
     // time is ... that is normalized

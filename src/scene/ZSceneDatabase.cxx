@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -169,7 +169,7 @@ void ZSceneDatabase::setupCullList()
         else
         {
             if (culledList != staticList)
-                delete culledList;
+                delete [] culledList;
             culledList = staticList;
             culledCount = staticCount;
         }
@@ -187,7 +187,8 @@ void ZSceneDatabase::makeCuller()
     TimeKeeper startTime = TimeKeeper::getCurrent();
 
     // sorted from lowest to highest
-    qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
+    if (staticCount)
+        qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
 
     // make the tree
     octree->addNodes (staticList, staticCount, cullDepth, cullElements);
@@ -196,7 +197,7 @@ void ZSceneDatabase::makeCuller()
     logDebugMessage(2,"SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
     if (culledList != staticList)
-        delete culledList;
+        delete [] culledList;
 
     // make scratch pad for the culler
     culledList = new SceneNode*[staticCount];

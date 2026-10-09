@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,13 +13,13 @@
 #ifndef BZF_CALLBACK_LIST_H
 #define BZF_CALLBACK_LIST_H
 
+// 1st
+#include "common.h"
+
 // system headers
 #include <utility>
 #include <list>
 #include <map>
-
-// local implementation headers
-#include "common.h"
 
 template <class F>
 class CallbackList

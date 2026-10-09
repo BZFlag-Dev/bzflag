@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,7 @@
 // Common headers
 #include "OpenGLLight.h"
 
-class BoltSceneNode : public SceneNode
+class BoltSceneNode final : public SceneNode
 {
 public:
     BoltSceneNode(const glm::vec3 &pos, const glm::vec3 &vel, bool super);
@@ -50,7 +50,7 @@ public:
         invisible = _invisible;
     }
 
-    virtual void move(const glm::vec3 &pos, const glm::vec3 &forward);
+    void move(const glm::vec3 &pos, const glm::vec3 &forward);
     void        addLight(SceneRenderer&) override;
 
     void        notifyStyleChange() override;
@@ -59,14 +59,14 @@ public:
 protected:
     bool        isSuper;
 
-    class BoltRenderNode : public RenderNode
+    class BoltRenderNode final : public RenderNode
     {
     public:
         BoltRenderNode(const BoltSceneNode*);
         ~BoltRenderNode();
         void        setColor(const glm::vec4 &rgba);
         void        setTextureColor(const glm::vec4 &rgba);
-        void        render();
+        void        render() override;
         const glm::vec3 getPosition() const override;
         void        setAnimation(int cu, int cv);
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -2113,9 +2113,9 @@ bz_ePlayerDeathReason getDeathReason (bz_PlayerDieEventData_V1* data)
     return eGotKilled;
 }
 
-class BotEventHandler : public bz_EventHandler
+class BotEventHandler final : public bz_EventHandler
 {
-    virtual void process ( bz_EventData *eventData )
+    void process ( bz_EventData *eventData ) override
     {
         std::vector<bz_ServerSidePlayerHandler*>::iterator itr = serverSidePlayer.begin();
         while (itr != serverSidePlayer.end())

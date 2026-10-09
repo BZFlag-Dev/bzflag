@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,21 +16,21 @@
 /* interface header */
 #include "WorldFileObstacle.h"
 
-/* local interface header */
-#include "WorldInfo.h"
-
 /* system header */
 #include <string>
 
 /* common interface header */
 #include "BzMaterial.h"
 
-class CustomTetra : public WorldFileObstacle
+/* local interface header */
+#include "WorldInfo.h"
+
+class CustomTetra final : public WorldFileObstacle
 {
 public:
     CustomTetra();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    bool read(const char *cmd, std::istream& input) override;
+    void writeToGroupDef(GroupDefinition*) override;
 
 private:
     int vertexCount;

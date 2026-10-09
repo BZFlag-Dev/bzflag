@@ -47,7 +47,7 @@ For example:
 Configuration
 --------------------------------------------------------------------------------
 
-Document the configuration BZDB values and/or configuation file format and
+Document the configuration BZDB values and/or configuration file format and
 options here.
 
 You can set BZDB variables on the command line, in a bzfs config file, or

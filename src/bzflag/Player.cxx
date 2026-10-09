@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1073,18 +1073,21 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     }   // isAlive()
     else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE))
     {
-        float t = float((TimeKeeper::getTick() - explodeTime) /
-                        BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
-        if (t > 1.0f)
-        {
-            // FIXME - setStatus(DeadStatus);
-            t = 1.0f;
-        }
-        else if (t < 0.0f)
+        float t;
+        const double deltaExplode = TimeKeeper::getTick() - explodeTime;
+        const double bzExplodeTim = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+        if (deltaExplode < 0)
         {
             // shouldn't happen but why take chances
             t = 0.0f;
         }
+        else if (deltaExplode >= bzExplodeTim)
+        {
+            // FIXME - setStatus(DeadStatus);
+            t = 1.0f;
+        }
+        else
+            t = float(deltaExplode / bzExplodeTim);
         // fade at the end of the explosion
         const float fadeRatio = 0.8f;
         if (t > fadeRatio)

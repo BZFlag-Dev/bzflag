@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -211,8 +211,8 @@ void LinkManager::findTelesByName(const std::string& name,
         return;
 
     // a leading ':' might be used to indicate absolute linking if
-    // links are ever included in group definintions. strip it here
-    // for forwards compatibiliy.
+    // links are ever included in group definitions. strip it here
+    // for forwards compatibility.
     if (glob[0] == ':')
     {
         glob.erase(0, 1); // erase 1 char from position 0

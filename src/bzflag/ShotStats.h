@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,9 +13,10 @@
 #ifndef __SHOTSTATS_H__
 #define __SHOTSTATS_H__
 
-#include "common.h"
-
+// Inherits from
 #include "HUDDialog.h"
+
+// Local headers
 #include "HUDuiControl.h"
 #include "HUDuiDefaultKey.h"
 
@@ -23,17 +24,17 @@ class Player;
 
 /** ShotStats displays a set of statistics on player's shots and accuracies
  */
-class ShotStats : public HUDDialog
+class ShotStats final : public HUDDialog
 {
 public:
     ShotStats();
     ~ShotStats();
 
-    HUDuiDefaultKey* getDefaultKey();
-    void resize(int width, int height);
-    void execute();
-    void dismiss();
-    void show();
+    HUDuiDefaultKey* getDefaultKey() override;
+    void resize(int width, int height) override;
+    void execute() override;
+    void dismiss() override;
+    void show() override;
 
     void refresh();
 

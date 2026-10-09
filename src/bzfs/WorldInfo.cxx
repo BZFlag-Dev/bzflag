@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -75,15 +75,6 @@ WorldInfo::~WorldInfo()
     OBSTACLEMGR.clear();
     finished = false;
 }
-
-
-void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
-{
-    const float pos[3] = {x, y, z};
-    WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
-    OBSTACLEMGR.addWorldObstacle(wall);
-}
-
 
 void WorldInfo::addLink(int src, int dst)
 {

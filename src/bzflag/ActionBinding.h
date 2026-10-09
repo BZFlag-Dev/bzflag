@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,12 +13,13 @@
 #ifndef BZF_ACTION_BINDING_H
 #define BZF_ACTION_BINDING_H
 
+// Inherits from
+#include "Singleton.h"
+
 // system includes
 #include <string>
 #include <map>
 
-// bzflag interface includes
-#include "Singleton.h"
 
 class ActionBinding : public Singleton<ActionBinding>
 {

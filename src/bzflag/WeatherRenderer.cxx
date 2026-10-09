@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -156,7 +156,7 @@ void WeatherRenderer::set(void)
 
     if (dbItemSet("_rainType") || dbItemSet("_rainDensity"))
     {
-        // default rain desnity
+        // default rain density
         rainDensity = (int)(1000.0f * BZDB.eval("userRainScale"));
 
         // some defaults
@@ -273,7 +273,7 @@ void WeatherRenderer::set(void)
                 tm.getTextureID(BZDB.get("_rainPuddleTexture").c_str()));
         }
 
-        // see if the texture is specificly overiden
+        // see if the texture is specifically overridden
         if (dbItemSet("_rainTexture"))
         {
             gstate.setTexture (
@@ -282,7 +282,7 @@ void WeatherRenderer::set(void)
 
         texturedRainState = gstate.getState();
 
-        // if there is a specific overides for stuff
+        // if there is a specific overrides for stuff
         if (dbItemSet("_rainSpread"))
             rainSpread = BZDB.eval("_rainSpread");
 
@@ -363,7 +363,7 @@ void WeatherRenderer::set(void)
         else
         {
             // the specified rain start and end values,
-            // make sure they make sense with the directon
+            // make sure they make sense with the direction
             if (rainSpeed < 0)   // rain going down
             {
                 if (rainEndZ > rainStartZ)
@@ -415,7 +415,7 @@ void WeatherRenderer::set(void)
             }
             lastRainTime = float(TimeKeeper::getCurrent().getSeconds());
         }
-        // recompute the drops based on the posible new size
+        // recompute the drops based on the possible new size
         buildDropList();
 
         if (_CULLING_RAIN)   // need to update the bbox depths on all the chunks

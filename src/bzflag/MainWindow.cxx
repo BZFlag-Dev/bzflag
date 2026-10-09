@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -287,6 +287,11 @@ void            MainWindow::resize()
 {
     window->getSize(trueWidth, trueHeight);
     window->makeCurrent();
+
+    // When resizing the window, set the scissor box to the whole window.
+    // Otherwise it remains at the original window size.
+    glScissor(0, 0, trueWidth, trueHeight);
+
     setQuadrant(quadrant);
 }
 
@@ -307,16 +312,9 @@ bool            MainWindow::haveJoystick() const
     return joystick->joystick();
 }
 
-void            MainWindow::getJoyPosition(int& mx, int& my) const
+void            MainWindow::getJoyPosition(float& jsx, float& jsy) const
 {
-    // joystick axes inversion values
-    // 0: no inversion
-    // 1: invert X
-    // 2: invert Y
-    // 3: invert both
-    joystick->getJoy(mx, my);
-    mx = ((width >> 1) * mx * (BZDB.evalInt("jsInvertAxes") % 2 == 1 ? -1 : 1)) / (900);
-    my = ((height >> 1) * my * (BZDB.evalInt("jsInvertAxes") > 1 ? -1 : 1)) / (900);
+    joystick->getJoy(jsx, jsy);
 }
 
 int         MainWindow::getNumHats() const

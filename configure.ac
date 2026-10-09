@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993-2023 Tim Riker
+dnl Copyright (c) 1993-2025 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -171,6 +171,10 @@ if test x$enable_robots != xno; then
     AC_DEFINE(ROBOT, 1, [Enabling Robots])
 fi
 
+AC_ARG_ENABLE(native,       [  --enable-native         optimized for the CPU used to build])
+AC_ARG_ENABLE(Woverride,    [  --enable-Woverride      warning for missing override of virtual])
+AC_ARG_ENABLE(framepointer, [  --enable-framepointer   use frame pointer, useful for getting stack frame (perf)])
+
 # debugging and profiling
 AC_ARG_ENABLE(debug,     [  --enable-debug          turn on debugging])
 AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
@@ -184,6 +188,10 @@ if test x$enable_debug = xyes; then
     user_CFLAGS="$ac_save_CFLAGS"
     user_CXXFLAGS="$CXXFLAGS"	# ac_save_CXXFLAGS is not set yet
 fi
+
+# sanitizer
+AC_ARG_ENABLE(asan,      [  --enable-asan           address sanitizer])
+AC_ARG_ENABLE(ubsan,     [  --enable-ubsan          undefined behaviour sanitizer])
 
 # do we want the bzflag  client?
 AC_ARG_ENABLE(client, [  --disable-client        server-only build])
@@ -208,7 +216,7 @@ AC_PROG_CXX
 if test -z "$CXX"; then
     AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
 fi
-AX_CXX_COMPILE_STDCXX_11([],[mandatory])
+AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 AC_PROG_CC
 AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
@@ -656,10 +664,19 @@ case $host_os in
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
 	     pc)
-               FLAGS=-mtune=native
+               FLAGS="-mtune=native"
+               if test x$enable_native = xyes ; then
+                   FLAGS="$FLAGS -march=native"
+               fi
+               if test x$enable_framepointer = xyes ; then
+                   FLAGS="$FLAGS -fno-omit-frame-pointer"
+               fi
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
-	       CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
+	       CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";
+	       if test x$enable_Woverride = xyes ; then
+                   CONF_CXXFLAGS="$CONF_CXXFLAGS -Wsuggest-override -Woverloaded-virtual"
+	       fi;;
 	     ppc)
 	       FLAGS="-mcpu=$host_cpu"
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
@@ -727,6 +744,16 @@ else
 	esac
     fi
     AC_DEFINE(NDEBUG, 1, [Debugging disabled])
+fi
+
+if test "x$enable_asan" = xyes; then
+    CONF_CFLAGS="$CONF_CFLAGS -fsanitize=address"
+    CONF_CXXFLAGS="$CONF_CXXFLAGS -fsanitize=address"
+fi
+
+if test "x$enable_ubsan" = xyes; then
+    CONF_CFLAGS="$CONF_CFLAGS -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow"
+    CONF_CXXFLAGS="$CONF_CXXFLAGS -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow"
 fi
 
 dnl check for -search_paths_first linker flag when making dynamic libraries

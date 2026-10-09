@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,6 +12,9 @@
 
 #ifndef __PACKVARS_H__
 #define __PACKVARS_H__
+
+// 1st
+#include "common.h"
 
 /* system interface headers */
 #include <string>

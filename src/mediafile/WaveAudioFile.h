@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,7 +17,7 @@
 
 /** This class represents a WAVE file. It implements the read() function from
     AudioFile. */
-class WaveAudioFile : public AudioFile
+class WaveAudioFile final : public AudioFile
 {
 public:
     WaveAudioFile(std::istream*);
@@ -27,7 +27,7 @@ public:
     static std::string    getExtension();
 
     /** This function reads data from a WAVE file. */
-    virtual bool      read(void* buffer, int numFrames);
+    bool      read(void* buffer, int numFrames) override;
 
 protected:
     bool          readHeader(char* tag, uint32_t* length);

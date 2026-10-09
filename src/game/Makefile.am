@@ -26,6 +26,7 @@ libGame_la_SOURCES =			\
 	PlayerInfo.cxx			\
 	Ray.cxx				\
 	ServerItem.cxx			\
+	ServerAuth.cxx			\
 	ServerList.cxx			\
 	ServerListCache.cxx		\
 	StartupInfo.cxx			\

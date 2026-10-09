@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@ BZDBCache::Bool  BZDBCache::texture;
 BZDBCache::Bool  BZDBCache::shadows;
 BZDBCache::Bool  BZDBCache::stencilShadows;
 BZDBCache::Bool  BZDBCache::useMeshForRadar;
-BZDBCache::Bool  BZDBCache::tesselation;
+BZDBCache::Bool  BZDBCache::tessellation;
 BZDBCache::Bool  BZDBCache::lighting;
 BZDBCache::Bool  BZDBCache::smooth;
 BZDBCache::Bool  BZDBCache::colorful;
@@ -178,7 +178,7 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     else if (name == "useMeshForRadar")
         useMeshForRadar = BZDB.isTrue("useMeshForRadar");
     else if (name == "tesselation")
-        tesselation = BZDB.isTrue("tesselation");
+        tessellation = BZDB.isTrue("tesselation");
     else if (name == "lighting")
         lighting = BZDB.isTrue("lighting");
     else if (name == "smooth")

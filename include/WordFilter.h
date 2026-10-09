@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -127,10 +127,10 @@ private:
     ExpCompareSet filters[MAX_FILTER_SETS];
 
 
-    /** used by the agressive filter */
+    /** used by the aggressive filter */
     ExpCompareSet suffixes;
 
-    /** used by the agressive filter */
+    /** used by the aggressive filter */
     ExpCompareSet prefixes;
 
 
@@ -213,7 +213,7 @@ public:
     bool addToFilter(const std::string &word, const std::string &expression);
 
     /** given an input string, filter the input
-     * using either the simple or agressive filter
+     * using either the simple or aggressive filter
      */
     bool filter(char *input, const bool simple=false) const;
     bool filter(std::string &input, const bool simple=false) const;
@@ -222,7 +222,7 @@ public:
     void outputWords(void) const;
     /** dump the filter to stdout (including expressions) */
     void outputFilter(void) const;
-    /** retuns a count of how many words are in the filter */
+    /** returns a count of how many words are in the filter */
     unsigned long int wordCount(void) const;
 
     /** Clears the Filter */
@@ -260,7 +260,7 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
         previousCharPos = randomCharPos;
 
         /* when filterspaces is true, we filter everything.
-          * otherise the ascii character code ranges for a-z, A-Z, and 0-9
+          * otherwise the ascii character code ranges for a-z, A-Z, and 0-9
           * are filtered.
           */
         if (filterSpaces)

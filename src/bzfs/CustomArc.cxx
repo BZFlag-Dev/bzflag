@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -137,7 +137,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomArc::writeToGroupDef(GroupDefinition *groupdef)
 {
     int i;
     const BzMaterial* mats[MaterialCount];

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -166,8 +166,9 @@ void updateConfigFile(void)
         BZDB.set("list", BZDB.getDefault("list"));
     }
 
-    // Upgrade 2.4.26 to 2.4.28
-    if (configVersion <= 5)
+    // Upgrade to 2.4.32. This was 2.4.28, but a merge error brought back the forceFeedback option instead of rumble).
+    // Client config version was 5 for 2.4.28, so we'll bump this to 6 to *actually* upgrade the config.
+    if (configVersion <= 6)
         BZDB.unset("forceFeedback");
 
     // Upgrade 2.4.x to 2.6.0

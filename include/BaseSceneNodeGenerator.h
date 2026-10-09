@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,12 +16,12 @@
 #include "ObstacleSceneNodeGenerator.h"
 #include "BaseBuilding.h"
 
-class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator
+class BaseSceneNodeGenerator final : public ObstacleSceneNodeGenerator
 {
     friend class SceneDatabaseBuilder;
     ~BaseSceneNodeGenerator();
 public:
-    WallSceneNode*  getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool) override;
 protected:
     BaseSceneNodeGenerator(const BaseBuilding *);
 private:

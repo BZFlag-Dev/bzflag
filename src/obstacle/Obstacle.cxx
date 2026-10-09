@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,11 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <math.h>
-#include <string.h>
-#include <iostream>
+// Interface
 #include "Obstacle.h"
+
+// System headers
+#include <cassert>
+#include <math.h>
+#include <iostream>
+#include <string.h>
+
+// Common headers
 #include "Intersect.h"
 #include "StateDatabase.h"
 
@@ -253,8 +258,11 @@ void Obstacle::addInsideSceneNode(SceneNode* node)
 {
     insideNodeCount++;
     SceneNode** tmp = new SceneNode*[insideNodeCount];
-    memcpy(tmp, insideNodes, (insideNodeCount - 1) * sizeof(SceneNode*));
-    delete[] insideNodes;
+    if (insideNodes)
+    {
+        memcpy(tmp, insideNodes, (insideNodeCount - 1) * sizeof(SceneNode*));
+        delete[] insideNodes;
+    }
     insideNodes = tmp;
     insideNodes[insideNodeCount - 1] = node;
 }
@@ -286,6 +294,107 @@ Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
     exit(1);
     // umm, yeah...make the compiler happy...
     return NULL;
+}
+
+float Obstacle::intersect(const Ray&) const
+{
+    assert(false);
+    return -1.0f;
+}
+
+void Obstacle::getNormal(const float*, float*) const
+{
+    assert(false);
+    return;
+}
+
+bool Obstacle::inCylinder(const float*,float, float) const
+{
+    assert(false);
+    return false;
+}
+
+bool Obstacle::inBox(const float*, float, float, float, float) const
+{
+    assert(false);
+    return false;
+}
+
+bool Obstacle::inMovingBox(const float*, float, const float*, float,
+                           float, float, float) const
+{
+    assert(false);
+    return false;
+}
+
+bool Obstacle::getHitNormal(const float*, float, const float*, float,
+                            float, float, float, float*) const
+{
+    assert(false);
+    return false;
+}
+
+static inline int compareHeights(const Obstacle* obsA, const Obstacle* obsB)
+{
+    const Extents& eA = obsA->getExtents();
+    const Extents& eB = obsB->getExtents();
+    if (eA.maxs[2] > eB.maxs[2])
+        return -1;
+    else
+        return +1;
+}
+
+static inline int compareFaceHeights(const Obstacle* obsA, const Obstacle* obsB)
+{
+    const Extents& eA = obsA->getExtents();
+    const Extents& eB = obsB->getExtents();
+
+    // Primary sort on max Z; secondary sort on min Z for sub-millimeter ties
+    if (std::abs(eA.maxs[2] - eB.maxs[2]) < 1.0e-3f)
+    {
+        if (eA.mins[2] > eB.mins[2])
+            return -1;
+        else
+            return +1;
+    }
+    else if (eA.maxs[2] > eB.maxs[2])
+        return -1;
+    else
+        return +1;
+}
+
+int Obstacle::compareObstacles(const void* a, const void* b)
+{
+    // - normal object come first (from lowest to highest)
+    // - then come the mesh face (highest to lowest)
+    // - and finally, the mesh objects (checkpoints really)
+    const Obstacle* obsA = *((const Obstacle* const *)a);
+    const Obstacle* obsB = *((const Obstacle* const *)b);
+
+    const auto priorityA = obsA->getSortPriority();
+    const auto priorityB = obsB->getSortPriority();
+
+    // Group by category: Normal (0) -> MeshFace (1) -> MeshObstacle (2)
+    const int delta = static_cast<int>(priorityA) - static_cast<int>(priorityB);
+    if (delta != 0)
+        return delta;
+
+    // Same category height ordering:
+    // MeshFace (1) and MeshObstacle (2) -> Normal height ordering
+    // Normal obstacles (0)              -> Reversed height ordering
+    switch (priorityA)
+    {
+    case Obstacle::SortPriority::Normal:
+        return compareHeights(obsB, obsA); // Reversed for normal obstacles
+
+    case Obstacle::SortPriority::MeshFace:
+        return compareFaceHeights(obsA, obsB);
+
+    case Obstacle::SortPriority::MeshObstacle:
+        return compareHeights(obsA, obsB);
+    }
+
+    return 0;
 }
 
 

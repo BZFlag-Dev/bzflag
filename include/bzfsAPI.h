@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -72,7 +72,7 @@ class bz_Plugin;
   BZF_PLUGIN_CALL int bz_GetMinVersion ( void ) { return BZ_API_VERSION; }
 
 /** This is so we can use gcc's "format string vs arguments"-check
- * for various printf-like functions, and still maintain compatability.
+ * for various printf-like functions, and still maintain compatibility.
  * Not tested on other platforms yet, but should work. */
 #ifndef __attribute__
 /* This feature is available in gcc versions 2.5 and later.  */
@@ -344,7 +344,7 @@ typedef enum
     bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
-// permision #defines
+// permission #defines
 #define bz_perm_actionMessage       "actionMessage"
 #define bz_perm_adminMessageReceive "adminMessageReceive"
 #define bz_perm_adminMessageSend    "adminMessageSend"
@@ -2057,7 +2057,7 @@ bz_MaterialInfo* bz_anewMaterial ( void );
 void bz_deleteMaterial ( bz_MaterialInfo *material );
 
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options );
-BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options );
+BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool flipped, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, bz_eTeamType team, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );

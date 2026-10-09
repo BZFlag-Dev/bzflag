@@ -8,7 +8,6 @@ EXTRA_DIST =				\
 	bzfquery.php			\
 	bzfquery.pl			\
 	bzfquery.py			\
-	bzfquery_example.php		\
 	bzfs				\
 	bzfs.conf			\
 	bzfsd				\
@@ -24,7 +23,6 @@ EXTRA_DIST =				\
 	fonts/LICENSE.DejaVu		\
 	fonts/README			\
 	groups.conf			\
-	libtool.m4			\
 	man2html.c			\
 	maps/flagbuffet.bzw		\
 	maps/fountains.bzw		\

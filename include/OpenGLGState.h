@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -52,7 +52,7 @@ public:
     static void     setStippleIndex(int index);
     static int      getStippleIndex(float alpha);
     static int      getOpaqueStippleIndex();
-    static int      getMaxSamples();
+    static unsigned int getMaxSamples();
 
     static void     init();
     static bool     haveGLContext();
@@ -131,7 +131,7 @@ private:
 private:
     OpenGLGStateRep*    rep;
     static GLuint   stipples;
-    static int maxSamples;
+    static unsigned int maxSamples;
 public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;

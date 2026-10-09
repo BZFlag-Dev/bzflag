@@ -285,7 +285,7 @@ __END__
 
 =head1 NAME
 
-BZFlag::Info - Extracts infomation about BZFlag servers and players
+BZFlag::Info - Extracts information about BZFlag servers and players
 
 =head1 SYNOPSIS
 

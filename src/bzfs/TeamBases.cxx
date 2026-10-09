@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,10 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "TeamBases.h"
+
+// System headers
 #include <string.h>
 
+// Common headers
 #include "Protocol.h"
-#include "TeamBases.h"
 #include "Pack.h"
 #include "BZDBCache.h"
 
@@ -102,10 +106,10 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
         float rotation = it->rotation;
         float nx = x - pos[0];
         float ny = y - pos[1];
-        if (nx == 0.0f)
-            nx = 1.0f;
-        float rx = (float)(cosf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
-        float ry = (float)(sinf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
+        float an = atan2f(ny, nx) - rotation;
+        float di = hypotf(nx, ny);
+        float rx = cosf(an) * di;
+        float ry = sinf(an) * di;
 
 
         if (fabsf(rx) < _size[0] &&

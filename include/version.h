@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,9 +13,8 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif // HAVE_CONFIG_H
+// 1st
+#include "common.h"
 
 #ifndef BZ_CONFIG_DIR_VERSION
 #define BZ_CONFIG_DIR_VERSION   "2.5"

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -122,6 +122,11 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
     // do nothing
 }
 
+const glm::vec3 LaserSceneNode::LaserRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 void LaserSceneNode::LaserRenderNode::render()
 {
     const bool blackFog = RENDERER.isFogActive();
@@ -135,12 +140,6 @@ void LaserSceneNode::LaserRenderNode::render()
 
     if (blackFog)
         glFogfv(GL_FOG_COLOR, glm::value_ptr(RENDERER.getFogColor()));
-}
-
-
-const glm::vec3 LaserSceneNode::LaserRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()

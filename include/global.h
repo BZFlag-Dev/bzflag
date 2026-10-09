@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,6 +34,11 @@ const int       TokenLen = 22;      // opaque string (now int(10)) and terminati
 const int       VersionLen = 60;    // including terminating NUL
 const int       LocaleLen = 17;     // including terminating NUL
 const int       MessageLen = 128;   // including terminating NUL
+
+// world->maxPlayers do not work as bzfs uses more player slot than
+// real players. Any tcp connection is assigned a slot.
+// So I put now 216. We should fix it though.
+const int       maxRemotePlayers = 216;
 
 // types of things we can be
 enum PlayerType

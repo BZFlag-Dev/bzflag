@@ -1,22 +1,44 @@
 BZFlag README for macOS
 =======================
 
-BZFlag is supported on macOS version 10.7 and later. Official builds may be
-downloaded from the project web site at https://www.bzflag.org/downloads.
-Alternatively, you can set up your build environment and project dependencies,
-and then build BZFlag from source.
+BZFlag is supported on macOS 10.13 (High Sierra) and later, and official builds
+are available for both Intel (x86_64) and Apple Silicon (arm64) processors.
+BZFlag may be installed by downloading an official build from the BZFlag web
+site (https://www.bzflag.org/downloads), expanding the archive (if necessary),
+and moving the game to the Applications folder.
 
-Using the BZFlag Application on macOS
--------------------------------------
-To run the BZFlag client, double-click the BZFlag application in the Finder.
-To access the bzadmin text client or the bzflag server bzfs from the BZFlag
-application, right click on the application, click "Show Package Contents,"
-and navigate to Contents/MacOS. Server plugins are located at
-Contents/PlugIns. Note that plugin names are different from Windows and Linux
-("<name>.dylib" instead of "<name>.dll or "<name>.so"). However, bzfs will
-still load the plugins when you specify the full plugin path.
+BZFlag is also available as a Homebrew cask using the following command:
 
-Building BZFlag from Source
----------------------------
+  brew install --cask bzflag
+
+The BZFlag macOS application package also contains the BZFlag server (bzfs),
+the text-based client (bzadmin), server plugins, and various other tools. You
+may access these additional components using a terminal application or by using
+the contextual menu in the Finder (as described above) to explore the
+application package contents.
+
+By default, the BZFlag configuration directory on macOS is located at the
+following path (note that the ~/Library directory is hidden by default, but you
+can open it using the command-shift-g key combination):
+
+  ~/Library/Application Support/BZFlag
+
+When using a MacBook which has a camera notch in the display, you may also want
+to enable the option "Scale to fit below built-in camera" in the "Get Info"
+panel for the application to avoid a portion of the game window being obscured
+while in fullscreen mode.
+
+Building from Source
+--------------------
 BZFlag builds on macOS are now done using premake5 and Xcode 7 (or later).
 Please refer to the README.premake5 file for build instructions.
+
+Issues
+------
+
+Due to diminishing support for OpenGL-based graphics on macOS, please note that
+occasional graphical issues have been known to arise. Updating to the latest
+macOS version has been known to improve graphics driver support in some cases.
+Our goal is to fix or mitigate any reported issues (graphical or otherwise) to
+the best of our ability. Please submit any bug reports or comments to the issue
+tracker on our GitHub page (https://github.com/BZFlag-Dev/bzflag/issues).

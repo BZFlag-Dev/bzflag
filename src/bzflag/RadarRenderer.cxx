@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -97,13 +97,6 @@ void RadarRenderer::setDimming(float newDimming)
 }
 
 
-void RadarRenderer::drawShot(const ShotPath::Ptr shot)
-{
-    glBegin(GL_POINTS);
-    glVertex2fv(shot->getPosition());
-    glEnd();
-}
-
 static void glColor3fv(const glm::vec3 &c)
 {
     ::glColor3f(c.r, c.g, c.b);
@@ -163,8 +156,6 @@ void RadarRenderer::setTankColor(const Player* player)
 
 void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useSquares)
 {
-    glPushMatrix();
-
     // 'ps' is pixel scale, setup in render()
     const float tankRadius = BZDBCache::tankRadius;
     float minSize = 1.5f + (ps * BZDBCache::radarTankPixels);
@@ -178,9 +169,6 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
 
     // NOTE: myTank was checked in render()
     const float myAngle = LocalPlayer::getMyTank()->getAngle();
-
-    // transform to the tanks location
-    glTranslatef(pos[0], pos[1], 0.0f);
 
     // draw the tank
     if (useSquares || !useTankDimensions)
@@ -224,8 +212,6 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     glVertex2f(0.0f, +size);
     glVertex2f(-size, 0.0f);
     glEnd();
-
-    glPopMatrix();
 }
 
 
@@ -274,13 +260,12 @@ void RadarRenderer::drawFlag(const float pos[3])
     glEnd();
 }
 
-void RadarRenderer::drawFlagOnTank(const float pos[3])
+void RadarRenderer::drawFlagOnTank()
 {
     glPushMatrix();
 
     // align it to the screen axes
     const float angle = LocalPlayer::getMyTank()->getAngle();
-    glTranslatef(pos[0], pos[1], 0.0f);
     glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
 
     float tankRadius = BZDBCache::tankRadius;
@@ -389,14 +374,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         return;
     }
 
+    glPushAttrib(GL_SCISSOR_BIT);
+
     // render the frame
     renderFrame(renderer);
 
-    if (blank)
+    if (blank || !world)
+    {
+        glPopAttrib();
         return;
-
-    if (!world)
-        return;
+    }
 
     smooth = BZDBCache::smooth;
     const bool fastRadar = (BZDBCache::radarStyle == 1) ||
@@ -634,16 +621,23 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
             const float* position = player->getPosition();
 
+            glPushMatrix();
+
+            // transform to the tanks location
+            glTranslatef(position[0], position[1], 0.0f);
+
             if (player->getFlag() != Flags::Null)
             {
                 glColor3fv(player->getFlag()->getRadarColor());
-                drawFlagOnTank(position);
+                drawFlagOnTank();
             }
 
             if (!observer)
                 drawTank(position, player, true);
             else
                 drawTank(position, player, false);
+
+            glPopMatrix();
         }
 
         bool coloredShot = BZDB.isTrue("coloredradarshots");
@@ -744,17 +738,20 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         {
             // revert to the centered transformation
             glRotatef(90.0f - myAngle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
-            glTranslatef(-myPos[0], -myPos[1], 0.0f);
+
+            glPushMatrix();
 
             // my flag
             if (myTank->getFlag() != Flags::Null)
             {
                 glColor3fv(myTank->getFlag()->getRadarColor());
-                drawFlagOnTank(myPos);
+                drawFlagOnTank();
             }
 
             // my tank
             drawTank(myPos, myTank, false);
+
+            glPopMatrix();
 
             // re-setup the blending function
             // (was changed by drawing jump jets)
@@ -778,6 +775,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     triangleCount = RenderNode::getTriangleCount();
+
+    glPopAttrib();
 }
 
 
@@ -1198,7 +1197,6 @@ void RadarRenderer::renderBasesAndTeles()
     // is one system that doesn't do correct filtering.
     const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
     int count = teleporters.size();
-    glColor3f(1.0f, 1.0f, 0.25f);
     glBegin(GL_LINES);
     for (i = 0; i < count; i++)
     {

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,6 +18,11 @@
 #define __WIN32_H__
 
 #define _WINSOCKAPI_
+
+// Work around bug in recent Visual C++ 2017 that triggers an unknown attribute error when including windows.h
+#if (_MSC_VER >= 1915)
+#define no_init_all deprecated
+#endif
 
 #include <windows.h>
 #include <stdio.h>

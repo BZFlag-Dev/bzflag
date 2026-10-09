@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,7 +13,8 @@
 #ifndef __CUSTOM_GROUP_H__
 #define __CUSTOM_GROUP_H__
 
-#include "common.h"
+// Inherits from
+#include "WorldFileObstacle.h"
 
 /* system interface headers */
 #include <string>
@@ -22,17 +23,16 @@
 
 /* local interface headers */
 #include "WorldInfo.h"
-#include "WorldFileObstacle.h"
 
 class GroupInstance;
 
-class CustomGroup : public WorldFileObstacle
+class CustomGroup final : public WorldFileObstacle
 {
 public:
     CustomGroup(const std::string& groupdef);
     ~CustomGroup();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    bool read(const char *cmd, std::istream&) override;
+    void writeToGroupDef(GroupDefinition*) override;
 
 protected:
     mutable GroupInstance* group;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,10 +36,10 @@ public:
     SegmentedShotStrategy(const FiringInfo&, bool useSuperTexture, bool faint = false);
     ~SegmentedShotStrategy();
 
-    void        update(float dt);
-    float       checkHit(const BaseLocalPlayer*, float[3]) const;
-    void        addShot(SceneDatabase*, bool colorblind);
-    void        radarRender() const;
+    void        update(float dt) override;
+    float       checkHit(const BaseLocalPlayer*, float[3]) const override final;
+    void        addShot(SceneDatabase*, bool colorblind) override;
+    void        radarRender() const override;
     TeamColor   team;
 
 protected:
@@ -84,15 +84,15 @@ public:
     ~RapidFireStrategy();
 };
 
-class ThiefStrategy : public SegmentedShotStrategy
+class ThiefStrategy final : public SegmentedShotStrategy
 {
 public:
     ThiefStrategy(const FiringInfo&);
     ~ThiefStrategy();
-    void        update(float dt);
-    bool        isStoppedByHit() const;
-    void        addShot(SceneDatabase*, bool colorblind);
-    void        radarRender() const;
+    void        update(float dt) override;
+    bool        isStoppedByHit() const override;
+    void        addShot(SceneDatabase*, bool colorblind) override;
+    void        radarRender() const override;
 
 private:
     float       cumTime;
@@ -107,16 +107,16 @@ public:
     ~MachineGunStrategy();
 };
 
-class LaserStrategy : public SegmentedShotStrategy
+class LaserStrategy final : public SegmentedShotStrategy
 {
 public:
     LaserStrategy(const FiringInfo&);
     ~LaserStrategy();
 
-    void        update(float dt);
-    bool        isStoppedByHit() const;
-    void        addShot(SceneDatabase*, bool colorblind);
-    void        radarRender() const;
+    void        update(float dt) override;
+    bool        isStoppedByHit() const override;
+    void        addShot(SceneDatabase*, bool colorblind) override;
+    void        radarRender() const override;
 
 private:
     float       cumTime;

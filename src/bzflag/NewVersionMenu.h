@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,28 +25,28 @@
 
 /** this class provides options for setting the gui
  */
-class NewVersionMenu : public HUDDialog, cURLManager
+class NewVersionMenu final : public HUDDialog, cURLManager
 {
 public:
     NewVersionMenu(std::string announce, std::string url, std::string date);
     ~NewVersionMenu();
 
-    HUDuiDefaultKey* getDefaultKey()
+    HUDuiDefaultKey* getDefaultKey() override
     {
         return MenuDefaultKey::getInstance();
     }
-    void execute();
-    void resize(int width, int height);
+    void execute() override;
+    void resize(int width, int height) override;
 
     // cURL download
-    void finalization(char *data, unsigned int length, bool good);
+    void finalization(char *data, unsigned int length, bool good) override;
 
 private:
     // no default constructor
     NewVersionMenu();
 
     // cURL status
-    void collectData(char* ptr, int len);
+    void collectData(char* ptr, int len) override;
     int byteTransferred;
 
     // menu items

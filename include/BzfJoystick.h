@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,7 +29,7 @@ public:
 
     virtual void    initJoystick(const char* joystickName);
     virtual bool    joystick() const;
-    virtual void    getJoy(int& x, int& y);
+    virtual void    getJoy(float& x, float& y);
     virtual int  getNumHats();
     virtual void    getJoyHat(int hat, float &hatX, float &hatY);
     virtual unsigned long getJoyButtons();

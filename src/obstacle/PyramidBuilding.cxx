@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -90,7 +90,7 @@ void            PyramidBuilding::getNormal(const float* p,
                   s * getWidth(), s * getBreadth(), n);
 
     // make sure we are not way above or way below it
-    // above is good so we can drive on it when it's fliped
+    // above is good so we can drive on it when it's flipped
     float top =  getPosition()[2] + getHeight();
     float bottom = getPosition()[2];
 

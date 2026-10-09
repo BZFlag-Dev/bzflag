@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,8 +43,8 @@ class OpenGLMaterial
 {
 public:
     OpenGLMaterial();
-    OpenGLMaterial(const GLfloat* specularRGB,
-                   const GLfloat* emissiveRGB,
+    OpenGLMaterial(const GLfloat specularRGB[3],
+                   const GLfloat emissiveRGB[3],
                    GLfloat shininess = 0.0f);
     OpenGLMaterial(const glm::vec3 &specularRGB,
                    const glm::vec3 &emissiveRGB,

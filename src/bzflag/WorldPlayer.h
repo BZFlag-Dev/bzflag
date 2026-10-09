@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,12 +13,16 @@
 #ifndef BZF_WORLD_PLAYER_H
 #define BZF_WORLD_PLAYER_H
 
-#include "common.h"
+// Inherits from
 #include "Player.h"
-#include "ShotPath.h"
+
+// System headers
 #include <vector>
 
-class WorldPlayer : public Player
+// Local headers
+#include "ShotPath.h"
+
+class WorldPlayer final : public Player
 {
 public:
     WorldPlayer();
@@ -28,7 +32,7 @@ public:
     virtual void        addShots(SceneDatabase* scene, bool colorblind) const;
 
 private:
-    bool                doEndShot(int index, bool isHit, float* pos);
+    bool                doEndShot(int index, bool isHit, float* pos) override;
 
 };
 #endif // BZF_WORLD_PLAYER_H

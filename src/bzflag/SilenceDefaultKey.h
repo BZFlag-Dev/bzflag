@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,12 +17,12 @@
 #include "HUDuiDefaultKey.h"
 
 
-class SilenceDefaultKey : public HUDuiDefaultKey
+class SilenceDefaultKey final : public HUDuiDefaultKey
 {
 public:
     SilenceDefaultKey();
-    bool      keyPress(const BzfKeyEvent&);
-    bool      keyRelease(const BzfKeyEvent&);
+    bool      keyPress(const BzfKeyEvent&) override;
+    bool      keyRelease(const BzfKeyEvent&) override;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -253,7 +253,7 @@ void GuidedMissileStrategy::update(float dt)
         lastPuff = currentTime;
         addShotPuff(nextPos,azimuth,elevation);
 
-        // pick a new time for the next puff so it's not so orderd.
+        // pick a new time for the next puff so it's not so ordered.
         puffTime = (float)bzfrand()*rootPuff;
     }
 

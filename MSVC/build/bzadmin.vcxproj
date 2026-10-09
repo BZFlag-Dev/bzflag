@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CA597E05-FD07-4AE3-B963-81C858F26D56}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -91,7 +91,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;BUILDING_BZADMIN;HAVE_CURSES_H;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -122,13 +122,13 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -142,7 +142,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;BUILDING_BZADMIN;HAVE_CURSES_H;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -173,13 +173,13 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -191,7 +191,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
     </Midl>
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN;HAVE_CURSES_H;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -222,12 +222,12 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -241,7 +241,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN;HAVE_CURSES_H;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -272,12 +272,12 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,29 +27,29 @@
 // system interface headers
 #include <map>
 
-class SDLDisplay : public BzfDisplay
+class SDLDisplay final : public BzfDisplay
 {
 public:
     SDLDisplay();
     ~SDLDisplay();
-    virtual bool isValid() const
+    bool isValid() const override
     {
         return true;
     };
-    bool isEventPending() const;
-    bool getEvent(BzfEvent&) const;
-    bool peekEvent(BzfEvent&) const;
+    bool isEventPending() const override;
+    bool getEvent(BzfEvent&) const override;
+    bool peekEvent(BzfEvent&) const override;
     bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char asciiText = '\0') const;
     void getWindowSize(int& width, int& height);
-    bool hasGetKeyMode()
+    bool hasGetKeyMode() override
     {
         return true;
     };
-    void getModState(bool &shift, bool &control, bool &alt);
+    void getModState(bool &shift, bool &control, bool &alt) override;
 private:
     const Uint32 mouseWheelStopEvent;
     bool setupEvent(BzfEvent&, const SDL_Event&) const;
-    bool doSetResolution(int)
+    bool doSetResolution(int) override
     {
         return true;
     };

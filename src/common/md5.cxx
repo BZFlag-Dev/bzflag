@@ -150,7 +150,7 @@ void MD5::finalize()
     finalized=true;
 }
 
-// default ctor, just initailize
+// default ctor, just initialize
 MD5::MD5()
 {
     init();

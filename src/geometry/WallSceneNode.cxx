@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -141,7 +141,7 @@ bool            WallSceneNode::cull(const ViewFrustum& frustum) const
 int         WallSceneNode::pickLevelOfDetail(
     const SceneRenderer& renderer) const
 {
-    if (!BZDBCache::tesselation)
+    if (!BZDBCache::tessellation)
         return 0;
 
     int bestLOD = 0;

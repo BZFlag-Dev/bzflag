@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,7 +12,7 @@
 
 #include "bzsignal.h"
 
-/* Unix systems implemnt signal() differently */
+/* Unix systems implement signal() differently */
 /* modified from "UNIX Network Programming" */
 SIG_PF bzSignal(int signo, SIG_PF func)
 {

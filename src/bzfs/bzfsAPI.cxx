@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -45,7 +45,7 @@ std::map<std::string, std::vector<bz_ClipFieldNotifier*> > clipFieldMap;
 
 void callClipFiledCallbacks ( const char* field );
 
-class MasterBanURLHandler : public bz_BaseURLHandler
+class MasterBanURLHandler final : public bz_BaseURLHandler
 {
 public:
     bool busy;
@@ -73,7 +73,7 @@ public:
         doNext();
     }
 
-    virtual void URLDone ( const char*, const void * data, unsigned int size, bool complete )
+    void URLDone ( const char*, const void * data, unsigned int size, bool complete ) override
     {
         if (!busy)
             return;
@@ -94,12 +94,12 @@ public:
         }
     }
 
-    virtual void URLTimeout ( const char* UNUSED(URL), int UNUSED(errorCode) )
+    void URLTimeout ( const char* UNUSED(URL), int UNUSED(errorCode) ) override
     {
         doNext();
     }
 
-    virtual void URLError ( const char* UNUSED(URL), int UNUSED(errorCode), const char * UNUSED(errorString) )
+    void URLError ( const char* UNUSED(URL), int UNUSED(errorCode), const char * UNUSED(errorString) ) override
     {
         doNext();
     }
@@ -2493,7 +2493,7 @@ BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int it
         break;
     }
 
-    if (end.getSeconds() > 30000000.0) // it's basicly forever
+    if (end.getSeconds() > 30000000.0) // it's basically forever
         return -1.0;
 
     return end.getSeconds() - TimeKeeper::getCurrent().getSeconds();
@@ -2666,8 +2666,8 @@ class V1SlashCommandWrapper : public bz_CustomSlashCommandHandlerV2
 public:
     bz_CustomSlashCommandHandler *legacyHandler = nullptr;
 
-    virtual bool SlashCommand(int playerID, int UNUSED(sourceChannel), bz_ApiString command, bz_ApiString message,
-                              bz_APIStringList *params)
+    bool SlashCommand(int playerID, int UNUSED(sourceChannel), bz_ApiString command, bz_ApiString message,
+                      bz_APIStringList *params) override final
     {
         if (legacyHandler == nullptr)
             return false;
@@ -2832,7 +2832,7 @@ BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force 
             return false;
         }
     }
-    else //invald player
+    else //invalid player
         return false;
 
     if (gkPlayer && fi)
@@ -3058,12 +3058,12 @@ BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjec
     return true;
 }
 
-BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options )
+BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool flipped, bz_WorldObjectOptions options )
 {
     if (!world || world->isFinisihed() || !pos || !scale)
         return false;
 
-    world->addPyramid(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],options.driveThru,options.shootThru,fliped);
+    world->addPyramid(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],options.driveThru,options.shootThru,flipped);
     return true;
 }
 
@@ -3167,7 +3167,7 @@ BZF_API bool bz_CustomZoneObject::pointInZone(float pos[3])
             py = ry;
         }
 
-        // As the world is now simmetric remove the sign
+        // As the world is now symmetric remove the sign
         px = std::abs(px);
         py = std::abs(py);
 
@@ -3269,7 +3269,7 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 _size[1] = (float)atof(nubs->get(2).c_str());
                 _size[2] = (float)atof(nubs->get(3).c_str());
 
-                // Half Width and Half Heigth
+                // Half Width and Half Height
                 hw  = _size[0];
                 hh  = _size[1];
             }
@@ -4128,7 +4128,7 @@ BZF_API bz_ApiString bz_filterPath ( const char* path )
 
     strcpy(temp,path);
 
-    // replace anything but alphanumeric charcters or dots in filename by '_'
+    // replace anything but alphanumeric characters or dots in filename by '_'
     // should be safe on every supported platform
 
     char * buf = temp;

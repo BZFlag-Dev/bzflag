@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -349,9 +349,10 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
     // copy the incoming list
     const int listBytes = _listSize * sizeof(SceneNode*);
     list = (SceneNode**)malloc(listBytes);
-    memcpy(list, _list, listBytes);
+    if (listBytes)
+        memcpy(list, _list, listBytes);
 
-    // copy the extents, and make a slighty puffed up version
+    // copy the extents, and make a slightly puffed up version
     extents = exts;
     Extents testExts;
     testExts = exts;

@@ -73,15 +73,15 @@
 #
 ######################################################################
 
-# set to minimum acceptible version of autoconf
+# set to minimum acceptable version of autoconf
 if [ "x$AUTOCONF_VERSION" = "x" ] ; then
     AUTOCONF_VERSION=2.68
 fi
-# set to minimum acceptible version of automake
+# set to minimum acceptable version of automake
 if [ "x$AUTOMAKE_VERSION" = "x" ] ; then
     AUTOMAKE_VERSION=1.6.0
 fi
-# set to minimum acceptible version of libtool
+# set to minimum acceptable version of libtool
 if [ "x$LIBTOOL_VERSION" = "x" ] ; then
     LIBTOOL_VERSION=1.4.2
 fi
@@ -254,7 +254,7 @@ PATH_TO_AUTOGEN="`dirname $0`"
 NAME_OF_AUTOGEN="`basename $0`"
 AUTOGEN_SH="$PATH_TO_AUTOGEN/$NAME_OF_AUTOGEN"
 
-LIBTOOL_M4="${PATH_TO_AUTOGEN}/misc/libtool.m4"
+LIBTOOL_M4="${PATH_TO_AUTOGEN}/m4/libtool.m4"
 
 if [ "x$HELP" = "x" ] ; then
     HELP=no
@@ -830,7 +830,7 @@ recursive_protect ( ) {
 
 
 #############################
-# RESTORE_CLOBBERED FUNCION #
+# RESTORE_CLOBBERED FUNCTION #
 #############################
 restore_clobbered ( ) {
 
@@ -988,7 +988,7 @@ initialize ( ) {
     if test ! -d "$_aux_dir" ; then
 	_aux_dir=.
     else
-	$VERBOSE_ECHO "Detected auxillary directory: $_aux_dir"
+	$VERBOSE_ECHO "Detected auxiliary directory: $_aux_dir"
     fi
 
     ################################
@@ -1110,7 +1110,7 @@ if [ "x$HAVE_AUTORECONF" = "xyes" ] ; then
 	$ECHO "Warning: $AUTORECONF failed"
 
 	if test -f ltmain.sh ; then
-	    $ECHO "libtoolize being run by autoreconf is not creating ltmain.sh in the auxillary directory like it should"
+	    $ECHO "libtoolize being run by autoreconf is not creating ltmain.sh in the auxiliary directory like it should"
 	fi
 
 	$ECHO "Attempting to run the preparation steps individually"

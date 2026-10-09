@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -141,6 +141,11 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()
     // do nothing
 }
 
+const glm::vec3 EighthDPyrSceneNode::EighthDPyrRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 void            EighthDPyrSceneNode::EighthDPyrRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
@@ -160,11 +165,6 @@ void            EighthDPyrSceneNode::EighthDPyrRenderNode::render()
     glVertex3fv(corner[3]);
     glVertex3fv(corner[4]);
     glEnd();
-}
-
-const glm::vec3 EighthDPyrSceneNode::EighthDPyrRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 // Local Variables: ***

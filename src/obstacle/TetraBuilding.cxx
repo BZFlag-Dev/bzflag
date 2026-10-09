@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,7 +15,6 @@
 
 // System headers
 #include <math.h>
-#include <assert.h>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -34,12 +33,6 @@
 
 
 const char* TetraBuilding::typeName = "TetraBuilding";
-
-
-TetraBuilding::TetraBuilding()
-{
-    return;
-}
 
 
 TetraBuilding::TetraBuilding(const MeshTransform& xform,
@@ -65,14 +58,6 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
     shootThrough = shoot;
     ricochet     = rico;
 
-    finalize();
-
-    return;
-}
-
-
-TetraBuilding::~TetraBuilding()
-{
     return;
 }
 
@@ -87,12 +72,6 @@ Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
                           useNormals, useTexcoords, const_cast<const BzMaterial**>(materials),
                           driveThrough, shootThrough, ricochet);
     return copy;
-}
-
-
-void TetraBuilding::finalize()
-{
-    return;
 }
 
 
@@ -173,35 +152,18 @@ void TetraBuilding::checkVertexOrder()
     // swap vertices 1 & 2 if we are out of order
     if (dot < 0.0f)
     {
-        float tmpVertex[3];
-        memcpy (tmpVertex, vertices[1], sizeof(tmpVertex));
-        memcpy (vertices[1], vertices[2], sizeof(vertices[1]));
-        memcpy (vertices[2], tmpVertex, sizeof(vertices[2]));
+        std::swap(vertices[1], vertices[2]);
 
-        float tmpNormals[4][3];
-        memcpy (tmpNormals, normals[1], sizeof(tmpNormals));
-        memcpy (normals[1], normals[2], sizeof(normals[1]));
-        memcpy (normals[2], tmpNormals, sizeof(normals[2]));
+        std::swap(normals[1],  normals[2]);
 
-        float tmpTexcoords[3][2];
-        memcpy (tmpTexcoords, texcoords[1], sizeof(tmpTexcoords));
-        memcpy (texcoords[1], texcoords[2], sizeof(texcoords[1]));
-        memcpy (texcoords[2], tmpTexcoords, sizeof(texcoords[2]));
+        std::swap(texcoords[1], texcoords[2]);
 
-        bool tmpBool = useNormals[1];
-        useNormals[1] = useNormals[2];
-        useNormals[2] = tmpBool;
+        std::swap(useNormals[1], useNormals[2]);
 
-        tmpBool = useTexcoords[1];
-        useTexcoords[1] = useTexcoords[2];
-        useTexcoords[2] = tmpBool;
+        std::swap(useTexcoords[1], useTexcoords[2]);
 
-        const BzMaterial* tmpMat = materials[1];
-        materials[1] = materials[2];
-        materials[2] = tmpMat;
+        std::swap(materials[1], materials[2]);
     }
-
-    return;
 }
 
 
@@ -221,68 +183,6 @@ bool TetraBuilding::isValid() const
 {
     return true;
 }
-
-
-float TetraBuilding::intersect(const Ray&) const
-{
-    assert(false);
-    return -1.0f;
-}
-
-
-void TetraBuilding::get3DNormal(const float*, float*) const
-{
-    assert(false);
-    return;
-}
-
-
-void TetraBuilding::getNormal(const float*, float*) const
-{
-    assert(false);
-    return;
-}
-
-
-bool TetraBuilding::getHitNormal(const float*, float, const float*, float,
-                                 float, float, float, float*) const
-{
-    assert(false);
-    return false;
-}
-
-
-bool TetraBuilding::inCylinder(const float*,float, float) const
-{
-    assert(false);
-    return false;
-}
-
-
-bool TetraBuilding::inBox(const float*, float, float, float, float) const
-{
-    assert(false);
-    return false;
-}
-
-
-bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
-                                float, float, float) const
-{
-    assert(false);
-    return false;
-}
-
-
-bool TetraBuilding::isCrossing(const float* UNUSED(p), float UNUSED(_angle),
-                               float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
-                               float* UNUSED(_plane)) const
-{
-    assert(false);
-    return false;
-}
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -426,8 +326,6 @@ const void *TetraBuilding::unpack(const void* buf)
         buf = nboUnpackInt(buf, matindex);
         materials[v] = MATERIALMGR.getMaterial(matindex);
     }
-
-    finalize();
 
     return buf;
 }

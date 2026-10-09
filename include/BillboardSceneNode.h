@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,10 +20,10 @@
 // Inherits from
 #include "SceneNode.h"
 
-// Commen headers
+// Common headers
 #include "OpenGLLight.h"
 
-class BillboardSceneNode : public SceneNode
+class BillboardSceneNode final : public SceneNode
 {
 public:
     BillboardSceneNode(const GLfloat pos[3]);
@@ -55,19 +55,19 @@ public:
 
     void        move(const glm::vec3 &pos);
     void        setAngle(GLfloat);
-    void        addLight(SceneRenderer&);
+    void        addLight(SceneRenderer&) override;
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
 protected:
-    class BillboardRenderNode : public RenderNode
+    class BillboardRenderNode final : public RenderNode
     {
     public:
         BillboardRenderNode(const BillboardSceneNode*);
         ~BillboardRenderNode();
         void        setColor(const GLfloat* rgba);
-        void        render();
+        void        render() override;
         const glm::vec3 getPosition() const override;
         void        setFrame(float u, float v);
         void        setFrameSize(float du, float dv);

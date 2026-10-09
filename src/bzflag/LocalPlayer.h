@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -65,7 +65,7 @@ public:
     float     getFlagShakingTime() const;
     int       getFlagShakingWins() const;
     const float*  getAntidoteLocation() const;
-    virtual ShotPath::Vec getShots() const;
+    virtual ShotPath::Vec getShots() const override final;
     const Player* getTarget() const;
     int       getDeathPhysicsDriver() const;
     const std::vector<const Obstacle*>& getInsideBuildings() const;
@@ -76,9 +76,9 @@ public:
     void            setPause(bool = true);
     void            activateAutoPilot(bool = true);
     bool            fireShot();
-
     void            purgeShots();
-    void            explodeTank();
+    void            explodeTank() override;
+
     void            doJump();
     void            setJump();
     void            setJumpPressed(bool value);
@@ -91,9 +91,9 @@ public:
     const Player*   getRecipient() const;
 
     void            restart(const float* pos, float azimuth);
-    bool            checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const;
-    void            setFlag(FlagType::Ptr, int limit);
-    void            changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    bool            checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const override final;
+    void            setFlag(FlagType::Ptr, int limit) override final;
+    void            changeScore(short deltaWins, short deltaLosses, short deltaTeamKills) override final;
 
     void            addAntidote(SceneDatabase*);
 
@@ -112,8 +112,6 @@ public:
     static LocalPlayer*   getMyTank();
     static void       setMyTank(LocalPlayer*);
 
-    const Obstacle*   getHitBuilding(const float* pos, float angle,
-                                     bool phased, bool& expel) const;
     const Obstacle*   getHitBuilding(const float* oldPos, float oldAngle,
                                      const float* pos, float angle,
                                      bool phased, bool& expel);
@@ -123,9 +121,9 @@ public:
                            float* normal) const;
 
 protected:
-    bool doEndShot(int index, bool isHit, float* pos);
-    void doUpdate(float dt);
-    void doUpdateMotion(float dt);
+    bool doEndShot(int index, bool isHit, float* pos) override final;
+    void doUpdate(float dt) override;
+    void doUpdateMotion(float dt) override;
     void doMomentum(float dt, float& speed, float& angVel);
     void doFriction(float dt, const float *oldVelocity, float *newVelocity);
     void doForces(float dt, float* velocity, float& angVel);

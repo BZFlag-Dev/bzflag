@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,6 +13,9 @@
 #ifndef __HELPMENU_H__
 #define __HELPMENU_H__
 
+// Inherits from
+#include "MenuDefaultKey.h"
+
 /* common interface headers */
 #include "BzfEvent.h"
 
@@ -20,19 +23,18 @@
 #include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiControl.h"
-#include "MenuDefaultKey.h"
 
 
 class MenuDefaultKey;
 
-class HelpMenuDefaultKey : public MenuDefaultKey
+class HelpMenuDefaultKey final : public MenuDefaultKey
 {
 public:
     HelpMenuDefaultKey() {}
     ~HelpMenuDefaultKey() {}
 
-    bool keyPress(const BzfKeyEvent&);
-    bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&) override;
+    bool keyRelease(const BzfKeyEvent&) override;
 };
 
 
@@ -44,14 +46,14 @@ public:
     {
     }
 
-    HUDuiDefaultKey* getDefaultKey()
+    HUDuiDefaultKey* getDefaultKey() override final
     {
         return &defaultKey;
     }
-    void execute()
+    void execute() override final
     {
     }
-    void resize(int width, int height);
+    void resize(int width, int height) override;
 
     static HelpMenu* getHelpMenu(HUDDialog* = NULL, bool next = true);
     static void done();

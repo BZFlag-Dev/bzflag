@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,7 @@
 
 /******************************************************************************/
 
-class SphereSceneNode : public SceneNode
+class SphereSceneNode final : public SceneNode
 {
 public:
     SphereSceneNode(const GLfloat pos[3], GLfloat radius);
@@ -33,10 +33,10 @@ public:
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void setColor(const GLfloat* rgba);
     void move(const GLfloat pos[3], GLfloat radius);
-    void notifyStyleChange();
+    void notifyStyleChange() override final;
 
-    void addRenderNodes(SceneRenderer&);
-    void addShadowNodes(SceneRenderer&);
+    void addRenderNodes(SceneRenderer&) override;
+    void addShadowNodes(SceneRenderer&) override;
 
     static void init();
     static void kill();
@@ -44,14 +44,14 @@ public:
     static void freeContext(void*);
 
 protected:
-    class SphereLodRenderNode : public RenderNode
+    class SphereLodRenderNode final : public RenderNode
     {
         friend class SphereLodSceneNode;
     public:
         SphereLodRenderNode(const SphereSceneNode*);
         ~SphereLodRenderNode();
         void setLod(int lod);
-        void render();
+        void render() override;
         const glm::vec3 getPosition() const override;
 
     private:

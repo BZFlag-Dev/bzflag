@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,11 +23,13 @@
 #ifndef BZF_SHOT_UPDATE_H
 #define BZF_SHOT_UPDATE_H
 
+// 1st
+#include "common.h"
+
 // system headers
 #include <math.h>
 
 // local implementation headers
-#include "common.h"
 #include "Address.h"
 #include "Flag.h"
 

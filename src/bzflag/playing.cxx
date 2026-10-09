@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -52,7 +52,7 @@
 #include "PhysicsDriver.h"
 #include "PlatformFactory.h"
 #include "QuadWallSceneNode.h"
-#include "ServerList.h"
+#include "ServerAuth.h"
 #include "SphereSceneNode.h"
 #include "TankGeometryMgr.h"
 #include "Team.h"
@@ -524,7 +524,7 @@ void            joinGame()
         }
         if (worldDatabase)
         {
-            delete[] worldDatabase;
+            free(worldDatabase);
             worldDatabase = NULL;
         }
         HUDDialogStack::get()->setFailedMessage("Download stopped by user action");
@@ -901,6 +901,74 @@ static void doKey(const BzfKeyEvent& key, bool pressed)
         doKeyPlaying(key, pressed, haveBinding);
 }
 
+
+void     applyJSModifiers(float& jsx, float& jsy)
+{
+    // enforce range setting limits (min 0% to 20%, max 25% to 100%) so the maximum can't be less than the minimum
+    const auto jsRangeMax = std::max(std::min(float(BZDB.evalInt("jsRangeMax")) / 100.0f, 1.0f), 0.25f);
+    const auto jsRangeMin = std::max(std::min(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.2f), 0.0f);
+
+    // invert axes
+    // 0: no inversion
+    // 1: invert X
+    // 2: invert Y
+    // 3: invert both
+    jsx *= BZDB.evalInt("jsInvertAxes") % 2 == 1 ? -1.0f : 1.0f;
+    jsy *= BZDB.evalInt("jsInvertAxes") > 1 ? -1.0f : 1.0f;
+
+    // stretch corners
+    const auto jsMagnitude = std::sqrt(jsx * jsx + jsy * jsy);
+    if(BZDB.isTrue("jsStretchCorners"))
+    {
+        const auto stretchFactor = (1.0f - float(std::abs(std::abs(atan(jsy / jsx) / M_PI) - 0.25f)) * 4.0f) * jsMagnitude;
+        const auto stretchValue = std::sqrt(2.0f);
+
+        if(! isnan(stretchFactor))
+        {
+            jsx *= (1.0f - stretchFactor) + stretchValue * stretchFactor; // mix based on stretchFactor from 0.0 to 1.0
+            jsy *= (1.0f - stretchFactor) + stretchValue * stretchFactor;
+        }
+    }
+
+    // apply scaled radial dead zone and range limit
+    const auto jsRadialDeadZoneScale = (jsMagnitude - jsRangeMin) / (jsRangeMax - jsRangeMin) / jsMagnitude;
+    if(jsMagnitude < jsRangeMin || isnan(jsRadialDeadZoneScale))
+        jsx = jsy = 0.0f;
+    else if(jsMagnitude < jsRangeMax) // apply scale between edge of dead zone and range limit radius
+    {
+        jsx *= jsRadialDeadZoneScale;
+        jsy *= jsRadialDeadZoneScale;
+    }
+    else
+    {
+        jsx /= jsRangeMax;
+        jsy /= jsRangeMax;
+    }
+
+    // apply exponential ramp
+    const auto jsRampType = BZDB.get("jsRampType");
+    auto jsRampMultiplier = 1.0f;
+
+    if(jsRampType == "squared")
+        jsRampMultiplier = jsMagnitude / jsRangeMax;
+    else if(jsRampType == "cubed")
+        jsRampMultiplier = std::pow(jsMagnitude / jsRangeMax, 2.0f);
+
+    jsx *= jsRampMultiplier;
+    jsy *= jsRampMultiplier;
+
+    // proportionally scale the coordinates back to the -1, 1 range box
+    const auto jsxAbs = std::abs(jsx);
+    const auto jsyAbs = std::abs(jsy);
+    if(jsxAbs > 1 || jsyAbs > 1)
+    {
+        const auto jsRangeExcess = (jsxAbs > jsyAbs ? jsxAbs : jsyAbs);
+        jsx /= jsRangeExcess;
+        jsy /= jsRangeExcess;
+    }
+}
+
+
 static void     doMotion()
 {
     float rotation = 0.0f, speed = 1.0f;
@@ -924,12 +992,13 @@ static void     doMotion()
     // determine if joystick motion should be used instead of mouse motion
     // when the player bumps the mouse, LocalPlayer::getInputMethod return Mouse;
     // make it return Joystick when the user bumps the joystick
+    auto jsx = 0.0f, jsy = 0.0f;
     if (mainWindow->haveJoystick())
     {
         if (myTank->getInputMethod() == LocalPlayer::Joystick)
         {
             // if we're using the joystick right now, replace mouse coords with joystick coords
-            mainWindow->getJoyPosition(mx, my);
+            mainWindow->getJoyPosition(jsx, jsy);
         }
         else
         {
@@ -937,11 +1006,10 @@ static void     doMotion()
             // see if it's moved and autoswitch
             if (BZDB.isTrue("allowInputChange"))
             {
-                int jx = 0, jy = 0;
-                mainWindow->getJoyPosition(jx, jy);
+                mainWindow->getJoyPosition(jsx, jsy);
+
                 // if we aren't using the joystick, but it's moving, start using it
-                if ((jx < -noMotionSize * 2) || (jx > noMotionSize * 2)
-                        || (jy < -noMotionSize * 2) || (jy > noMotionSize * 2))
+                if(std::sqrt(jsx * jsx + jsy * jsy) > std::min(std::max(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.0f), 0.2f))
                     myTank->setInputMethod(LocalPlayer::Joystick); // joystick motion
             } // allowInputChange
         } // getInputMethod == Joystick
@@ -975,9 +1043,48 @@ static void     doMotion()
             speed *= 0.5f;
         }
     }
-    else     // both mouse and joystick
+    else if (myTank->getInputMethod() == LocalPlayer::Joystick)
     {
+        applyJSModifiers(jsx, jsy);
 
+        // calculate desired rotation
+        if (keyboardRotation && !devDriving)
+        {
+            rotation = float(keyboardRotation);
+            rotation *= BZDB.eval("displayFOV") / 60.0f;
+            if (BZDB.isTrue("slowKeyboard"))
+                rotation *= 0.5f;
+        }
+        else
+        {
+            rotation = -jsx;
+
+            if (rotation > 1.0f)
+                rotation = 1.0f;
+            if (rotation < -1.0f)
+                rotation = -1.0f;
+        }
+
+        // calculate desired speed
+        if (keyboardSpeed && !devDriving)
+        {
+            speed = float(keyboardSpeed);
+            if (speed < 0.0f)
+                speed *= 0.5f;
+            if (BZDB.isTrue("slowKeyboard"))
+                speed *= 0.5f;
+        }
+        else
+        {
+            speed = -jsy;
+            if (speed > 1.0f)
+                speed = 1.0f;
+            if (speed < -0.5f)
+                speed = -0.5f;
+        }
+    }
+    else // mouse
+    {
         // calculate desired rotation
         if (keyboardRotation && !devDriving)
         {
@@ -1574,6 +1681,8 @@ static bool removePlayer (PlayerId id)
         myTank->setRecipient(0);
     if (myTank->getNemesis() == p)
         myTank->setNemesis(0);
+    if (myTank->getTarget() == p)
+        myTank->setTarget(NULL);
 
     completer.unregisterWord(p->getCallSign());
 
@@ -1731,6 +1840,7 @@ static bool loadCachedWorld()
     {
         delete world;
         world = NULL;
+        World::setWorld(world);
     }
     if (!worldBuilder->unpack(localWorldDatabase))
     {
@@ -1781,11 +1891,9 @@ static void dumpMissingFlag(const char *buf, uint16_t len)
         buf += 2;
     }
 
-    std::vector<std::string> args;
-    args.push_back(flags);
     HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format("Flags not supported by this client: {1}",
-                       &args).c_str());
+    (TextUtils::format("Flags not supported by this client: %s",
+                       flags.c_str()).c_str());
 }
 
 std::map<int, std::pair<size_t, char*> > WorldChunks;
@@ -2926,11 +3034,13 @@ static void     handleServerMessage(bool human, uint16_t code,
         }
         else
         {
-            RemotePlayer* shooter = remotePlayers[shooterid];
+            RemotePlayer* shooter = shooterid < maxRemotePlayers
+                                    ? remotePlayers[shooterid]
+                                    : NULL;
 
             if (shooterid != ServerPlayer)
             {
-                if (shooter && remotePlayers[shooterid]->getId() == shooterid)
+                if (shooter && shooter->getId() == shooterid)
                 {
                     shooter->addShot(firingInfo);
 
@@ -3748,6 +3858,13 @@ static void     updateExplosions(float dt)
     }
 }
 
+static void dropLastExplosions()
+{
+    for (auto explosion : explosions)
+        delete explosion;
+    explosions.clear();
+}
+
 static void     addExplosions(SceneDatabase* scene)
 {
     const int count = explosions.size();
@@ -4384,7 +4501,7 @@ void setLookAtMarker(void)
         markercolor = RogueTeam;
 
     hud->AddEnhancedNamedMarker(glm::make_vec3(bestTarget->getPosition()),
-                                glm::vec4(glm::make_vec3(Team::getTankColor(markercolor)), 1.0f),
+                                glm::make_vec3(Team::getTankColor(markercolor)),
                                 label, isFriendly(bestTarget), 2.0f);
 }
 
@@ -5043,7 +5160,7 @@ static void enteringServer(const void *buf)
     std::string teamMsg;
     if (myTank->getTeam() != AutomaticTeam)
     {
-        teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
+        teamMsg = TextUtils::format("%s was unavailable, you were joined ",
                                     Team::getName(myTank->getTeam()));
         if ((TeamColor)team == ObserverTeam)
             teamMsg += "as an Observer";
@@ -5507,6 +5624,7 @@ static void joinInternetGame()
     numRobots = 0;
 #endif
 
+    delete serverLink;
     serverLink = _serverLink;
 
     // assume everything's okay for now
@@ -5670,11 +5788,6 @@ static void     renderDialog()
 {
     if (HUDDialogStack::get()->isActive())
     {
-        const int width = mainWindow->getWidth();
-        const int height = mainWindow->getHeight();
-        const int ox = mainWindow->getOriginX();
-        const int oy = mainWindow->getOriginY();
-        glScissor(ox, oy, width, height);
         glMatrixMode(GL_PROJECTION);
         mainWindow->setProjectionPlay();
         glMatrixMode(GL_MODELVIEW);
@@ -5718,7 +5831,6 @@ static void renderRoamMouse()
 
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-    glScissor(ox, oy, sx, sy);
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     mainWindow->setProjectionPlay();
@@ -6139,7 +6251,7 @@ void drawFrame(const float dt)
 
         // add dynamic nodes
         SceneDatabase* scene = sceneRenderer->getSceneDatabase();
-        if (scene && myTank)
+        if (scene && myTank && world)
         {
 
             int i;
@@ -6161,8 +6273,7 @@ void drawFrame(const float dt)
             myTank->addShots(scene, colorblind);
 
             // add server shells
-            if (world)
-                world->getWorldWeapons()->addShots(scene, false);
+            world->getWorldWeapons()->addShots(scene, false);
 
             // add antidote flag
             myTank->addAntidote(scene);
@@ -6293,6 +6404,9 @@ void drawFrame(const float dt)
         // draw frame
         if (viewType == SceneRenderer::ThreeChannel)
         {
+#if !defined(DEBUG_RENDERING)
+            glClear(GL_COLOR_BUFFER_BIT);
+#endif
             // draw center channel
             sceneRenderer->render(false);
             drawUI();
@@ -6502,10 +6616,14 @@ void drawFrame(const float dt)
         else
         {
             // bind the multisample framebuffer, if enabled
-            bool useMultisampling = OpenGLGState::getMaxSamples() > 1 && BZDB.evalInt("multisample") > 1;
+            int maxSamples = OpenGLGState::getMaxSamples();
+            bool useMultisampling = maxSamples > 1 && BZDB.evalInt("multisample") > 1;
             if(useMultisampling)
             {
-                glFramebuffer.checkState(mainWindow->getWidth(), mainWindow->getHeight(), BZDB.evalInt("multisample"));
+                int samples = BZDB.evalInt("multisample");
+                if (samples > maxSamples)
+                    samples = maxSamples;
+                glFramebuffer.checkState(mainWindow->getWidth(), mainWindow->getHeight(), samples);
                 glBindFramebuffer(GL_FRAMEBUFFER, glFramebuffer.getFramebuffer());
             }
 
@@ -6609,7 +6727,7 @@ enum MouseCtrlType
 {
     NoCtrl,
     ShiftX, // left/right
-    ShiftY, // backwards/forewards
+    ShiftY, // backwards/forwards
     ShiftZ, // up/down
     SpinX,  // tilt (phi)
     SpinY,  // -- not used --
@@ -6810,7 +6928,7 @@ static void     prepareTheHUD()
                     const float* flagPos = flag.position;
                     float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
                     hud->addMarker(heading, myTeamColor);
-                    hud->AddEnhancedMarker(glm::make_vec3(flagPos), glm::vec4(glm::make_vec3(myTeamColor), 1.0f),
+                    hud->AddEnhancedMarker(glm::make_vec3(flagPos), glm::make_vec3(myTeamColor),
                                            false, BZDBCache::flagPoleSize * 2.0f);
                 }
             }
@@ -6821,7 +6939,7 @@ static void     prepareTheHUD()
             const GLfloat* antidotePos = myTank->getAntidoteLocation();
             float heading = atan2f(antidotePos[1] - myPos[1],
                                    antidotePos[0] - myPos[0]);
-            const auto antidoteColor = glm::vec4(1.0f, 1.0f, 0.0f,1.0f);
+            const auto antidoteColor = glm::vec3(1.0f, 1.0f, 0.0f);
             hud->addMarker(heading, antidoteColor);
             hud->AddEnhancedMarker(glm::make_vec3(antidotePos), antidoteColor, false,
                                    BZDBCache::flagPoleSize * 2.0f);
@@ -6988,26 +7106,28 @@ static void     playingLoop()
             // if already connected to a game then first sign off
             if (myTank) leaveGame();
 
-            // get token if we need to (have a password but no token)
-            if ((startupInfo.token[0] == '\0')
-                    && (startupInfo.password[0] != '\0'))
+            // Erase any existing token
+            startupInfo.token[0] = '\0';
+
+            // get token if we have a password
+            if (startupInfo.password[0] != '\0')
             {
-                ServerList* serverList = new ServerList;
-                serverList->startServerPings(&startupInfo);
+                ServerAuth* serverAuth = new ServerAuth;
+                serverAuth->requestToken(&startupInfo);
                 // wait no more than 10 seconds for a token
                 for (int j = 0; j < 40; j++)
                 {
-                    serverList->checkEchos(getStartupInfo());
                     cURLManager::perform();
                     if (startupInfo.token[0] != '\0') break;
                     TimeKeeper::sleep(0.25f);
                 }
-                delete serverList;
+                delete serverAuth;
+
+                // don't let the bad token specifier slip through to the server,
+                // just erase it
+                if (strcmp(startupInfo.token, "badtoken") == 0)
+                    startupInfo.token[0] = '\0';
             }
-            // don't let the bad token specifier slip through to the server,
-            // just erase it
-            if (strcmp(startupInfo.token, "badtoken") == 0)
-                startupInfo.token[0] = '\0';
 
             ares->queryHost(startupInfo.serverName);
             waitingDNS = true;
@@ -7300,7 +7420,7 @@ static void     playingLoop()
         }
 
         // do motion
-        if (myTank)
+        if (myTank && world)
         {
             if (myTank->isAlive() && !myTank->isPaused())
             {
@@ -7474,6 +7594,8 @@ static void     playingLoop()
         doMessages();
 
     } // end main client loop
+
+    dropLastExplosions();
 }
 
 

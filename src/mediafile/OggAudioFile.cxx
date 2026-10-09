@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,9 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "OggAudioFile.h"
+
+// System headers
 #include <iostream>
 #include <fstream>
-#include "OggAudioFile.h"
 
 OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 {

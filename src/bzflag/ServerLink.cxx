@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -224,7 +224,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
 
     bool gotNetData = false;
 
-    // loop calling select untill we read some data back.
+    // loop calling select until we read some data back.
     // its only 8 bytes so it better come back in one packet.
     int loopCount = 0;
     while (!gotNetData)
@@ -387,7 +387,7 @@ ServerLink::~ServerLink()
     logDebugMessage(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
     if (packetsSent != 0)
         logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-    logDebugMessage(1, "  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+    logDebugMessage(1, "  bytes received  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
     logDebugMessage(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
     if (packetsReceived != 0)
         logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
@@ -695,7 +695,7 @@ bool ServerLink::readEnter(std::string& reason,
     {
         if (this->read(code, len, msg, -1) < 0)
         {
-            reason = "Communication error joining game [No immediate respose].";
+            reason = "Communication error joining game [No immediate response].";
             return false;
         }
 

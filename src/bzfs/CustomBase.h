@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,8 +13,6 @@
 #ifndef __CUSTOMBASE_H__
 #define __CUSTOMBASE_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObstacle.h"
 
@@ -25,12 +23,12 @@
 #include "WorldInfo.h"
 
 
-class CustomBase : public WorldFileObstacle
+class CustomBase final : public WorldFileObstacle
 {
 public:
     CustomBase();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    bool read(const char *cmd, std::istream&) override;
+    void writeToGroupDef(GroupDefinition*) override;
 
 protected:
     int color;

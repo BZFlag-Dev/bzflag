@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -73,7 +73,6 @@ public:
     void setSize ( float x, float y );
     void setGravity ( float g );
 
-    void addWall(float x, float y, float z, float r, float w, float h);
     void addLink(int from, int to);
     void addLink(const std::string& from, const std::string& to);
 

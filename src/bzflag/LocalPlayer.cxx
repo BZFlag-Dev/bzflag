@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -163,7 +163,6 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
     const float scale = (dt / slideTime);
     const float speedAdj = desiredSpeed * scale;
     const float* ov = oldVelocity;
-    const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
     float* nv = newVelocity;
     nv[0] = ov[0] + (cos_val * speedAdj);
     nv[1] = ov[1] + (sin_val * speedAdj);
@@ -174,9 +173,10 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
     if (newSpeed > maxSpeed)
     {
         float adjSpeed;
+        const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
         if (oldSpeed > maxSpeed)
         {
-            adjSpeed = oldSpeed - (dt * (maxSpeed / slideTime));
+            adjSpeed = oldSpeed - maxSpeed * scale;
             if (adjSpeed < 0.0f)
                 adjSpeed = 0.0f;
         }
@@ -203,7 +203,7 @@ float LocalPlayer::getNewAngVel(float old, float desired)
     else
     {
 
-        /* keybaord users
+        /* keyboard users
          * the larger the oldAngVel contribution, the more slowly an
          * angular velocity converges to the desired "max" velocity; the
          * contribution of the desired and old velocity should add up to
@@ -678,14 +678,17 @@ void            LocalPlayer::doUpdateMotion(float dt)
         newVelocity[1] = (newPos[1] - oldPosition[1]) * oodt;
         newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
 
-        float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
-                                + newVelocity[1] * newVelocity[1];
-        float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
-        if (scaling > 1.0f)
+        if (nominalPlanarSpeed2)
         {
-            scaling = sqrtf(scaling);
-            newVelocity[0] /= scaling;
-            newVelocity[1] /= scaling;
+            float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
+                                    + newVelocity[1] * newVelocity[1];
+            float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
+            if (scaling > 1.0f)
+            {
+                scaling = sqrtf(scaling);
+                newVelocity[0] /= scaling;
+                newVelocity[1] /= scaling;
+            }
         }
     }
 
@@ -879,23 +882,6 @@ void            LocalPlayer::doUpdateMotion(float dt)
                                (newPos[2] - oldPosition[2]) / dt);
         }
     }
-}
-
-
-const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
-        bool phased, bool& expelled) const
-{
-    const float* dims = getDimensions();
-    const Obstacle* obstacle =
-        World::getWorld()->hitBuilding(p, a, dims[0], dims[1], dims[2]);
-
-    expelled = (obstacle != NULL);
-    if (expelled && phased)
-        expelled = (obstacle->getType() == WallObstacle::getClassName() ||
-                    obstacle->getType() == Teleporter::getClassName() ||
-                    (getFlag()->flagEffect == FlagEffect::OscillationOverthruster && desiredSpeed < 0.0f &&
-                     p[2] == 0.0f));
-    return obstacle;
 }
 
 

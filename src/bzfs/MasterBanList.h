@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,14 +16,14 @@
 // common implementation headers
 #include "cURLManager.h"
 
-class MasterBanList : cURLManager
+class MasterBanList final : cURLManager
 {
 public:
     const std::string &get(const std::string &URL);
 protected:
     std::string data;
 private:
-    void finalization(char *cURLdata, unsigned int length, bool good);
+    void finalization(char *cURLdata, unsigned int length, bool good) override;
 };
 #endif //__MASTER_BAN_LIST_H__
 

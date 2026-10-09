@@ -7,7 +7,7 @@
 --  copyright:  (c) 2011 trepan
 --  license:    LGPL 2.1
 --
---  brief:      BZFlag server list console utililty
+--  brief:      BZFlag server list console utility
 --
 --------------------------------------------------------------------------------
 

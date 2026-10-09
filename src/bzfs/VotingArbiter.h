@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,7 +25,7 @@
 
 /** VotingArbiter is a means to manage and enforce a poll.  The poll will
  * maintain a voting booth when a poll is started.  As the poll is
- * updated, it verifies if a vote was succesfully passed.
+ * updated, it verifies if a vote was successfully passed.
  *
  * voteTime is how long a poll will allow players to vote
  * vetoTime is how long after a poll is successful that a veto is possible

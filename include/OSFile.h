@@ -1,6 +1,6 @@
 /* 3dScreamers */
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -132,8 +132,7 @@ protected:
     class OSDirInfo;
     OSDirInfo    *info;
 
-    bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly = false);
-    bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly = false);
+    bool addFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly = false);
 };
 
 

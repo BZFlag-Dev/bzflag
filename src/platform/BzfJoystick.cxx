@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -59,9 +59,9 @@ bool            BzfJoystick::joystick() const
     return false;
 }
 
-void            BzfJoystick::getJoy(int& x, int& y)
+void            BzfJoystick::getJoy(float& x, float& y)
 {
-    x = y = 0;
+    x = y = 0.0f;
 }
 
 void            BzfJoystick::getJoyDevices(std::vector<std::string>

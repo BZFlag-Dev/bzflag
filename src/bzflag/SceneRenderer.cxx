@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,7 +31,7 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 
-/* FIXME - local implementation dependancies */
+/* FIXME - local implementation dependencies */
 #include "BackgroundRenderer.h"
 #include "LocalPlayer.h"
 #include "daylight.h"
@@ -450,16 +450,6 @@ void SceneRenderer::setExposed()
 }
 
 
-void SceneRenderer::clearRadar(float opacity)
-{
-    int size = window->getHeight() - window->getViewHeight();
-    float op = (opacity > 1.0f) ? 1.0f : (opacity < 0.0f) ? 0.0f : opacity;
-    glScissor(window->getOriginX(), 0, size, size);
-    glClearColor(0.0f, 0.0f, 0.0f, op);
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
-
 void SceneRenderer::setSceneDatabase(SceneDatabase* db)
 {
     // update the styles
@@ -862,6 +852,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     }
 
     // set scissor
+    glPushAttrib(GL_SCISSOR_BIT);
     glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
               window->getWidth(), window->getViewHeight());
 
@@ -1019,6 +1010,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     // do depth complexity
     if (useDepthComplexityOn)
         renderDepthComplexity();
+    glPopAttrib();
 
     return;
 }

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -123,7 +123,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
+void CustomGroup::writeToGroupDef(GroupDefinition *grpdef)
 {
     // include the old style parameters
     MeshTransform xform;

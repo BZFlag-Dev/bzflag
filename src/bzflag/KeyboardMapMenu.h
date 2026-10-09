@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,7 +13,9 @@
 #ifndef __KEYBOARDMAPMENU_H__
 #define __KEYBOARDMAPMENU_H__
 
-#include "common.h"
+// Inherits from
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
 
 /* system interface headers */
 #include <map>
@@ -26,21 +28,19 @@
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
 #include "HUDuiControl.h"
-#include "HUDDialog.h"
 #include "QuickKeysMenu.h"
-#include "MenuDefaultKey.h"
 
 
 class KeyboardMapMenu;
 
-class KeyboardMapMenuDefaultKey : public MenuDefaultKey
+class KeyboardMapMenuDefaultKey final : public MenuDefaultKey
 {
 public:
     KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
     ~KeyboardMapMenuDefaultKey() {}
 
-    bool        keyPress(const BzfKeyEvent&);
-    bool        keyRelease(const BzfKeyEvent&);
+    bool        keyPress(const BzfKeyEvent&) override;
+    bool        keyRelease(const BzfKeyEvent&) override;
 
 public:
     KeyboardMapMenu*    menu;
@@ -55,13 +55,13 @@ public:
         delete quickKeysMenu;
     }
 
-    HUDuiDefaultKey*    getDefaultKey()
+    HUDuiDefaultKey*    getDefaultKey() override
     {
         return &defaultKey;
     }
-    void        execute();
-    void        dismiss();
-    void        resize(int width, int height);
+    void        execute() override;
+    void        dismiss() override;
+    void        resize(int width, int height) override;
 
     bool        isEditing() const;
     void        setKey(const BzfKeyEvent&);

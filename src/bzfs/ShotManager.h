@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -305,7 +305,7 @@ protected:
     virtual bool ForceShotRico();
 };
 
-class RicoShot : public ProjectileShot
+class RicoShot final : public ProjectileShot
 {
 public:
     RicoShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -323,7 +323,7 @@ public:
     };
 };
 
-class RapidFireShot : public ProjectileShot
+class RapidFireShot final : public ProjectileShot
 {
 public:
     RapidFireShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -342,7 +342,7 @@ public:
     };
 };
 
-class ThiefShot : public ProjectileShot
+class ThiefShot final : public ProjectileShot
 {
 public:
     ThiefShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -361,7 +361,7 @@ public:
     };
 };
 
-class MachineGunShot : public ProjectileShot
+class MachineGunShot final : public ProjectileShot
 {
 public:
     MachineGunShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -379,7 +379,7 @@ public:
     };
 };
 
-class LaserShot : public ProjectileShot
+class LaserShot final : public ProjectileShot
 {
 public:
     LaserShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -398,7 +398,7 @@ public:
     };
 };
 
-class PhantomShot : public ProjectileShot
+class PhantomShot final : public ProjectileShot
 {
 public:
     PhantomShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -418,7 +418,7 @@ public:
 };
 
 
-class GuidedMissileShot : public Shot
+class GuidedMissileShot final : public Shot
 {
 public:
     GuidedMissileShot(uint32_t guid, const FiringInfo &info) : Shot(guid, info) {}
@@ -438,7 +438,7 @@ public:
     };
 };
 
-class SuperBulletShot : public ProjectileShot
+class SuperBulletShot final : public ProjectileShot
 {
 public:
     SuperBulletShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
@@ -456,7 +456,7 @@ public:
     };
 };
 
-class ShockwaveShot : public Shot
+class ShockwaveShot final : public Shot
 {
 public:
     ShockwaveShot(uint32_t guid, const FiringInfo &info) : Shot(guid, info) {}

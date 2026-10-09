@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -45,6 +45,11 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 }
 
 
+const glm::vec3 OpaqueRenderNode::getPosition() const
+{
+    return glm::vec3(0.0f);
+}
+
 void OpaqueRenderNode::render()
 {
     const bool switchLights = (exts != NULL);
@@ -55,8 +60,11 @@ void OpaqueRenderNode::render()
     myColor4fv(*color);
 
     // do the transformation
-    glPushMatrix();
-    glMultMatrixf(xformMatrix);
+    if (xformMatrix)
+    {
+        glPushMatrix();
+        glMultMatrixf(xformMatrix);
+    }
     if (normalize)
         glEnable(GL_NORMALIZE);
 
@@ -66,7 +74,8 @@ void OpaqueRenderNode::render()
     // undo the transformation
     if (normalize)
         glDisable(GL_NORMALIZE);
-    glPopMatrix();
+    if (xformMatrix)
+        glPopMatrix();
 
     if (switchLights)
         RENDERER.reenableLights();
@@ -77,35 +86,20 @@ void OpaqueRenderNode::render()
 }
 
 
-void OpaqueRenderNode::renderRadar()
-{
-    glPushMatrix();
-    glMultMatrixf(xformMatrix);
-    drawMgr->executeSetGeometry(lod, set);
-    glPopMatrix();
-
-    addTriangleCount(triangles);
-
-    return;
-}
-
-
 void OpaqueRenderNode::renderShadow()
 {
-    glPushMatrix();
-    glMultMatrixf(xformMatrix);
+    if (xformMatrix)
+    {
+        glPushMatrix();
+        glMultMatrixf(xformMatrix);
+    }
     drawMgr->executeSetGeometry(lod, set);
-    glPopMatrix();
+    if (xformMatrix)
+        glPopMatrix();
 
     addTriangleCount(triangles);
 
     return;
-}
-
-
-const glm::vec3 OpaqueRenderNode::getPosition() const
-{
-    return glm::vec3(0.0f);
 }
 
 
@@ -125,7 +119,6 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
     pos = glm::make_vec3(_pos);
     return;
 }
-
 
 const glm::vec3 AlphaGroupRenderNode::getPosition() const
 {

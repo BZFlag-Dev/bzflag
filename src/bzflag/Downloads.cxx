@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -68,18 +68,18 @@ static void printAuthNotice();
 static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
 
 
-class CachedTexture : cURLManager
+class CachedTexture final : cURLManager
 {
 public:
     CachedTexture(const std::string &texUrl);
 
-    virtual void finalization(char *data, unsigned int length, bool good);
+    void finalization(char *data, unsigned int length, bool good) override;
 
     static void  setParams(bool check, long timeout);
     static int   activeTransfer();
 private:
 
-    virtual void collectData(char* ptr, int len);
+    void collectData(char* ptr, int len) override;
 
     std::string          url;
     static bool          checkForCache;

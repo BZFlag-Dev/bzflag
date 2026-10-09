@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@
 static const std::string    DEFAULT_MEDIA_DIR = "data";
 
 /** BzfMedia is a helper class that will read in audio and image
- * data files.  It's an abstract, platform independant base for
+ * data files.  It's an abstract, platform-independent base for
  * media I/O.
  *
  * if HALF_RATE_AUDIO defined then use half the normal audio sample

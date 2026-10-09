@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,148 +27,148 @@
 #include "bzfs.h"
 
 
-class KickCommand : ServerCommand
+class KickCommand final : ServerCommand
 {
 public:
     KickCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class KillCommand : ServerCommand
+class KillCommand final : ServerCommand
 {
 public:
     KillCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class BanListCommand : ServerCommand
+class BanListCommand final : ServerCommand
 {
 public:
     BanListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class CheckIPCommand : ServerCommand
+class CheckIPCommand final : ServerCommand
 {
 public:
     CheckIPCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class HostbanListCommand : ServerCommand
+class HostbanListCommand final : ServerCommand
 {
 public:
     HostbanListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class IdBanListCommand : ServerCommand
+class IdBanListCommand final : ServerCommand
 {
 public:
     IdBanListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class BanCommand : ServerCommand
+class BanCommand final : ServerCommand
 {
 public:
     BanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class HostbanCommand : ServerCommand
+class HostbanCommand final : ServerCommand
 {
 public:
     HostbanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class IdBanCommand : ServerCommand
+class IdBanCommand final : ServerCommand
 {
 public:
     IdBanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class UnbanCommand : ServerCommand
+class UnbanCommand final : ServerCommand
 {
 public:
     UnbanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class HostUnbanCommand : ServerCommand
+class HostUnbanCommand final : ServerCommand
 {
 public:
     HostUnbanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class IdUnbanCommand : ServerCommand
+class IdUnbanCommand final : ServerCommand
 {
 public:
     IdUnbanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class MuteCommand : ServerCommand
+class MuteCommand final : ServerCommand
 {
 public:
     MuteCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class UnmuteCommand : ServerCommand
+class UnmuteCommand final : ServerCommand
 {
 public:
     UnmuteCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class MuteListCommand : ServerCommand
+class MuteListCommand final : ServerCommand
 {
 public:
     MuteListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class MasterBanCommand : ServerCommand
+class MasterBanCommand final : ServerCommand
 {
 public:
     MasterBanCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
 static KickCommand    kickCommand;
@@ -195,9 +195,9 @@ KillCommand::KillCommand()       : ServerCommand("/kill",
 BanListCommand::BanListCommand()     : ServerCommand("/banlist",
             "[pattern] - List the IPs currently banned from this server") {}
 CheckIPCommand::CheckIPCommand()     : ServerCommand("/checkip",
-            "<ip> - check if IP is banned and print corresponding ban info") {}
+            "<ip> - check if an IP address is banned and print corresponding ban info") {}
 BanCommand::BanCommand()         : ServerCommand("/ban",
-            "<#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, ip or ip range off the server") {}
+            "<#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, IP address or IP range off the server") {}
 UnbanCommand::UnbanCommand()         : ServerCommand("/unban",
             "<ip> - remove a ip pattern from the ban list") {}
 HostbanCommand::HostbanCommand()     : ServerCommand("/hostban",

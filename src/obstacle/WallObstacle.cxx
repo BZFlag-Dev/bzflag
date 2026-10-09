@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,11 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "WallObstacle.h"
+
+// System headers
 #include <math.h>
-#include "common.h"
+
+// Common headers
 #include "global.h"
 #include "Pack.h"
-#include "WallObstacle.h"
 #include "Intersect.h"
 
 const char*     WallObstacle::typeName = "WallObstacle";

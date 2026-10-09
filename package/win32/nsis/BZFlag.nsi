@@ -455,7 +455,7 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Documentation"
   RMDir "$SMPROGRAMS\$MUI_TEMP"
 
-  ;Delete empty start menu parent diretories
+  ;Delete empty start menu parent directories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
 
   startMenuDeleteLoop:

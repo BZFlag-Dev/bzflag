@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,7 +13,13 @@
 #ifndef _ANSI_CODES_H_
 #define _ANSI_CODES_H_
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <string>
+
+// Common headers
 #include "TextUtils.h"
 
 // Escape character to begin ANSI codes

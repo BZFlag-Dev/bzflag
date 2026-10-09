@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-// FIXME - no tesselation is done on for shot lighting
+// FIXME - no tessellation is done on for shot lighting
 
 
 //
@@ -50,6 +50,11 @@ MeshPolySceneNode::Geometry::~Geometry()
 {
     // do nothing
     return;
+}
+
+const glm::vec3  MeshPolySceneNode::Geometry::getPosition() const
+{
+    return sceneNode->getCenter();
 }
 
 inline void MeshPolySceneNode::Geometry::drawV() const
@@ -135,12 +140,6 @@ void MeshPolySceneNode::Geometry::renderShadow()
     drawV();
     addTriangleCount(vertices.size() - 2);
     return;
-}
-
-
-const glm::vec3 MeshPolySceneNode::Geometry::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 

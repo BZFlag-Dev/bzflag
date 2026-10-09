@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,7 +39,7 @@ public:
     const glm::vec4 &getModulateColor() const;
     const glm::vec4 &getLightedColor() const;
     const glm::vec4 &getLightedModulateColor() const;
-    GLfloat     getDistance(const glm::vec3 &) const override;
+    GLfloat     getDistance(const glm::vec3 &) const override final;
     bool  inAxisBox (const Extents& exts) const override;
 
     void        setColor(GLfloat r, GLfloat g,
@@ -67,7 +67,7 @@ public:
     void        setColor();
 
     bool        cull(const ViewFrustum&) const override;
-    void        notifyStyleChange() override;
+    void        notifyStyleChange() override final;
 
     void        copyStyle(WallSceneNode*);
 

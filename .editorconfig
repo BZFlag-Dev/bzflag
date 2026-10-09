@@ -11,3 +11,11 @@ tab_width = 4
 
 [*.md,*.markdown]
 trim_trailing_whitespace = false
+
+[*.py]
+indent_style = tab
+
+[*.php]
+insert_final_newline = true
+indent_size = 2
+

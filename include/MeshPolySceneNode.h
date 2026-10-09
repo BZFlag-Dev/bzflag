@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@
 // Inherits from
 #include "WallSceneNode.h"
 
-class MeshPolySceneNode : public WallSceneNode
+class MeshPolySceneNode final : public WallSceneNode
 {
 public:
     MeshPolySceneNode(const glm::vec4 &plane,
@@ -44,7 +44,7 @@ public:
 
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry final : public RenderNode
     {
     public:
         Geometry(MeshPolySceneNode*,

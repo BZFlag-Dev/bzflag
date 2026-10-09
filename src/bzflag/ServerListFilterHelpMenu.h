@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,26 +13,28 @@
 #ifndef __SERVERLISTFILTERHELPMENU_H__
 #define __SERVERLISTFILTERHELPMENU_H__
 
+// Inherits from
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
+
 /* common interface headers */
 #include "BzfEvent.h"
 
 /* local interface headers */
-#include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiControl.h"
-#include "MenuDefaultKey.h"
 
 
 class MenuDefaultKey;
 
-class ServerListFilterHelpMenuDefaultKey : public MenuDefaultKey
+class ServerListFilterHelpMenuDefaultKey final : public MenuDefaultKey
 {
 public:
     ServerListFilterHelpMenuDefaultKey() {}
     ~ServerListFilterHelpMenuDefaultKey() {}
 
-    bool keyPress(const BzfKeyEvent&);
-    bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&) override;
+    bool keyRelease(const BzfKeyEvent&) override;
 };
 
 
@@ -44,14 +46,14 @@ public:
     {
     }
 
-    HUDuiDefaultKey* getDefaultKey()
+    HUDuiDefaultKey* getDefaultKey() override final
     {
         return &defaultKey;
     }
-    void execute()
+    void execute() override final
     {
     }
-    void resize(int width, int height);
+    void resize(int width, int height) override final;
 
     static ServerListFilterHelpMenu* getServerListFilterHelpMenu(HUDDialog* = NULL, bool next = true);
     static void done();

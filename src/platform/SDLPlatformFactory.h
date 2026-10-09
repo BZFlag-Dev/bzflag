@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,17 +19,18 @@
 
 #include "PlatformFactory.h"
 
-class SdlPlatformFactory : public PlatformFactory
+class SdlPlatformFactory final : public PlatformFactory
 {
 public:
     SdlPlatformFactory();
     ~SdlPlatformFactory();
 
-    BzfDisplay*       createDisplay(const char* name, const char*);
-    BzfVisual*        createVisual(const BzfDisplay*);
-    BzfWindow*        createWindow(const BzfDisplay*, BzfVisual*);
-    BzfMedia*     createMedia();
-    BzfJoystick*      createJoystick();
+    BzfDisplay*       createDisplay(const char* name, const char*) override;
+    BzfVisual*        createVisual(const BzfDisplay*) override;
+    BzfWindow*        createWindow(const BzfDisplay*, BzfVisual*) override;
+    BzfMedia*     createMedia() override;
+    BzfJoystick*      createJoystick() override;
+    std::string       getClipboard() override;
 
 private:
     SdlPlatformFactory(const SdlPlatformFactory&);

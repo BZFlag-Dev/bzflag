@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -89,13 +89,13 @@ typedef std::string STRING;
     entire parameter instead of just the first word (which the
     stream operator would have done). */
 template<>
-class VariableParser<STRING> : public Parser
+class VariableParser<STRING> final : public Parser
 {
 public:
     VariableParser(std::string& variable, const std::string& usageText,
                    const std::string& helpText)
         : Parser(usageText, helpText), var(variable) {}
-    virtual int parse(char** argv)
+    int parse(char** argv) override
     {
         var = argv[0];
         return 1;
@@ -107,13 +107,13 @@ protected:
 /** This is a specialization for @c bool variables. It does not
     take a parameter, but just sets the variable to @c true. */
 template<>
-class VariableParser<bool> : public Parser
+class VariableParser<bool> final : public Parser
 {
 public:
     VariableParser(bool& variable, const std::string& usageText,
                    const std::string& helpText)
         : Parser(usageText, helpText), var(variable) {}
-    virtual int parse(char**)
+    int parse(char**) override
     {
         var = true;
         return 0;
@@ -126,14 +126,14 @@ protected:
     It splits the parameter at ',' characters and puts the tokens in the
     vector. The type @c T must have a stream operator. */
 template<class T>
-class VectorParser : public Parser
+class VectorParser final : public Parser
 {
 public:
     VectorParser(std::vector<T>& variable,
                  const std::string& usageText,
                  const std::string& helpText)
         : Parser(usageText, helpText), var(variable) {}
-    virtual int parse(char** argv)
+    int parse(char** argv) override
     {
         std::vector<std::string> tmpVector = TextUtils::tokenize(argv[0], ",");
         T t;

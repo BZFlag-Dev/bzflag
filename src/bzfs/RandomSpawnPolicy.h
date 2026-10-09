@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,8 +13,6 @@
 #ifndef __RANDOMSPAWNPOLICY_H__
 #define __RANDOMSPAWNPOLICY_H__
 
-#include "common.h"
-
 /* common interface headers */
 #include "SpawnPolicy.h"
 
@@ -22,15 +20,15 @@
 /** a RandomSpawnPolicy is a SpawnPolicy that just generates a purely
  *  random (yet hopefully still valid) position and drops you there.
  */
-class RandomSpawnPolicy : public SpawnPolicy
+class RandomSpawnPolicy final : public SpawnPolicy
 {
 
 public:
     RandomSpawnPolicy();
     virtual ~RandomSpawnPolicy();
 
-    virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
-    virtual void getAzimuth(float &azimuth);
+    void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges) override;
+    void getAzimuth(float &azimuth) override;
 };
 
 #endif  /*__RANDOMSPAWNPOLICY_H__ */

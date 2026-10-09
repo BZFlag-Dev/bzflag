@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,7 +13,8 @@
 #ifndef __SERVERLIST_H__
 #define __SERVERLIST_H__
 
-#include "common.h"
+// Inherits from
+#include "cURLManager.h"
 
 /* system interface headers */
 #include <vector>
@@ -23,14 +24,13 @@
 #include "StartupInfo.h"
 #include "ServerItem.h"
 #include "ServerListCache.h"
-#include "cURLManager.h"
 
 
 /** The ServerList class contains links to the list server as well as
- * any fetched list of servers.  The list handles cacheing of those
+ * any fetched list of servers.  The list handles caching of those
  * server entries in case of list server unavailability.
  */
-class ServerList : cURLManager
+class ServerList final : cURLManager
 {
 
 public:
@@ -44,8 +44,8 @@ public:
     const std::vector<ServerItem>& getServers();
     std::vector<ServerItem>::size_type size();
     int updateFromCache();
-    void collectData(char *ptr, int len);
-    void finalization(char *data, unsigned int length, bool good);
+    void collectData(char *ptr, int len) override;
+    void finalization(char *data, unsigned int length, bool good) override;
 
 public:
     void addToList(ServerItem, bool doCache=false);

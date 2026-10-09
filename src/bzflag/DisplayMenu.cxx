@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -101,10 +101,10 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
         option->setCallback(callback, "m");
         options = &option->getList();
         options->push_back(std::string("Off"));
-        for (int i = 2; i <= OpenGLGState::getMaxSamples(); i=i*2)
+        for (unsigned int i = 2; i <= OpenGLGState::getMaxSamples(); i=i*2)
         {
             char msaaText[11];
-            snprintf(msaaText, sizeof(msaaText), "%i", i);
+            snprintf(msaaText, sizeof(msaaText), "%u", i);
             options->push_back(std::string(msaaText) + "x MSAA");
         }
         option->update();
@@ -441,7 +441,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     case 'A':
     {
         int aniso = list->getIndex();
-        BZDB.setInt("aniso", (aniso == 0)?0:(int)pow(2, aniso));
+        BZDB.setInt("aniso", (int)pow(2, aniso));
         TextureManager& tm = TextureManager::instance();
         tm.setMaxFilter(tm.getMaxFilter());
         sceneRenderer->notifyStyleChange();
@@ -484,7 +484,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     case 'm':
     {
         int multi = list->getIndex();
-        BZDB.setInt("multisample", (multi == 0)?0:(int)pow(2, multi));
+        BZDB.setInt("multisample", (int)pow(2, multi));
         break;
     }
     case 'g':

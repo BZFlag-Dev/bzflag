@@ -1,6 +1,6 @@
 
 //
-// modeltool.h : defintions of the model classes
+// modeltool.h : definitions of the model classes
 //
 
 #ifndef _MODEL_H_

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,13 +29,13 @@
 #include "CustomMeshFace.h"
 
 
-class CustomMesh : public WorldFileObstacle
+class CustomMesh final : public WorldFileObstacle
 {
 public:
     CustomMesh();
     ~CustomMesh();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    bool read(const char *cmd, std::istream& input) override;
+    void writeToGroupDef(GroupDefinition*) override;
 
 private:
 

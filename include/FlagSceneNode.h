@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,7 +19,7 @@
 // Inherits from
 #include "SceneNode.h"
 
-class FlagSceneNode : public SceneNode
+class FlagSceneNode final : public SceneNode
 {
 public:
     FlagSceneNode(const GLfloat pos[3]);
@@ -48,7 +48,7 @@ public:
 
     bool cullShadow(const std::vector<glm::vec4> &planes) const override;
 protected:
-    class FlagRenderNode : public RenderNode
+    class FlagRenderNode final : public RenderNode
     {
     public:
         FlagRenderNode(const FlagSceneNode*);

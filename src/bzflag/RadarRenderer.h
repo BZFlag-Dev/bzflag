@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,6 @@
 #include "common.h"
 #include "bzfgl.h"
 #include "Obstacle.h"
-#include "ShotPath.h"
 
 
 class SceneRenderer;
@@ -47,6 +46,24 @@ public:
 
     void        render(SceneRenderer&, bool blank, bool observer);
 
+    int         getFrameTriangleCount() const;
+
+private:
+    // no copying
+    RadarRenderer(const RadarRenderer&);
+    RadarRenderer&  operator=(const RadarRenderer&);
+
+    void        setTankColor(const class Player* player);
+    void        drawTank(const float pos[3],
+                         const class Player* player,
+                         bool useSquares);
+    void        drawFancyTank(const class Player* player);
+    void        drawFlag(const float pos[3]);
+    void        drawFlagOnTank();
+
+    static float    colorScale(const float z, const float h);
+    static float    transScale(const float z, const float h);
+
     void        renderFrame(SceneRenderer&);
 
     void        renderObstacles(bool fastRadar, float range);
@@ -55,24 +72,6 @@ public:
     void        renderBoxPyrMeshFast(float range);
     void        renderBasesAndTeles();
 
-    int         getFrameTriangleCount() const;
-
-private:
-    // no copying
-    RadarRenderer(const RadarRenderer&);
-    RadarRenderer&  operator=(const RadarRenderer&);
-
-    void        drawShot(const ShotPath::Ptr);
-    void        setTankColor(const class Player* player);
-    void        drawTank(const float pos[3],
-                         const class Player* player,
-                         bool useSquares);
-    void        drawFancyTank(const class Player* player);
-    void        drawFlag(const float pos[3]);
-    void        drawFlagOnTank(const float pos[3]);
-
-    static float    colorScale(const float z, const float h);
-    static float    transScale(const float z, const float h);
 
 private:
     World*      world;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,7 +35,7 @@
 
 class MeshFace;
 
-class MeshFragSceneNode : public WallSceneNode
+class MeshFragSceneNode final : public WallSceneNode
 {
 
 public:
@@ -55,7 +55,7 @@ public:
     void getRenderNodes(std::vector<RenderSet>& rnodes) override;
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry final : public RenderNode
     {
     public:
         Geometry(MeshFragSceneNode &node);
@@ -64,7 +64,6 @@ protected:
         void init();
         void setStyle(int style);
         void render() override;
-        void renderRadar() override;
         void renderShadow() override;
         const glm::vec3 getPosition() const override;
 

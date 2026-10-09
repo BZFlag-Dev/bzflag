@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,11 +12,13 @@
 #ifndef __WORLDFILELOCATION_H__
 #define __WORLDFILELOCATION_H__
 
+// Inherits from
+#include "WorldFileObject.h"
+
 // system headers
 #include <iostream>
 
 // bzfs-specific headers
-#include "WorldFileObject.h"
 #include "MeshTransform.h"
 
 
@@ -24,8 +26,8 @@ class WorldFileLocation : public WorldFileObject
 {
 public:
     WorldFileLocation();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
+    bool read(const char *cmd, std::istream&) override;
+    void writeToWorld(WorldInfo*) const override;
     void *pack(void *buf) const;
 protected:
     float pos[3];

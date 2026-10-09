@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5000550B-DA03-4872-9975-1AA7EE3A40AF}</ProjectGuid>
     <RootNamespace>bzflag</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -109,7 +109,7 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_WINDOWS;WIN32;_DEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -132,7 +132,7 @@
       <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;glew32sd.lib;SDL2.lib;SDL2main.lib;zlib.lib;libpng.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -148,7 +148,7 @@
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 
 if not exist "..\..\bin_$(Configuration)_$(Platform)\licenses" mkdir "..\..\bin_$(Configuration)_$(Platform)\licenses"
 copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"</Command>
@@ -171,7 +171,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_WINDOWS;WIN32;_DEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -194,7 +194,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;glew32sd.lib;SDL2.lib;SDL2main.lib;zlib.lib;libpng.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -210,7 +210,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 
 if not exist "..\..\bin_$(Configuration)_$(Platform)\licenses" mkdir "..\..\bin_$(Configuration)_$(Platform)\licenses"
 copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"</Command>
@@ -231,7 +231,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
     </Midl>
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_WINDOWS;WIN32;NDEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -254,7 +254,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;glew32s.lib;SDL2.lib;SDL2main.lib;zlib.lib;libpng.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -266,7 +266,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 
 if not exist "..\..\bin_$(Configuration)_$(Platform)\licenses" mkdir "..\..\bin_$(Configuration)_$(Platform)\licenses"
 copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"</Command>
@@ -288,7 +288,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_WINDOWS;WIN32;NDEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -311,7 +311,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;glew32s.lib;SDL2.lib;SDL2main.lib;zlib.lib;libpng.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -323,7 +323,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
     <PostBuildEvent>
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 
 if not exist "..\..\bin_$(Configuration)_$(Platform)\licenses" mkdir "..\..\bin_$(Configuration)_$(Platform)\licenses"
 copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"</Command>
@@ -335,6 +335,8 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
+    <ClCompile Include="..\..\src\bzflag\HUDuiJSTestLabel.cxx" />
+    <ClCompile Include="..\..\src\bzflag\JoystickTestMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
@@ -940,12 +942,14 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
     <ClInclude Include="..\..\src\bzflag\HUDui.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiControl.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiDefaultKey.h" />
+    <ClInclude Include="..\..\src\bzflag\HUDuiJSTestLabel.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiLabel.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiList.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiTextureLabel.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiTypeIn.h" />
     <ClInclude Include="..\..\src\bzflag\InputMenu.h" />
     <ClInclude Include="..\..\src\bzflag\JoinMenu.h" />
+    <ClInclude Include="..\..\src\bzflag\JoystickTestMenu.h" />
     <ClInclude Include="..\..\src\bzflag\KeyboardMapMenu.h" />
     <ClInclude Include="..\..\include\ListServer.h" />
     <ClInclude Include="..\..\src\bzflag\LocalCommand.h" />

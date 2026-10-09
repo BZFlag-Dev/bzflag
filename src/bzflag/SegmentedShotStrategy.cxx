@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,6 +21,7 @@
 #include "Intersect.h"
 #include "BZDBCache.h"
 #include "WallObstacle.h"
+#include "mathRoutine.h"
 
 /* local implementation headers */
 #include "sound.h"
@@ -158,9 +159,11 @@ void  SegmentedShotStrategy::update(float dt)
         {
             ShotPathSegment &segm = segments[numSegments - 1];
             const float     *dir = segm.ray.getDirection();
-            const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
+            const float speed2
+                = dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
             float pos[3];
-            segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
+            segm.ray.getPoint(
+                float(segm.end - segm.start - bzInverseSqrt(speed2)), pos);
             /* NOTE -- comment out to not explode when shot expires */
             addShotExplosion(pos);
         }
@@ -332,11 +335,18 @@ void  SegmentedShotStrategy::radarRender() const
     if (length > 0)
     {
         const float* vel = getVelocity();
-        const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
         float dir[3];
-        dir[0] = vel[0] * d * shotTailLength * length;
-        dir[1] = vel[1] * d * shotTailLength * length;
-        dir[2] = vel[2] * d * shotTailLength * length;
+        dir[0] = vel[0];
+        dir[1] = vel[1];
+        dir[2] = vel[2];
+        const float d = bzInverseSqrt(vel[0] * vel[0] +
+                                      vel[1] * vel[1] +
+                                      vel[2] * vel[2]) *
+                        shotTailLength * length;
+        dir[0] *= d;
+        dir[1] *= d;
+        dir[2] *= d;
+
         glBegin(GL_LINES);
         glVertex2fv(orig);
         if (BZDBCache::leadingShotLine == 0)   //lagging
@@ -400,7 +410,8 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const float    *v = getVelocity();
     TimeKeeper      start = getStartTime();
     float timeLeft = getLifetime();
-    float    minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
+    float minTime  = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) *
+                     bzInverseSqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 
     // if all shots ricochet and obstacle effect is stop, then make it ricochet
     if (e == Stop && World::getWorld()->allShotsRicochet())

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// BZFlag common header
-#include "common.h"
+// Inherits from
+#include "LocalCommand.h"
 
 // system implementation headers
 #include <cmath>
@@ -27,7 +27,6 @@
 #include "KeyManager.h"
 
 // local implementation headers
-#include "LocalCommand.h"
 #include "Roster.h"
 #include "playing.h"
 #include "bzglob.h"
@@ -37,123 +36,123 @@
 
 // class definitions
 
-class CommandList : LocalCommand
+class CommandList final : LocalCommand
 {
 public:
     CommandList();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class BindCommand : LocalCommand
+class BindCommand final : LocalCommand
 {
 public:
     BindCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class SilenceCommand : LocalCommand
+class SilenceCommand final : LocalCommand
 {
 public:
     SilenceCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class UnsilenceCommand : LocalCommand
+class UnsilenceCommand final : LocalCommand
 {
 public:
     UnsilenceCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class DumpCommand : LocalCommand
+class DumpCommand final : LocalCommand
 {
 public:
     DumpCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class ClientQueryCommand : LocalCommand
+class ClientQueryCommand final : LocalCommand
 {
 public:
     ClientQueryCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class HighlightCommand : LocalCommand
+class HighlightCommand final : LocalCommand
 {
 public:
     HighlightCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class SetCommand : LocalCommand
+class SetCommand final : LocalCommand
 {
 public:
     SetCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class DiffCommand : LocalCommand
+class DiffCommand final : LocalCommand
 {
 public:
     DiffCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class LocalSetCommand : LocalCommand
+class LocalSetCommand final : LocalCommand
 {
 public:
     LocalSetCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class QuitCommand : LocalCommand
+class QuitCommand final : LocalCommand
 {
 public:
     QuitCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class RoamPosCommand : LocalCommand
+class RoamPosCommand final : LocalCommand
 {
 public:
     RoamPosCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class ReTextureCommand : LocalCommand
+class ReTextureCommand final : LocalCommand
 {
 public:
     ReTextureCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class SaveMsgsCommand : LocalCommand
+class SaveMsgsCommand final : LocalCommand
 {
 public:
     SaveMsgsCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class SaveWorldCommand : LocalCommand
+class SaveWorldCommand final : LocalCommand
 {
 public:
     SaveWorldCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class ForceRadarCommand : LocalCommand
+class ForceRadarCommand final : LocalCommand
 {
 public:
     ForceRadarCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
-class DebugLevelCommand : LocalCommand
+class DebugLevelCommand final : LocalCommand
 {
 public:
     DebugLevelCommand();
-    bool operator() (const char *commandLine);
+    bool operator() (const char *commandLine) override;
 };
 
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -330,6 +330,11 @@ BillboardSceneNode::BillboardRenderNode::~BillboardRenderNode()
     // do nothing
 }
 
+const glm::vec3 BillboardSceneNode::BillboardRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 void            BillboardSceneNode::BillboardRenderNode::
 setFrame(float _u, float _v)
 {
@@ -382,12 +387,6 @@ void            BillboardSceneNode::BillboardRenderNode::render()
     addTriangleCount(2);
 
     glDisable(GL_CLIP_PLANE0);
-}
-
-
-const glm::vec3 BillboardSceneNode::BillboardRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 // Local Variables: ***

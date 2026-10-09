@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,30 +18,30 @@
 #ifndef __HUDUITYPEIN_H__
 #define __HUDUITYPEIN_H__
 
-#include "common.h"
+// Inherits from
+#include "HUDuiControl.h"
 
 /* system interface headers */
 #include <string>
 
 /* common interface headers */
 #include "BzfEvent.h"
-#include "HUDuiControl.h"
 
 
 typedef std::string (*TypeInColorFunc)(const std::string&);
 
 
-class HUDuiTypeIn : public HUDuiControl
+class HUDuiTypeIn final : public HUDuiControl
 {
 public:
     HUDuiTypeIn();
     ~HUDuiTypeIn();
 
     void        setObfuscation(bool on);
-    int         getMaxLength() const;
+    size_t      getMaxLength() const;
     std::string     getString() const;
 
-    void        setMaxLength(int);
+    void        setMaxLength(size_t);
     void        setString(const std::string&);
     void        setEditing(bool _allowEdit);
     void        setColorFunc(TypeInColorFunc func)
@@ -50,14 +50,14 @@ public:
     }
 
 protected:
-    bool        doKeyPress(const BzfKeyEvent&);
-    bool        doKeyRelease(const BzfKeyEvent&);
-    void        doRender();
+    bool        doKeyPress(const BzfKeyEvent&) override;
+    bool        doKeyRelease(const BzfKeyEvent&) override;
+    void        doRender() override;
 
 private:
-    int         maxLength;
+    size_t          maxLength;
     std::string     string;
-    int         cursorPos;
+    size_t          cursorPos;
     bool        allowEdit;
     bool        obfuscate;
     TypeInColorFunc colorFunc;

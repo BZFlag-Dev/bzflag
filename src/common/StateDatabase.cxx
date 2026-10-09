@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -40,7 +40,7 @@ void    _debugLookups(const std::string &name)
     typedef std::map<std::string,int> EvalCntMap;
     static const float interval = 20.0f;
 
-    /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
+    /* This bit of nastiness help debug BDZB->eval accesses sorted from worst to best*/
     static EvalCntMap cnts;
     static TimeKeeper last = TimeKeeper::getCurrent();
 
@@ -454,7 +454,7 @@ int         StateDatabase::evalInt(const std::string& name)
     return (int)eval(name);
 }
 
-bool        StateDatabase::evalTriplet(const std::string& name, float data[4])
+bool StateDatabase::evalTriplet(const std::string& name, float data[3])
 {
     if (!isSet(name) || !data)
         return false;
@@ -585,11 +585,13 @@ StateDatabase::ExpressionToken::ExpressionToken()
 {
     tokenType = Number;
     tokenContents.number = 0;
+    tokenContents.oper = none;
 }
 
 StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
 {
     tokenType = _tokenType;
+    tokenContents.oper = none;
     switch (tokenType)
     {
     case Number:
@@ -598,7 +600,6 @@ StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
     case Variable:
         break;
     case Oper:
-        tokenContents.oper = none;
         break;
     }
 }

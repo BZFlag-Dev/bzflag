@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -102,14 +102,14 @@ std::string no_whitespace(const std::string &s);
  * Get a vector of strings from a string, using all of chars of thedelims
  * string as separators. If maxTokens > 0, then the last 'token' maycontain delimiters
  * as it just returns the rest of the line
- * if you specify use quotes then tokens can be grouped in quotes and delimeters
+ * if you specify use quotes then tokens can be grouped in quotes and delimiters
  * inside quotes are ignored.
  * Hence /ban "Mr Blahblah" isajerk parses to "/ban", "Mr Blahlah" and "isajerk"
- * but so does "Mr Blahblah" "isajerk", so if you want 3 tokens and a delimeter
- * is in one of the tokens, by puting quotes around it you can get the correct
+ * but so does "Mr Blahblah" "isajerk", so if you want 3 tokens and a delimiter
+ * is in one of the tokens, by putting quotes around it you can get the correct
  * parsing. When use quotes is enabled, \'s and "'s should\can be escaped with \
  * escaping is not currently done for any other character.
- * Should not have " as a delimeter if you want to use quotes
+ * Should not have " as a delimiter if you want to use quotes
  */
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0,
                                   const bool useQuotes = false);

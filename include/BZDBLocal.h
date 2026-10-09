@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -71,14 +71,14 @@ protected:
 
 /******************************************************************************/
 
-class BZDBbool : public BZDBLocal
+class BZDBbool final : public BZDBLocal
 {
 public:
     BZDBbool(const std::string& name, bool defVal,  bool saveOnExit = true);
     ~BZDBbool();
 
-    void addCallbacks();
-    void removeCallbacks();
+    void addCallbacks() override;
+    void removeCallbacks() override;
 
     inline operator bool() const
     {
@@ -99,7 +99,7 @@ private:
 
 /******************************************************************************/
 
-class BZDBint : public BZDBLocal
+class BZDBint final : public BZDBLocal
 {
 public:
     BZDBint(const std::string& name, int defVal,
@@ -107,8 +107,8 @@ public:
             bool neverZero = false, bool saveOnExit = true);
     ~BZDBint();
 
-    void addCallbacks();
-    void removeCallbacks();
+    void addCallbacks() override;
+    void removeCallbacks() override;
 
     inline operator int() const
     {
@@ -145,7 +145,7 @@ private:
 
 /******************************************************************************/
 
-class BZDBfloat : public BZDBLocal
+class BZDBfloat final : public BZDBLocal
 {
 public:
     BZDBfloat(const std::string& name, float defVal,
@@ -153,8 +153,8 @@ public:
               bool neverZero = false, bool saveOnExit = true);
     ~BZDBfloat();
 
-    void addCallbacks();
-    void removeCallbacks();
+    void addCallbacks() override;
+    void removeCallbacks() override;
 
     inline operator float() const
     {
@@ -191,7 +191,7 @@ private:
 
 /******************************************************************************/
 
-class BZDBcolor : public BZDBLocal
+class BZDBcolor final : public BZDBLocal
 {
 public:
     BZDBcolor(const std::string& name,
@@ -199,8 +199,8 @@ public:
               bool neverAlpha = false, bool saveOnExit = true);
     ~BZDBcolor();
 
-    void addCallbacks();
-    void removeCallbacks();
+    void addCallbacks() override;
+    void removeCallbacks() override;
 
     inline operator const float*() const
     {
@@ -227,15 +227,15 @@ private:
 
 /******************************************************************************/
 
-class BZDBstring : public BZDBLocal
+class BZDBstring final : public BZDBLocal
 {
 public:
     BZDBstring(const std::string& name, const std::string& defVal,
                bool neverEmpty = false, bool saveOnExit = true);
     ~BZDBstring();
 
-    void addCallbacks();
-    void removeCallbacks();
+    void addCallbacks() override;
+    void removeCallbacks() override;
 
     inline operator const std::string&() const
     {

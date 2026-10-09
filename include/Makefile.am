@@ -102,6 +102,7 @@ noinst_HEADERS =			\
 	SceneNode.h			\
 	SceneRenderer.h			\
 	SegmentedShotStrategy.h		\
+	ServerAuth.h			\
 	ServerItem.h			\
 	ServerList.h			\
 	ServerListCache.h		\
@@ -140,6 +141,7 @@ noinst_HEADERS =			\
 	common.h			\
 	cURLManager.h			\
 	global.h			\
+	mathRoutine.h			\
 	md5.h				\
 	messages.h			\
 	multicast.h			\

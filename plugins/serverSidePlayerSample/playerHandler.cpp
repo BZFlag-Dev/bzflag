@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,12 +27,11 @@ void PlayerHandler::textMessage(int dest, int source, const char *text)
         sendChatMessage(text,source);
 }
 
-void PlayerHandler::playerSpawned(int player, const float pos[3], float rot)
+void PlayerHandler::playerSpawned(int player, const float[3], float)
 {
     std::string playerName = bz_getPlayerCallsign(player);
     std::string msg = "Oh look, " + playerName + " decided to join us!";
     sendChatMessage(msg.c_str());
-    rot += pos[0];    // use these variables in a useless way to silence warning
 }
 
 void PlayerHandler::shotFired(int player, unsigned short shotID)

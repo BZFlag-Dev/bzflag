@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,30 +13,29 @@
 #ifndef __SERVERLISTFILTERMENU_H__
 #define __SERVERLISTFILTERMENU_H__
 
-// common - 1st one
-#include "common.h"
+// Inherits from
+#include "HUDDialog.h"
 
 /* system interface headers */
 #include <string>
 
 /* local interface headers */
-#include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 
-class ServerListFilterMenu : public HUDDialog
+class ServerListFilterMenu final : public HUDDialog
 {
 public:
     ServerListFilterMenu();
     ~ServerListFilterMenu();
 
-    HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey() override;
 
-    void show();
-    void dismiss();
-    void execute();
-    void resize(int width, int height);
+    void show() override;
+    void dismiss() override;
+    void execute() override;
+    void resize(int width, int height) override;
 
 private:
     HUDuiLabel* createLabel(const std::string &);

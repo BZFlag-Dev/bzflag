@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -471,10 +471,10 @@ void TankSceneNode::rebuildExplosion()
         const float vhMax = maxExplosionVel;
         const float vhAng = (float)(M_PI * 0.5 * bzfrand());
         const float vhMag = vhMax * sinf(vhAng);
+        const float vz    = vhMax * cosf(vhAng);
         const float vhAngle = (float)(2.0 * M_PI * bzfrand());
         vel[i][0] = cosf(vhAngle) * vhMag;
         vel[i][1] = sinf(vhAngle) * vhMag;
-        const float vz = vhMax * cosf(vhAng);
         vel[i][2] = vz * vertExplosionRatio; // flatten it a little
         if (bzfrand() > 0.5)
             vel[i][2] = -vel[i][2];
@@ -700,6 +700,10 @@ TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
     return;
 }
 
+const glm::vec3 TankIDLSceneNode::IDLRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
 
 void TankIDLSceneNode::IDLRenderNode::render()
 {
@@ -770,12 +774,6 @@ void TankIDLSceneNode::IDLRenderNode::render()
     glPopMatrix();
     return;
 }
-
-
-const glm::vec3 TankIDLSceneNode::IDLRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
-}
 //
 // TankSceneNode::TankRenderNode
 //
@@ -819,6 +817,10 @@ TankSceneNode::TankRenderNode::~TankRenderNode()
     return;
 }
 
+const glm::vec3 TankSceneNode::TankRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
 
 void TankSceneNode::TankRenderNode::setRadar(bool radar)
 {
@@ -852,12 +854,6 @@ void TankSceneNode::TankRenderNode::setNarrowWithDepth(bool narrow)
 {
     narrowWithDepth = narrow;
     return;
-}
-
-
-const glm::vec3 TankSceneNode::TankRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 

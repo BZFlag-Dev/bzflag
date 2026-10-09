@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -166,7 +166,7 @@ static const BzMaterial* getTintedMaterial(const float tint[4],
     newColor[2] = oldColor[2] * tint[2];
     newColor[3] = oldColor[3] * tint[3];
     tintmat.setDiffuse(newColor);
-    // ambient, specular, and emission are intentionally unmodifed
+    // ambient, specular, and emission are intentionally unmodified
 
     const BzMaterial* newmat = MATERIALMGR.addMaterial(&tintmat);
     return newmat;

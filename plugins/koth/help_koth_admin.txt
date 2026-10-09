@@ -7,7 +7,7 @@ Admin only:
 "kothtimemult <%>" - sets auto time multiplier per player.
 "kothtimemultmin <%>" - sets auto time minimum multiplier.
 "kothautotimeon" - enable the autotime function.
-"kothautotimeoff" - disable the autotime funtion.
+"kothautotimeoff" - disable the autotime function.
 "kothsoundon" - enable the plugin's sounds.
 "kothsoundoff" - disable the plugin's sounds.
 "kothtime <seconds>" - change hold time 1-7200 secs.

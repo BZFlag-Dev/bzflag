@@ -407,7 +407,7 @@ msgstr "Activar/Desactivar Bandeiras no Radar:"
 msgid "Toggle Flags On Field:"
 msgstr "Activar/Desactivar Bandeiras no Campo:"
 
-msgid "Silence/UnSilence Key:"
+msgid "Silence/Unsilence Key:"
 msgstr "Tecla de Silenciar/Não Silenciar:"
 
 msgid "Server Command Key:"

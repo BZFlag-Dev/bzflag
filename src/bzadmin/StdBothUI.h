@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -26,12 +26,12 @@ class BZAdminClient;
     requires polling of the stdin file descriptor, which isn't defined in
     standard C or C++, which means that this might not work well on all
     systems. It should work on most UNIX-like systems though. */
-class StdBothUI : public BZAdminUI
+class StdBothUI final : public BZAdminUI
 {
 public:
     StdBothUI(BZAdminClient& c);
-    virtual void outputMessage(const std::string& msg, ColorCode color);
-    virtual bool checkCommand(std::string& str);
+    void outputMessage(const std::string& msg, ColorCode color) override;
+    bool checkCommand(std::string& str) override;
 
     /** This function returns a pointer to a dynamically allocated
         StdBothUI object. */

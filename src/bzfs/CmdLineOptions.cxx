@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -196,7 +196,7 @@ const char *extraUsageString =
     "\t-lagwarn: lag warning threshold time [ms]\n"
     "\t-loadplugin: load the specified plugin with the specified commandline\n"
     "\t\tstring\n"
-    "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
+    "\t-masterBanURL: URL to attempt to get the master ban list from <URL>\n"
     "\t-maxidle: idle kick threshold [s]\n"
     "\t-mp: maximum players total or per team\n"
     "\t-mps: set player score limit on each game\n"
@@ -206,7 +206,7 @@ const char *extraUsageString =
     "\t-noradar: disallow the use of radar\n"
     "\t-noSelfKills: Players are immune to their own shots. Self Destruct is excepted.\n"
     "\t-noTeamKills: Players on the same team are immune to each other's shots. Rogue is excepted.\n"
-    "\t-offa: teamless free-for-all game stye\n"
+    "\t-offa: teamless free-for-all game style\n"
     "\t-p: use alternative port (default=5154)\n"
     "\t-packetlossdrop: drop player after this many packetloss warnings\n"
     "\t-packetlosswarn: packetloss warning threshold [%]\n"

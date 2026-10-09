@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,26 +13,29 @@
 #ifndef _TEXTURE_FONT_H_
 #define _TEXTURE_FONT_H_
 
-#include "bzfgl.h"
+// Inherits from
 #include "ImageFont.h"
+
+// Common headers
+#include "bzfgl.h"
 #include "OpenGLGState.h"
 
-class TextureFont : public ImageFont
+class TextureFont final : public ImageFont
 {
 public:
     TextureFont();
     virtual ~TextureFont();
 
-    virtual void build();
-    virtual bool isBuilt() const
+    void build() override;
+    bool isBuilt() const override
     {
         return textureID != -1;
     }
 
-    virtual void filter(bool dofilter);
-    virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
+    void filter(bool dofilter) override;
+    void drawString(float scale, GLfloat color[4], const char *str, int len) override;
 
-    virtual void free();
+    void free() override;
 
 private:
     void preLoadLists();

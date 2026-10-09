@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -216,6 +216,11 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(
 BoltSceneNode::BoltRenderNode::~BoltRenderNode()
 {
     // do nothing
+}
+
+const glm::vec3 BoltSceneNode::BoltRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
 }
 
 void            BoltSceneNode::BoltRenderNode::setAnimation(
@@ -577,7 +582,7 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float ti = theta[i];
                 const float fs = FlareSpread;
                 glBegin(GL_TRIANGLE_STRIP);
-                glVertex3f(0.0f, 0.0f, CoreFraction);
+                glVertex3f(0.0f, 0.0f, 0.0f);
                 glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
                 glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
                 glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
@@ -751,12 +756,6 @@ void            BoltSceneNode::BoltRenderNode::render()
                 v = 0;
         }
     }
-}
-
-
-const glm::vec3 BoltSceneNode::BoltRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 // Local Variables: ***

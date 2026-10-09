@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,17 +25,17 @@
 #include "ShotPath.h"
 
 
-class ShockWaveStrategy : public ShotStrategy
+class ShockWaveStrategy final : public ShotStrategy
 {
 public:
     ShockWaveStrategy(const FiringInfo& info);
     ~ShockWaveStrategy();
 
-    void        update(float dt);
-    float       checkHit(const BaseLocalPlayer*, float[3]) const;
-    bool        isStoppedByHit() const;
-    void        addShot(SceneDatabase*, bool colorblind);
-    void        radarRender() const;
+    void        update(float dt) override;
+    float       checkHit(const BaseLocalPlayer*, float[3]) const override;
+    bool        isStoppedByHit() const override;
+    void        addShot(SceneDatabase*, bool colorblind) override;
+    void        radarRender() const override;
 
 private:
     float       radius;

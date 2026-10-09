@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,7 +25,7 @@ class EighthDimSceneNode : public SceneNode
 public:
     ~EighthDimSceneNode();
 
-    bool cull(const ViewFrustum&) const override;
+    bool cull(const ViewFrustum&) const override final;
     void notifyStyleChange() override;
     void addRenderNodes(SceneRenderer&) override;
 
@@ -35,7 +35,7 @@ protected:
     void        setPolygon(int index, const glm::vec3 vertex[3]);
 
 protected:
-    class EighthDimRenderNode : public RenderNode
+    class EighthDimRenderNode final : public RenderNode
     {
     public:
         EighthDimRenderNode(

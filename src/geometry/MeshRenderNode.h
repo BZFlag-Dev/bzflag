@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,9 +35,8 @@ public:
                      GLfloat *xformMatrix, bool normalize,
                      const glm::vec4 *color, int lod, int set,
                      const Extents* exts, int triangles);
-    void render();
-    void renderRadar();
-    void renderShadow();
+    void render() override final;
+    void renderShadow() override final;
     const glm::vec3 getPosition() const override;
 private:
     void drawV() const;
@@ -55,7 +54,7 @@ private:
 };
 
 
-class AlphaGroupRenderNode : public OpaqueRenderNode
+class AlphaGroupRenderNode final : public OpaqueRenderNode
 {
 public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,

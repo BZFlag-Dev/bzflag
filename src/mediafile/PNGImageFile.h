@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,7 +20,7 @@
 
 /** This class represents a PNG image file. It implements the read() function
     from ImageFile. */
-class PNGImageFile : public ImageFile
+class PNGImageFile final : public ImageFile
 {
 public:
     PNGImageFile(std::istream* input, std::string* filename, void(*callback)(std::string, bool) = nullptr);
@@ -30,7 +30,7 @@ public:
     static std::string    getExtension();
 
     /** Read image data from a PNG file. */
-    virtual bool      read(void* buffer);
+    bool      read(void* buffer) override;
 private:
     png_structp               png;
     png_infop                 pnginfo;

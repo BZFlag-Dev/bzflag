@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -75,7 +75,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
          * map.
          *
          * TODO: this should be a circle instead of square to prevent such
-         * predictibility and tendency to select those potentially
+         * predictability and tendency to select those potentially
          * dangerous corners.
          */
 

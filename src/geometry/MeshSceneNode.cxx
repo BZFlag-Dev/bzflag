@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -45,7 +45,7 @@
 // NOTE
 //
 //   This type of SceneNode does not support
-//   tesselation or splitting of translucent
+//   tessellation or splitting of translucent
 //   nodes for improved back-to-front sorting.
 //
 
@@ -54,6 +54,7 @@ float MeshSceneNode::LodScale = 1.0f;
 float MeshSceneNode::RadarLodScale = 1.0f;
 
 MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
+    : xformPtr(nullptr)
 {
     mesh = _mesh;
 
@@ -82,7 +83,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     }
     else
     {
-        // sloppy way to recalcuate the transformed extents
+        // sloppy way to recalculate the transformed extents
         afvec3 c[8];
         c[0][0] = c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
         c[7][0] = c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
@@ -152,7 +153,6 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 
     // build the transform display list
     makeXFormList();
-    OpenGLGState::registerContextInitializer(freeContext, initContext, this);
 
     // build gstates and render nodes
     notifyStyleChange();
@@ -177,7 +177,8 @@ MeshSceneNode::~MeshSceneNode()
     }
     delete[] lods;
 
-    OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
+    delete [] lodLengths;
+    delete [] radarLengths;
 
     return;
 }
@@ -339,7 +340,7 @@ void MeshSceneNode::notifyStyleChange()
             if (!mat.needsSorting)
             {
                 setNode.node =
-                    new OpaqueRenderNode(drawMgr, xformMatrix, normalize,
+                    new OpaqueRenderNode(drawMgr, xformPtr, normalize,
                                          mat.colorPtr, lod, set, extPtr,
                                          drawSet.triangleCount);
                 mat.animRepos = false;
@@ -351,7 +352,7 @@ void MeshSceneNode::notifyStyleChange()
                 if (xformTool != NULL)
                     xformTool->modifyVertex(setPos);
                 setNode.node =
-                    new AlphaGroupRenderNode(drawMgr, xformMatrix, normalize,
+                    new AlphaGroupRenderNode(drawMgr, xformPtr, normalize,
                                              mat.colorPtr, lod, set, extPtr, setPos,
                                              drawSet.triangleCount);
                 if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
@@ -367,7 +368,7 @@ void MeshSceneNode::notifyStyleChange()
             }
 
             setNode.radarNode =
-                new OpaqueRenderNode(drawMgr, xformMatrix, normalize,
+                new OpaqueRenderNode(drawMgr, xformPtr, normalize,
                                      mat.colorPtr, lod, set, extPtr,
                                      drawSet.triangleCount);
         }
@@ -528,45 +529,16 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
 void MeshSceneNode::makeXFormList()
 {
-    GLenum error;
     const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
     if (xformTool != NULL)
     {
-        int errCount = 0;
-        // reset the error state
-        while (true)
-        {
-            error = glGetError();
-            if (error == GL_NO_ERROR)
-                break;
-            errCount++; // avoid a possible spin-lock?
-            if (errCount > 666)
-            {
-                logDebugMessage(0,"ERROR: MeshSceneNode::makeXFormList() glError: %i\n", error);
-                return; // don't make the list, something is borked
-            }
-        };
-
+        xformPtr = &xformMatrix[0][0];
         // oops, transpose
         for (int i = 0; i < 4; i++)
-        {
             for (int j = 0; j < 4; j++)
-                xformMatrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
-        }
+                xformMatrix[i][j] = xformTool->getMatrix()[(j*4)+i];
     }
     return;
-}
-
-
-void MeshSceneNode::initContext(void* data)
-{
-    ((MeshSceneNode*)data)->makeXFormList();
-    return;
-}
-
-
-void MeshSceneNode::freeContext(void*)
-{
 }
 
 

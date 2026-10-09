@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -92,16 +92,32 @@ void            FlagWarpSceneNode::addRenderNodes(
 // FlagWarpSceneNode::FlagWarpRenderNode
 //
 
+float FlagWarpSceneNode::FlagWarpRenderNode::ring[12][2];
+
 FlagWarpSceneNode::FlagWarpRenderNode::FlagWarpRenderNode(
     const FlagWarpSceneNode* _sceneNode) :
     sceneNode(_sceneNode)
 {
-    // do nothing
+    static bool init = true;
+    if (init)
+    {
+        init = false;
+        for (int i = 0; i < 12; i++)
+        {
+            ring[i][0] = cosf((float)(2.0 * M_PI * double(i) / 12.0));
+            ring[i][1] = sinf((float)(2.0 * M_PI * double(i) / 12.0));
+        }
+    }
 }
 
 FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
 {
     // do nothing
+}
+
+const glm::vec3 FlagWarpSceneNode::FlagWarpRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
 }
 
 void            FlagWarpSceneNode::FlagWarpRenderNode::render()
@@ -111,8 +127,8 @@ void            FlagWarpSceneNode::FlagWarpRenderNode::render()
     for (int i = 0; i < 12; i++)
     {
         const GLfloat r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
-        geom[i][0] = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
-        geom[i][1] = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
+        geom[i][0] = r * ring[i][0];
+        geom[i][1] = r * ring[i][1];
     }
 
     const auto &sphere = sceneNode->getCenter();
@@ -175,11 +191,6 @@ void            FlagWarpSceneNode::FlagWarpRenderNode::render()
     }
 
     glPopMatrix();
-}
-
-const glm::vec3 FlagWarpSceneNode::FlagWarpRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 // Local Variables: ***

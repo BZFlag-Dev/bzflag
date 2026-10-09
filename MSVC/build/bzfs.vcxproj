@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -90,7 +90,7 @@
     </Midl>
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;NDEBUG;INSIDE_BZ;HAVE_CONFIG_H;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -113,9 +113,9 @@
       <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ProgramDatabaseFile>.$(OutDir)bzfs.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -126,7 +126,7 @@
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -140,7 +140,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;NDEBUG;INSIDE_BZ;HAVE_CONFIG_H;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -163,9 +163,9 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ProgramDatabaseFile>.$(OutDir)bzfs.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -176,7 +176,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -189,7 +189,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;HAVE_CONFIG_H;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -214,7 +214,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -229,7 +229,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -243,7 +243,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;HAVE_CONFIG_H;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -266,7 +266,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -281,7 +281,7 @@ copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bi
       <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
 copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
-copy "..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

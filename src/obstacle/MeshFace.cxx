@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -89,16 +89,19 @@ void MeshFace::finalize()
     int i, j, k;
     for (i = 0; i < (vertexCount - 2); i++)
     {
+        // When j == i edge2 become 0 and so the cross product
         glm::vec3 verti(glm::make_vec3(vertices[i]));
-        for (j = i; j < (vertexCount - 1); j++)
+        for (j = i + 1; j < (vertexCount - 1); j++)
         {
             glm::vec3 vertj(glm::make_vec3(vertices[j]));
-            for (k = j; k < (vertexCount - 0); k++)
+            glm::vec3 edge2;
+            edge2 = verti - vertj;
+
+            for (k = j + 1; k < (vertexCount - 0); k++)
             {
                 glm::vec3 vertk(glm::make_vec3(vertices[k]));
-                glm::vec3 edge1, edge2, cross;
+                glm::vec3 edge1, cross;
                 edge1 = vertk - vertj;
-                edge2 = verti - vertj;
                 cross = glm::cross(edge1, edge2);
                 const float lenSqr = glm::dot(cross, cross);
                 if (lenSqr > maxCrossSqr)

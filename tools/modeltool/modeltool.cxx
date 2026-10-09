@@ -242,7 +242,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
 int main(int argc, char* argv[])
 {
     std::string input;
-    std::string extenstion = "OBJ";
+    std::string extension = "OBJ";
     std::string output;
 
     // make sure we have all the right stuff
@@ -258,10 +258,10 @@ int main(int argc, char* argv[])
     }
     input = argv[1];
 
-    // see if it has an extenstion
+    // see if it has an extension
     char *p = strrchr(argv[1],'.');
     if (p)
-        extenstion = p+1;
+        extension = p+1;
 
     if (!p)
         output = input + ".bzw";
@@ -385,9 +385,9 @@ int main(int argc, char* argv[])
 
     CModel  model;
 
-    if ( SimpleTextUtils::tolower(extenstion) == "obj" )
+    if ( SimpleTextUtils::tolower(extension) == "obj" )
         readOBJ(model,input);
-    else if ( SimpleTextUtils::tolower(extenstion) == "bsp" )
+    else if ( SimpleTextUtils::tolower(extension) == "bsp" )
     {
         Quake3Level level;
         level.loadFromFile(input.c_str());
@@ -404,7 +404,7 @@ int main(int argc, char* argv[])
     if (model.meshes.size() > 0)
     {
         writeBZW(model,output);
-        printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
+        printf("%s file %s converted to BZW as %s\n", extension.c_str(),input.c_str(),output.c_str());
     }
     else
         printf("no valid meshes written from %s\n", input.c_str());

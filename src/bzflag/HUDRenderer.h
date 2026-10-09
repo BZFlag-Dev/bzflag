@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -54,16 +54,16 @@ class EnhancedHUDMarker
 public:
     EnhancedHUDMarker()
         : pos(0.0f, 0.0f, 0.0f)
-        , color(0.0f, 0.0f, 0.0f, 1.0f)
+        , color(0.0f, 0.0f, 0.0f)
         , friendly(false)
     {}
-    EnhancedHUDMarker(const glm::vec3 &p, const glm::vec4 &c)
+    EnhancedHUDMarker(const glm::vec3 &p, const glm::vec3 &c)
         : pos(p)
         , color(c)
         , friendly(false)
     {}
     glm::vec3 pos;
-    glm::vec4 color;
+    glm::vec3 color;
     std::string name;
     bool friendly;
 };
@@ -106,9 +106,9 @@ public:
     void      setRestartKeyLabel(const std::string&);
     void      setTimeLeft(uint32_t timeLeftInSeconds);
 
-    void      AddEnhancedMarker(const glm::vec3 &pos, const glm::vec4 &color,
+    void      AddEnhancedMarker(const glm::vec3 &pos, const glm::vec3 &color,
                                 bool friendly = false, float zShift = 0.0f);
-    void      AddEnhancedNamedMarker(const glm::vec3 &pos, const glm::vec4 &color, std::string name,
+    void      AddEnhancedNamedMarker(const glm::vec3 &pos, const glm::vec3 &color, std::string name,
                                      bool friendly = false, float zShift = 0.0f);
     void      AddLockOnMarker(const glm::vec3 &pos, std::string name,
                               bool friendly = false, float zShift = 0.0f);
@@ -128,12 +128,7 @@ public:
     ScoreboardRenderer *getScoreboard();
 
 protected:
-    void      hudColor3f(GLfloat, GLfloat, GLfloat);
-    void      hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-    void      hudColor3fv(const glm::vec3 &);
-    void      hudColor4fv(const glm::vec4 &);
     void      hudColor3Afv(const glm::vec3 &, const float);
-    void      hudSColor3fv(const glm::vec3 &);
     void      renderAlerts(void);
     void      renderStatus(void);
     void      renderCracks();

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,32 +23,32 @@
 // Local include
 #include "SDL2Display.h"
 
-class SDLVisual : public BzfVisual
+class SDLVisual final : public BzfVisual
 {
 public:
     SDLVisual(const SDLDisplay*)
     {
         ;
     };
-    void setLevel(int)
+    void setLevel(int) override
     {
         ;
     };
-    void setDoubleBuffer(bool);
-    void setIndex(int)
+    void setDoubleBuffer(bool) override;
+    void setIndex(int) override
     {
         ;
     };
     void setRGBA(int minRed, int minGreen,
-                 int minBlue, int minAlpha);
-    void setDepth(int minDepth);
-    void setStencil(int minDepth);
-    void setAccum(int, int, int, int)
+                 int minBlue, int minAlpha) override;
+    void setDepth(int minDepth) override;
+    void setStencil(int minDepth) override;
+    void setAccum(int, int, int, int) override
     {
         ;
     };
-    void setStereo(bool);
-    bool build()
+    void setStereo(bool) override;
+    bool build() override
     {
         return true;
     };

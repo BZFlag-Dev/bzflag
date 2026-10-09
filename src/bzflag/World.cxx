@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -191,8 +191,10 @@ TeamColor       World::whoseBase(const float* pos) const
         {
             float nx = pos[0] - it->p[0];
             float ny = pos[1] - it->p[1];
-            float rx = (float) (cosf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
-            float ry = (float) (sinf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
+            float an = atan2f(ny, nx) - it->p[3];
+            float di = hypotf(nx, ny);
+            float rx = cosf(an) * di;
+            float ry = sinf(an) * di;
             if (fabsf(rx) < it->p[4] &&
                     fabsf(ry) < it->p[5])
             {
@@ -265,67 +267,6 @@ const Obstacle*     World::hitBuilding(const float* pos, float angle,
 }
 
 
-static inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB)
-{
-    const Extents& eA = obsA->getExtents();
-    const Extents& eB = obsB->getExtents();
-    if (eA.maxs[2] > eB.maxs[2])
-        return -1;
-    else
-        return +1;
-}
-
-static int compareObstacles(const void* a, const void* b)
-{
-    // - normal object come first (from lowest to highest)
-    // - then come the mesh face (highest to lowest)
-    // - and finally, the mesh objects (checkpoints really)
-    const Obstacle* obsA = *((const Obstacle* const *)a);
-    const Obstacle* obsB = *((const Obstacle* const *)b);
-    const char* typeA = obsA->getType();
-    const char* typeB = obsB->getType();
-
-    bool isMeshA = (typeA == MeshObstacle::getClassName());
-    bool isMeshB = (typeB == MeshObstacle::getClassName());
-
-    if (isMeshA)
-    {
-        if (!isMeshB)
-            return +1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    if (isMeshB)
-    {
-        if (!isMeshA)
-            return -1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    bool isFaceA = (typeA == MeshFace::getClassName());
-    bool isFaceB = (typeB == MeshFace::getClassName());
-
-    if (isFaceA)
-    {
-        if (!isFaceB)
-            return +1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    if (isFaceB)
-    {
-        if (!isFaceA)
-            return -1;
-        else
-            return compareHeights(obsA, obsB);
-    }
-
-    return compareHeights(obsB, obsA); // reversed
-}
-
 static int compareHitNormal (const void* a, const void* b)
 {
     const MeshFace* faceA = *((const MeshFace* const *) a);
@@ -372,7 +313,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
         COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
 
     // sort the list by type and height
-    qsort (olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
+    qsort (olist->list, olist->count, sizeof(Obstacle*), Obstacle::compareObstacles);
 
 
     int i;
@@ -381,9 +322,8 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     for (i = 0; i < olist->count; i++)
     {
         const Obstacle* obs = olist->list[i];
-        const char* type = obs->getType();
-        if ((type == MeshFace::getClassName()) ||
-                (type == MeshObstacle::getClassName()))
+        // Stop as soon as we reach mesh objects in the sorted list
+        if (obs->getSortPriority() != Obstacle::SortPriority::Normal)
             break;
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
@@ -406,8 +346,8 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     for (/* do nothing */; i < olist->count; i++)
     {
         Obstacle* obs = olist->list[i];
-        const char* type = obs->getType();
-        if (type == MeshObstacle::getClassName())
+        // Stop when we hit MeshObstacle items in the sorted list
+        if (obs->getSortPriority() == Obstacle::SortPriority::MeshObstacle)
             break;
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))

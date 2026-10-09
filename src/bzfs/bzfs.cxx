@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -54,6 +54,7 @@
 // common implementation headers
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
+#include "WallObstacle.h"
 #include "CollisionManager.h"
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
@@ -171,10 +172,10 @@ static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
 // logging to the API
-class APILoggingCallback : public LoggingCallback
+class APILoggingCallback final : public LoggingCallback
 {
 public:
-    void log ( int level, const char* message )
+    void log ( int level, const char* message ) override
     {
         bz_LoggingEventData_V1 data;
         data.level = level;
@@ -186,7 +187,7 @@ public:
 
 APILoggingCallback apiLoggingCallback;
 
-class BZFSNetLogCB : NetworkDataLogCallback
+class BZFSNetLogCB final : NetworkDataLogCallback
 {
 public:
     void Init()
@@ -194,12 +195,16 @@ public:
         addNetworkLogCallback(this);
     }
 
-    virtual ~BZFSNetLogCB()
+    void kill()
     {
         removeNetworkLogCallback(this);
     }
 
-    virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param )
+    virtual ~BZFSNetLogCB()
+    {
+    }
+
+    void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param ) override
     {
         // let any listeners know we got net data
         NetHandler *h = (NetHandler*)param;
@@ -853,7 +858,7 @@ PingPacket getTeamCounts()
         // pretend there are no players if the game is over, but only
         // for servers with automatic countdown because we want the server
         // to become empty, so a new countdown can start.
-        // Servers with -timemanual (match servers) or plugins whch handle gameover
+        // Servers with -timemanual (match servers) or plugins which handle gameover
         // usually want people to join even when last game has just ended.
         // (FIXME: the countdown/gameover handling really needs a new concept,
         //   originally it was not possible to even join a server when gameover
@@ -1056,6 +1061,13 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     }
 }
 
+void addWall(float x, float y, float z, float r, float w, float h)
+{
+    const float pos[3] = { x, y, z };
+    WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
+    OBSTACLEMGR.addWorldObstacle(wall);
+}
+
 void makeWalls ( void )
 {
     float worldSize = BZDBCache::worldSize;
@@ -1083,16 +1095,16 @@ void makeWalls ( void )
             float x = sinf(midpointAngle*DEG2RADf)*midpointRad;
             float y = cosf(midpointAngle*DEG2RADf)*midpointRad;
 
-            world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*DEG2RADf, (float)segmentLen, wallHeight);
+            addWall(x, y, 0.0f, (270.0f-midpointAngle)*DEG2RADf, (float)segmentLen, wallHeight);
 
         }
     }
     else
     {
-        world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-        world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-        world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-        world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+        addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
+        addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
+        addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
+        addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
     }
 }
 
@@ -1487,7 +1499,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
         return;
 
     // reformat any '/me' action messages
-    // this is here instead of in commands.cxx to allow player-player/player-channel targetted messages
+    // this is here instead of in commands.cxx to allow player-player/player-channel targeted messages
     if (strncasecmp(message, "/me", 3) == 0)
     {
 
@@ -1520,7 +1532,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
         // Trim off the command to leave the player's message
         message = message + 4;
 
-        // Set the message type to an action messsage
+        // Set the message type to an action message
         type = ActionMessage;
     }
 
@@ -4251,20 +4263,20 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
         firingInfo.flagType = Flags::Null;
 
     float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-    FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
+    auto fInfo = FlagInfo::get(shooter.getFlag());
     // verify player flag
-    if ((firingInfo.flagType != Flags::Null)  && (firingInfo.flagType != fInfo.flag.type))
+    if ((firingInfo.flagType != Flags::Null)  && (firingInfo.flagType != fInfo->flag.type))
     {
         std::string fireFlag = "unknown";
         std::string holdFlag = "unknown";
         if (firingInfo.flagType)
             fireFlag = firingInfo.flagType->flagAbbv;
-        if (fInfo.flag.type)
+        if (fInfo->flag.type)
         {
-            if (fInfo.flag.type == Flags::Null)
+            if (fInfo->flag.type == Flags::Null)
                 holdFlag = "none";
             else
-                holdFlag = fInfo.flag.type->flagAbbv;
+                holdFlag = fInfo->flag.type->flagAbbv;
         }
 
         // probably a cheater using wrong shots.. exception for thief since they steal someone elses
@@ -4282,7 +4294,7 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
     }
 
     if (shooter.haveFlag())
-        firingInfo.flagType = fInfo.flag.type;
+        firingInfo.flagType = fInfo->flag.type;
     else
         firingInfo.flagType = Flags::Null;
 
@@ -4406,12 +4418,12 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
 
     if (shooter.haveFlag())
     {
-        fInfo.numShots++; // increase the # shots fired
+        fInfo->numShots++; // increase the # shots fired
 
-        int limit = clOptions->getFlagLimit(fInfo.flag.type);
+        int limit = clOptions->getFlagLimit(fInfo->flag.type);
         if (limit != -1)   // if there is a limit for players flag
         {
-            int shotsLeft = limit -  fInfo.numShots;
+            int shotsLeft = limit -  fInfo->numShots;
             if (shotsLeft <= 0)  // no shots left
             {
                 if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
@@ -4421,8 +4433,8 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
                     float lastPos [3];
                     for (int i = 0; i < 3; i ++)
                         lastPos[i] = playerData->lastState.pos[i];
-                    fInfo.grabs = 0; // recycle this flag now
-                    dropFlag(fInfo, lastPos);
+                    fInfo->grabs = 0; // recycle this flag now
+                    dropFlag(*fInfo, lastPos);
                 }
                 else
                 {
@@ -4909,11 +4921,19 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         for (it = FlagType::getFlagMap().begin();
                 it != FlagType::getFlagMap().end(); ++it)
         {
+            // If the client is missing any flags that the server supports, inform the client about this.
             if (!hasFlag[it->second])
             {
-                if (clOptions->flagCount[it->second] > 0)
-                    missingFlags.insert(it->second);
-                if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
+                // If it's a custom flag, notify the client about this flag type
+                if (it->second->custom)
+                {
+                    // custom flag, tell the client about it
+                    auto cfbuffer = GetMessageBuffer();
+                    cfbuffer->legacyPack((*m_it)->packCustom(cfbuffer->current_buffer()));
+                    sendPacket(t, MsgFlagType, cfbuffer);
+                }
+                // Otherwise, add it to the list of missing flags
+                else
                     missingFlags.insert(it->second);
             }
         }
@@ -4924,18 +4944,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         {
             if ((*m_it) != Flags::Null)
             {
-                if ((*m_it)->custom)
-                {
-                    // custom flag, tell the client about it
-                    auto cfbuffer = GetMessageBuffer();
-                    cfbuffer->legacyPack((*m_it)->packCustom(cfbuffer->current_buffer()));
-                    sendPacket(t, MsgFlagType, cfbuffer);
-                }
-                else
-                {
-                    // they should already know about this one, dump it back to them
-                    tmpbuf->legacyPack((*m_it)->pack(tmpbuf->current_buffer()));
-                }
+                // they should already know about this one, dump it back to them
+                tmpbuf->legacyPack((*m_it)->pack(tmpbuf->current_buffer()));
             }
         }
         sendPacket(t, MsgNegotiateFlags, tmpbuf);
@@ -5641,7 +5651,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         playerData->setPlayerState(state, timestamp);
 
         // Player might already be dead and did not know it yet (e.g. teamkill)
-        // do not propogate
+        // do not propagate
         if (!playerData->player.isAlive() &&
                 (state.status & short(PlayerState::Alive)))
             break;
@@ -6373,11 +6383,7 @@ void UPnP::setIGD()
 {
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
     // Discover uPnP devices waiting for 200ms
-#if (MINIUPNPC_API_VERSION >= 14)
     struct UPNPDev *devlist = upnpDiscover(200, NULL, NULL, 0, 0, 2, NULL);
-#else
-    struct UPNPDev *devlist = upnpDiscover(200, NULL, NULL, 0, 0, NULL);
-#endif
     if (!devlist)
     {
         std::cerr << "No UPnP device found"
@@ -6385,7 +6391,11 @@ void UPnP::setIGD()
         return;
     }
     // Select a good IGD (Internet Gateway Device)
+#if (MINIUPNPC_API_VERSION >= 18)
+    int i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr), nullptr, 0);
+#else
     int i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));
+#endif
     freeUPNPDevlist(devlist);
     if (!i)
         std::cerr << "No recognized device" << std::endl;
@@ -6627,7 +6637,7 @@ void UPnP::stop()
 }
 
 /** main parses command line options and then enters an event and activity
- * dependant main loop.  once inside the main loop, the server is up and
+ * dependent main loop.  once inside the main loop, the server is up and
  * running and should be ready to process connections and activity.
  */
 int main(int argc, char **argv)
@@ -7081,7 +7091,7 @@ int main(int argc, char **argv)
                 waitTime = nextGT;
         }
 
-        // minmal waitTime
+        // minimal waitTime
         if (waitTime < 0.0f)
             waitTime = 0.0f;
 
@@ -7871,7 +7881,7 @@ int main(int argc, char **argv)
             processConnectedPeer(peerItr->second, peerItr->first, read_set, write_set);
 
         // remove anyone that became a player since they will be handled by the rest of the code
-        // there net handler was transfered to the player class
+        // there net handler was transferred to the player class
         toKill.clear();
         for (peerItr = netConnectedPeers.begin(); peerItr != netConnectedPeers.end(); ++peerItr)
         {
@@ -7980,6 +7990,7 @@ int main(int argc, char **argv)
     Record::kill();
     Replay::kill();
     Flags::kill();
+    netLogCB.kill();
 
 #if defined(_WIN32)
     WSACleanup();

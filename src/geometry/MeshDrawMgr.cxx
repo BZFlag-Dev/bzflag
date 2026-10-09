@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,7 +38,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* drawInfo_)
     auto lodCount = drawInfo->getLodCount();
     lodLists.resize(lodCount);
 
-    // This pointer is a convience way to iterate over the DrawLod objects known to the MeshDrawInfo. A first-class
+    // This pointer is a convenience way to iterate over the DrawLod objects known to the MeshDrawInfo. A first-class
     // iterator would be better
     auto curDrawLod = drawInfo->getDrawLods();
 

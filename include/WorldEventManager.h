@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,16 +15,21 @@
 ************************************
 * right now this just does team flag capture events for world weps
 * but it should be able to be expandable to store any type of event
-* for anything that can be triggerd.
+* for anything that can be triggered.
 */
 
 #ifndef WORLD_EVENT_MANAGER_H
 #define WORLD_EVENT_MANAGER_H
 
+// 1st
+#include "common.h"
+
+// System headers
 #include <map>
 #include <vector>
 #include <algorithm>
 
+// Common headers
 #include "bzfsAPI.h"
 
 // event handler callback

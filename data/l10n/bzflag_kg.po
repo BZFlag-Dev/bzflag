@@ -390,7 +390,7 @@ msgstr "bup"
 #msgid "Toggle Main Flags"
 #msgstr ""
 
-#msgid "Silence/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
 #msgid "Server Admin"
@@ -1271,10 +1271,10 @@ msgstr "nIH neH"
 #msgid "Toggle Main Flags:"
 #msgstr ""
 
-#msgid "Silience/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
-#msgid "Silience/UnSilence Key:"
+#msgid "Silence/Unsilence Key:"
 #msgstr ""
 
 #msgid "Server Command Key:"

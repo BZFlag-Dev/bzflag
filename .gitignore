@@ -1,3 +1,6 @@
+# 3rd-Party dependencies
+dependencies/
+
 # Compiled Object files
 *.slo
 *.lo
@@ -23,7 +26,6 @@
 *.idb
 *.pdb
 *.suo
-*.lib
 *.user
 *.log
 *.cache
@@ -47,6 +49,10 @@
 .vs
 *.aps
 
+# JetBrains files
+.idea
+*.iml
+
 # GNU Autotools
 Makefile.in
 Makefile
@@ -58,6 +64,7 @@ bzflag.spec
 compile
 /config.*
 configure
+configure~
 depcomp
 /include/config.h
 /include/config.h.in
@@ -114,6 +121,7 @@ work
 *.nativecodeanalysis.xml
 vc.nativecodeanalysis.all.xml
 *.lastcodeanalysissucceeded
+perf.data*
 
 # OS generated files
 .DS_Store

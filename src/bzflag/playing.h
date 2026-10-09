@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -101,6 +101,8 @@ void initGlobalAres();
 void killGlobalAres();
 
 extern void joinGame();
+
+extern void applyJSModifiers(float& jsx, float& jsy);
 
 extern HUDRenderer  *hud;
 extern char     messageMessage[PlayerIdPLen + MessageLen];

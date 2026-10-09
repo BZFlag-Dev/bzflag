@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,7 +13,8 @@
 #ifndef __COMPOSEDEFAULTKEY_H__
 #define __COMPOSEDEFAULTKEY_H__
 
-#include "common.h"
+// Inherits from
+#include "HUDuiDefaultKey.h"
 
 /* system interface headers */
 #include <string>
@@ -21,7 +22,6 @@
 
 /* common interface headers */
 #include "BzfEvent.h"
-#include "HUDuiDefaultKey.h"
 
 
 typedef std::deque<std::string> MessageQueue;
@@ -29,11 +29,11 @@ typedef std::deque<std::string> MessageQueue;
 extern MessageQueue messageHistory;
 extern unsigned int messageHistoryIndex;
 
-class ComposeDefaultKey : public HUDuiDefaultKey
+class ComposeDefaultKey final : public HUDuiDefaultKey
 {
 public:
-    bool      keyPress(const BzfKeyEvent&);
-    bool      keyRelease(const BzfKeyEvent&);
+    bool      keyPress(const BzfKeyEvent&) override;
+    bool      keyRelease(const BzfKeyEvent&) override;
 };
 
 

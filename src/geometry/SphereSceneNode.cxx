@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -220,8 +220,8 @@ SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat radius_) :
     // adjust the gstate for this type of sphere
     builder.setCulling(GL_BACK);
     builder.setShading(GL_SMOOTH);
-    const float spec[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-    const float emis[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    const float spec[3] = {1.0f, 1.0f, 1.0f};
+    const float emis[3] = {0.0f, 0.0f, 0.0f};
     OpenGLMaterial glmat(spec, emis, 64.0f);
     builder.setMaterial(glmat);
     gstate = builder.getState();
@@ -303,6 +303,10 @@ SphereSceneNode::SphereLodRenderNode::~SphereLodRenderNode()
     return;
 }
 
+const glm::vec3 SphereSceneNode::SphereLodRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
 
 void SphereSceneNode::SphereLodRenderNode::setLod(int _lod)
 {
@@ -405,13 +409,6 @@ void SphereSceneNode::SphereLodRenderNode::render()
 
     return;
 }
-
-
-const glm::vec3 SphereSceneNode::SphereLodRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

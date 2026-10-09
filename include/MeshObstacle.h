@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,9 +21,9 @@
 #include "Obstacle.h"
 
 // System headers
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 // Common headers
 #include "Ray.h"
@@ -32,7 +32,7 @@
 
 class MeshDrawInfo;
 
-class MeshObstacle : public Obstacle
+class MeshObstacle final : public Obstacle
 {
 public:
     MeshObstacle();
@@ -56,7 +56,7 @@ public:
 
     void finalize();
 
-    Obstacle* copyWithTransform(const MeshTransform&) const;
+    Obstacle* copyWithTransform(const MeshTransform&) const override;
     void copyFace(int face, MeshObstacle* mesh) const;
 
     void setName(const std::string& name);
@@ -70,28 +70,32 @@ public:
         OutsidePartiy = 3
     };
 
-    const char* getType() const;
+    const char* getType() const override;
     static const char* getClassName(); // const
-    bool isValid() const;
+    bool isValid() const override;
 
-    float intersect(const Ray&) const;
-    void getNormal(const float* p, float* n) const;
-    void get3DNormal(const float* p, float* n) const;
+    float intersect(const Ray&) const override;
+    void getNormal(const float* p, float* n) const override;
+    void get3DNormal(const float* p, float* n) const override;
 
-    bool inCylinder(const float* p, float radius, float height) const;
+    bool inCylinder(const float* p, float radius, float height) const override;
     bool inBox(const float* p, float angle,
-               float halfWidth, float halfBreadth, float height) const;
+               float halfWidth, float halfBreadth, float height) const override;
     bool inMovingBox(const float* oldP, float oldAngle,
                      const float *newP, float newAngle,
-                     float halfWidth, float halfBreadth, float height) const;
+                     float halfWidth, float halfBreadth, float height) const override;
     bool isCrossing(const float* p, float angle,
                     float halfWidth, float halfBreadth, float height,
-                    float* plane) const;
+                    float* plane) const override;
+    SortPriority getSortPriority() const override
+    {
+        return SortPriority::MeshObstacle;
+    }
 
     bool getHitNormal(const float* pos1, float azimuth1,
                       const float* pos2, float azimuth2,
                       float halfWidth, float halfBreadth,
-                      float height, float* normal) const;
+                      float height, float* normal) const override;
 
     bool containsPoint(const float point[3]) const;
     bool containsPointNoOctree(const float point[3]) const;
@@ -108,19 +112,18 @@ public:
     int getFaceCount() const;
     MeshFace* getFace(int face) const;
     const float* getPosition() const;
-    const float* getSize() const;
     bool useSmoothBounce() const;
     bool noClusters() const;
 
     MeshDrawInfo* getDrawInfo() const;
     void setDrawInfo(MeshDrawInfo*);
 
-    int packSize() const;
-    void *pack(void*) const;
-    const void *unpack(const void*);
+    int packSize() const override;
+    void *pack(void*) const override;
+    const void *unpack(const void*) override;
 
-    void print(std::ostream& out, const std::string& indent) const;
-    void printOBJ(std::ostream& out, const std::string& indent) const;
+    void print(std::ostream& out, const std::string& indent) const override;
+    void printOBJ(std::ostream& out, const std::string& indent) const override;
 
 private:
     void makeFacePointers(const std::vector<int>& _vertices,
@@ -211,11 +214,6 @@ inline MeshFace* MeshObstacle::getFace(int face) const
 inline const float* MeshObstacle::getPosition() const
 {
     return pos;
-}
-
-inline const float* MeshObstacle::getSize() const
-{
-    return size;
 }
 
 inline bool MeshObstacle::useSmoothBounce() const

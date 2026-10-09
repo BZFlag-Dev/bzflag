@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -153,6 +153,8 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
         if (lastWhitespace > 0)
             n = lastWhitespace;
+        else if (n == 0)
+            n = 1;
 
         // message
         lines.push_back(previousANSICodes + std::string(msg,n));
@@ -320,10 +322,6 @@ void            ControlPanel::render(SceneRenderer& _renderer)
 
     if (!resized) resize();
 
-    // optimization for software rendering folks
-    if (!changedMessage && _renderer.getPanelOpacity() == 1.0f)
-        return;
-
     int i, j;
     const int x = window.getOriginX();
     const int y = window.getOriginY();
@@ -336,6 +334,7 @@ void            ControlPanel::render(SceneRenderer& _renderer)
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
+    glPushAttrib(GL_SCISSOR_BIT);
     OpenGLGState::resetState();
 
     FontManager &fm = FontManager::instance();
@@ -644,6 +643,7 @@ void            ControlPanel::render(SceneRenderer& _renderer)
 
     glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f );
 
+    glPopAttrib();
     glPopMatrix();
 
     fm.setOpacity(1.0f);

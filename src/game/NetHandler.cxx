@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -621,7 +621,7 @@ RxStatus NetHandler::receive(size_t length, bool *retry)
     if (retry)
         *retry = false;
 
-    // Degenerate case, becase a closed socket should not be sending data, but be paranoid and test for it anyway
+    // Degenerate case, because a closed socket should not be sending data, but be paranoid and test for it anyway
     if (closed) return returnValue;
 
     if ((int)length <= tcplen) return ReadAll;

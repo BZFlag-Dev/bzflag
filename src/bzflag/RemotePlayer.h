@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,9 +13,7 @@
 #ifndef __REMOTEPLAYER_H__
 #define __REMOTEPLAYER_H__
 
-#include "common.h"
-
-/* interface header */
+// Inherits from
 #include "Player.h"
 
 /* common interface headers */
@@ -26,18 +24,18 @@
 #include "ShotPath.h"
 
 
-class RemotePlayer : public Player
+class RemotePlayer final : public Player
 {
 public:
     RemotePlayer(const PlayerId&, TeamColor team, int skinIndex, const char* name, const char* motto, const PlayerType);
     ~RemotePlayer();
 
     virtual void addShot(const FiringInfo&);
-    virtual ShotPath::Vec getShots() const;
+    virtual ShotPath::Vec getShots() const override;
     void purgeShots() const;
 
 private:
-    bool doEndShot(int index, bool isHit, float* pos);
+    bool doEndShot(int index, bool isHit, float* pos) override;
 
 private:
 };

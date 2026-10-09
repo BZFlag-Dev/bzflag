@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,20 +16,20 @@
 /* interface header */
 #include "WorldFileObstacle.h"
 
-/* local interface headers */
-#include "WorldInfo.h"
-
 /* common interface headers */
 #include "BzMaterial.h"
 
+/* local interface headers */
+#include "WorldInfo.h"
 
-class CustomSphere : public WorldFileObstacle
+
+class CustomSphere final : public WorldFileObstacle
 {
 public:
     CustomSphere();
     ~CustomSphere();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    bool read(const char *cmd, std::istream& input) override;
+    void writeToGroupDef(GroupDefinition*) override;
 
 private:
     enum

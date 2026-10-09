@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -123,20 +123,20 @@ void HelpMenu::resize(int _width, int _height)
 // Help1Menu
 //
 
-class Help1Menu : public HelpMenu
+class Help1Menu final : public HelpMenu
 {
 public:
     Help1Menu();
     ~Help1Menu() {}
 
-    void      resize(int width, int height);
+    void      resize(int width, int height) override;
 
     void      onScan(const std::string& name, bool, const std::string&);
     static void       onScanCB(const std::string& name, bool press,
                                const std::string& cmd, void* userData);
 
 protected:
-    float     getLeftSide(int width, int height);
+    float     getLeftSide(int width, int height) override;
 
 private:
     void      initKeymap(const std::string& name, int index);
@@ -182,7 +182,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
     listHUD.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
     listHUD.push_back(createLabel(NULL, "Toggle Radar Flags:"));
     listHUD.push_back(createLabel(NULL, "Toggle Main Flags:"));
-    listHUD.push_back(createLabel(NULL, "Silence/UnSilence:"));
+    listHUD.push_back(createLabel(NULL, "Silence/Unsilence:"));
     listHUD.push_back(createLabel(NULL, "Server Admin:"));
     listHUD.push_back(createLabel(NULL, "Hunt:"));
     listHUD.push_back(createLabel(NULL, "Auto Pilot:"));
@@ -311,7 +311,7 @@ Help2Menu::Help2Menu() : HelpMenu("General")
     listHUD.push_back(createLabel("red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"));
     listHUD.push_back(createLabel("player on another team scores a win, while being destroyed or destroying a"));
     listHUD.push_back(createLabel("teammate scores a loss.  Individual and aggregate team scores are tallied."));
-    listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues),so they cannot shoot"));
+    listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues), so they cannot shoot"));
     listHUD.push_back(createLabel("teammates and they don't have a team score."));
     listHUD.push_back(createLabel(""));
     listHUD.push_back(createLabel("There are four styles of play, determined by the server configuration:  capture-"));
@@ -403,14 +403,14 @@ Help4Menu::Help4Menu() : HelpMenu("Flags")
 // Help5Menu
 //
 
-class Help5Menu : public HelpMenu
+class Help5Menu final : public HelpMenu
 {
 public:
     Help5Menu();
     ~Help5Menu() {}
 
 protected:
-    float getLeftSide(int width, int height);
+    float getLeftSide(int width, int height) override;
 };
 
 Help5Menu::Help5Menu() : HelpMenu("Good Flags")
@@ -440,14 +440,14 @@ float           Help5Menu::getLeftSide(int _width, int)
 // Help6Menu
 //
 
-class Help6Menu : public HelpMenu
+class Help6Menu final : public HelpMenu
 {
 public:
     Help6Menu();
     ~Help6Menu() {}
 
 protected:
-    float     getLeftSide(int width, int height);
+    float     getLeftSide(int width, int height) override;
 };
 
 Help6Menu::Help6Menu() : HelpMenu("Bad Flags")

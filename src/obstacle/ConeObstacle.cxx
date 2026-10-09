@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,7 +15,6 @@
 
 // System headers
 #include <math.h>
-#include <assert.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
@@ -30,28 +29,16 @@
 const char* ConeObstacle::typeName = "ConeObstacle";
 
 
-ConeObstacle::ConeObstacle()
-{
-    return;
-}
-
-
 ConeObstacle::ConeObstacle(const MeshTransform& xform,
                            const float* _pos, const float* _size,
                            float _rotation, float _sweepAngle,
                            const float _texsize[2], bool _useNormals,
-                           int _divisions, const BzMaterial* mats[MaterialCount],
-                           int physics, bool bounce, bool drive, bool shoot, bool rico)
+                           int _divisions,
+                           const BzMaterial* mats[MaterialCount],
+                           int physics, bool bounce, bool drive, bool shoot,
+                           bool rico) :
+    Obstacle(_pos, _rotation, _size[0], _size[1], _size[2], drive, shoot, rico)
 {
-    // common obstace parameters
-    memcpy(pos, _pos, sizeof(pos));
-    memcpy(size, _size, sizeof(size));
-    angle = _rotation;
-    ZFlip = false;
-    driveThrough = drive;
-    shootThrough = shoot;
-    ricochet     = rico;
-
     // arc specific parameters
     transform = xform;
     divisions = _divisions;
@@ -62,14 +49,6 @@ ConeObstacle::ConeObstacle(const MeshTransform& xform,
     memcpy(texsize, _texsize, sizeof(texsize));
     memcpy(materials, mats, sizeof(materials));
 
-    finalize();
-
-    return;
-}
-
-
-ConeObstacle::~ConeObstacle()
-{
     return;
 }
 
@@ -103,12 +82,6 @@ const char* ConeObstacle::getClassName() // const
 bool ConeObstacle::isValid() const
 {
     return true;
-}
-
-
-void ConeObstacle::finalize()
-{
-    return;
 }
 
 
@@ -358,59 +331,6 @@ MeshObstacle* ConeObstacle::makeMesh()
 }
 
 
-float ConeObstacle::intersect(const Ray&) const
-{
-    assert(false);
-    return -1.0f;
-}
-
-void ConeObstacle::get3DNormal(const float*, float*) const
-{
-    assert(false);
-    return;
-}
-
-void ConeObstacle::getNormal(const float*, float*) const
-{
-    assert(false);
-    return;
-}
-
-bool ConeObstacle::getHitNormal(const float*, float, const float*, float,
-                                float, float, float, float*) const
-{
-    assert(false);
-    return false;
-}
-
-bool ConeObstacle::inCylinder(const float*,float, float) const
-{
-    assert(false);
-    return false;
-}
-
-bool ConeObstacle::inBox(const float*, float, float, float, float) const
-{
-    assert(false);
-    return false;
-}
-
-bool ConeObstacle::inMovingBox(const float*, float, const float*, float,
-                               float, float, float) const
-{
-    assert(false);
-    return false;
-}
-
-bool ConeObstacle::isCrossing(const float* UNUSED(p), float UNUSED(_angle),
-                              float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
-                              float* UNUSED(_plane)) const
-{
-    assert(false);
-    return false;
-}
-
-
 void *ConeObstacle::pack(void *buf) const
 {
     buf = transform.pack(buf);
@@ -474,8 +394,6 @@ const void *ConeObstacle::unpack(const void *buf)
     smoothBounce = (stateByte & (1 << 2)) != 0;
     useNormals   = (stateByte & (1 << 3)) != 0;
     ricochet     = (stateByte & (1 << 4)) != 0;
-
-    finalize();
 
     return buf;
 }

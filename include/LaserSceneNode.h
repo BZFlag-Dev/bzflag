@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,7 @@
 // System headers
 #include <glm/vec4.hpp>
 
-class LaserSceneNode : public SceneNode
+class LaserSceneNode final : public SceneNode
 {
 public:
     LaserSceneNode(const GLfloat pos[3],
@@ -32,10 +32,10 @@ public:
 
     void        setTexture(const int);
 
-    bool        cull(const ViewFrustum&) const;
+    bool        cull(const ViewFrustum&) const override;
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
 
     void        setColor ( float r, float g, float b );
     void        setCenterColor ( float r, float g, float b );
@@ -45,12 +45,12 @@ public:
     }
 
 protected:
-    class LaserRenderNode : public RenderNode
+    class LaserRenderNode final : public RenderNode
     {
     public:
         LaserRenderNode(const LaserSceneNode*);
         ~LaserRenderNode();
-        void        render();
+        void        render() override;
         const glm::vec3 getPosition() const override;
     private:
         void renderFlatLaser();

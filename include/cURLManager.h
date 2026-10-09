@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,12 +46,10 @@ public:
     void setPostMode(std::string postData);
     void setRequestFileTime(bool request);
     void setURL(const std::string &url);
-    void setURLwithNonce(const std::string &url);
     void setProgressFunction(curl_xferinfo_callback func, const void* data);
     void setTimeCondition(timeCondition condition, time_t &t);
     void setInterface(const std::string &interfaceIP);
     void setUserAgent(const std::string &userAgent);
-    void setDNSCachingTime(long time);
 
     void addFormData(const char *key, const char *value);
 
@@ -109,7 +107,7 @@ typedef struct
     std::string       fileName;
 } trResourceItem;
 
-class ResourceGetter : cURLManager
+class ResourceGetter final : cURLManager
 {
 public:
     ResourceGetter();
@@ -118,7 +116,7 @@ public:
     void addResource(trResourceItem &item);
     void flush(void);
 
-    virtual void finalization(char *data, unsigned int length, bool good);
+    void finalization(char *data, unsigned int length, bool good) override;
 
 protected:
     bool itemExists(trResourceItem &item);

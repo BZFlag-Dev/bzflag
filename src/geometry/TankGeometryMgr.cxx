@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -156,7 +156,7 @@ void TankGeometryMgr::kill()
 
 void TankGeometryMgr::deleteLists()
 {
-    // delete the lists that have been aquired
+    // delete the lists that have been acquired
     for (int shadow = 0; shadow < LastTankShadow; shadow++)
     {
         for (int lod = 0; lod < LastTankLOD; lod++)

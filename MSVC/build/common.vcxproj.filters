@@ -103,6 +103,9 @@
     <ClCompile Include="..\..\src\common\WordFilter.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\common\mathRoutine.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\AccessList.h">
@@ -229,6 +232,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\VotingBooth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mathRoutine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

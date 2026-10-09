@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,7 +28,7 @@
 #include "SceneRenderer.h"
 
 
-// FIXME - no tesselation is done on for shot lighting
+// FIXME - no tessellation is done on for shot lighting
 
 
 //
@@ -188,21 +188,6 @@ void MeshFragSceneNode::Geometry::render()
 
     addTriangleCount(triangles);
 
-    return;
-}
-
-
-void MeshFragSceneNode::Geometry::renderRadar()
-{
-    const int triangles = sceneNode.arrayCount;
-    if (list != INVALID_GL_LIST_ID)
-        glCallList(list);
-    else
-    {
-        glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
-        glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
-    }
-    addTriangleCount(triangles);
     return;
 }
 

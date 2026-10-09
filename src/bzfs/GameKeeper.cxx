@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -360,7 +360,7 @@ void GameKeeper::Player::signingOn(bool ctf)
 }
 
 
-// Attempt to retrive a slot number for a player specified as EITHER "callsign" or "#<slot>"
+// Attempt to retrieve a slot number for a player specified as EITHER "callsign" or "#<slot>"
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)
 {
     Player* playerData(0);

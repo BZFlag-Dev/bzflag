@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,28 +23,25 @@
 // Common headers
 #include "OpenGLGState.h"
 
-class EighthDimShellNode : public SceneNode
+class EighthDimShellNode final : public SceneNode
 {
 public:
     EighthDimShellNode(SceneNode *sceneNode, bool ownTheNode);
     ~EighthDimShellNode();
 
-    bool cull(const ViewFrustum&) const;
-    void addRenderNodes(SceneRenderer&);
-    void notifyStyleChange();
+    bool cull(const ViewFrustum&) const override;
+    void addRenderNodes(SceneRenderer&) override;
+    void notifyStyleChange() override;
 
 protected:
-    class ShellRenderNode : public RenderNode
+    class ShellRenderNode final : public RenderNode
     {
     public:
         ShellRenderNode(RenderNode *renderNode,
                         const OpenGLGState* gstate);
         ~ShellRenderNode();
-        void render();
-        void renderShadow()
-        {
-            return;
-        }
+        void render() override;
+        void renderShadow() override;
         const glm::vec3 getPosition() const override;
     public:
         const OpenGLGState* getGState() const;

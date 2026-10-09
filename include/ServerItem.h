@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,7 +36,7 @@ public:
     std::string   getAddrName() const;
     time_t    getAgeMinutes() const;
     time_t    getAgeSeconds() const;
-    std::string   getAgeString() const; // nifty formated age string
+    std::string   getAgeString() const; // nifty formatted age string
     time_t    getNow() const; // current time
     bool      operator<(const ServerItem &right);
 private:

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,67 +32,67 @@
 #  include "SDL2/SDL_syswm.h"
 #endif
 
-class SDLWindow : public BzfWindow
+class SDLWindow final : public BzfWindow
 {
 public:
     SDLWindow(const SDLDisplay* _display, SDLVisual*);
     ~SDLWindow();
-    bool  isValid() const
+    bool  isValid() const override
     {
         return true;
     };
-    void  showWindow(bool)
+    void  showWindow(bool) override
     {
         ;
     };
-    void  getPosition(int &, int &)
+    void  getPosition(int &, int &) override
     {
         ;
     };
-    void  getSize(int& width, int& height) const;
-    void  setSize(int width, int height);
-    void  setTitle(const char * title);
-    void  setPosition(int, int)
+    void  getSize(int& width, int& height) const override;
+    void  setSize(int width, int height) override;
+    void  setTitle(const char * title) override;
+    void  setPosition(int, int) override
     {
         ;
     };
-    void  setMinSize(int, int);
-    void  setFullscreen(bool);
-    void  iconify(void);
-    void  disableConfineToMotionbox();
-    void  confineToMotionbox(int x1, int y1, int x2, int y2);
-    void  warpMouse(int x, int y);
-    void  getMouse(int& x, int& y) const;
-    void  grabMouse()
+    void  setMinSize(int, int) override;
+    void  setFullscreen(bool) override;
+    void  iconify(void) override;
+    void  disableConfineToMotionbox() override;
+    void  confineToMotionbox(int x1, int y1, int x2, int y2) override;
+    void  warpMouse(int x, int y) override;
+    void  getMouse(int& x, int& y) const override;
+    void  grabMouse() override
     {
         ;
     };
-    void  ungrabMouse()
+    void  ungrabMouse() override
     {
         ;
     };
-    void  enableGrabMouse(bool);
-    void  showMouse()
+    void  enableGrabMouse(bool) override;
+    void  showMouse() override
     {
         ;
     };
-    void  hideMouse()
+    void  hideMouse() override
     {
         ;
     };
-    void  setGamma(float newGamma);
-    float getGamma() const;
-    bool  hasGammaControl() const;
-    virtual bool hasVerticalSync() const
+    void  setGamma(float newGamma) override;
+    float getGamma() const override;
+    bool  hasGammaControl() const override;
+    bool hasVerticalSync() const override
     {
         return true;
     }
-    void  setVerticalSync(bool);
-    void  makeCurrent();
-    void  swapBuffers();
-    void  makeContext();
-    void  freeContext();
-    bool  create(void);
+    void  setVerticalSync(bool) override;
+    void  makeCurrent() override;
+    void  swapBuffers() override;
+    void  makeContext() override;
+    void  freeContext() override;
+    bool  create(void) override;
 #ifdef _WIN32
     static HWND getHandle()
     {

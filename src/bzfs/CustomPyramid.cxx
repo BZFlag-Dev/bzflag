@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -176,6 +176,16 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
         shootThrough = true; // for old pyramids
         return true;
     }
+    else if (strcasecmp(cmd, "ricochet") == 0)
+    {
+        for (int i = 0; i < faceCount; i++)
+        {
+            const int f = faceList[i];
+            ricochets[f] = true;
+        }
+        ricochet = true;
+        return true;
+    }
     else if (strcasecmp(cmd, "texsize") == 0)
     {
         isOldPyramid = false;
@@ -300,7 +310,7 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
 }
 
 
-void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef)
 {
     if (isOldPyramid && transform.isEmpty())
     {

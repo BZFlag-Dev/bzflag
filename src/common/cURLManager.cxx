@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -184,14 +184,6 @@ void cURLManager::setURL(const std::string &url)
     }
     if (result != CURLE_OK)
         logDebugMessage(1,"CURLOPT_URL error %d : %s\n", result, errorBuffer);
-}
-
-void cURLManager::setURLwithNonce(const std::string &url)
-{
-    // only the default list server is known to support the nonce parameter
-    const std::string nonce = (strcasecmp(url.c_str(), DefaultListServerURL) == 0) ? TextUtils::format("?nocache=%lu",
-                              time(0)) : "";
-    setURL(url + nonce);
 }
 
 void cURLManager::setProgressFunction(curl_xferinfo_callback func, const void* data)
@@ -416,18 +408,6 @@ void cURLManager::setUserAgent(const std::string &_userAgent)
         logDebugMessage(1,"CURLOPT_SET_USERAGENT error %d : %s\n", result, errorBuffer);
 }
 
-void cURLManager::setDNSCachingTime(long time)
-{
-    CURLcode result;
-
-    result = curl_easy_setopt(easyHandle,
-                              CURLOPT_DNS_CACHE_TIMEOUT,
-                              (long)time);
-    if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_SET_DNS_CACHE_TIMEOUT error %d : %s\n",
-                        result, errorBuffer);
-}
-
 //**************************ResourceGetter*************************
 
 ResourceGetter::ResourceGetter() : cURLManager()
@@ -457,9 +437,9 @@ void ResourceGetter::flush ( void )
 void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 {
     if (!resources.size() || !doingStuff)
-        return; // we are suposed to be done
+        return; // we are supposed to be done
 
-    // this is who we are suposed to be geting
+    // this is who we are supposed to be getting
     trResourceItem item = resources[0];
     resources.erase(resources.begin());
     if (good)

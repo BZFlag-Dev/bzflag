@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1023,7 +1023,7 @@ OpenGLGState::ContextInitializer*
 OpenGLGState::ContextInitializer::head = NULL;
 OpenGLGState::ContextInitializer*
 OpenGLGState::ContextInitializer::tail = NULL;
-int OpenGLGState::maxSamples = 1;
+unsigned int OpenGLGState::maxSamples = 1;
 bool OpenGLGState::executingFreeFuncs = false;
 bool OpenGLGState::executingInitFuncs = false;
 bool OpenGLGState::hasAnisotropicFiltering = false;
@@ -1213,7 +1213,7 @@ int OpenGLGState::getOpaqueStippleIndex()
 }
 
 
-int OpenGLGState::getMaxSamples()
+unsigned int OpenGLGState::getMaxSamples()
 {
     return maxSamples;
 }
@@ -1323,9 +1323,13 @@ void OpenGLGState::initContext()
     }
 
     GLenum err = glewInit();
-    if (GLEW_OK != err)
+    // Running the client using SDL's Wayland driver causes glewInit() to return GLEW_ERROR_NO_GLX_DISPLAY. We do not
+    // check for or use GLX extensions, so I think it's safe to allow for this error code.
+    // https://github.com/nigels-com/glew/issues/417
+    // https://github.com/BZFlag-Dev/bzflag/issues/377
+    if (GLEW_OK != err && GLEW_ERROR_NO_GLX_DISPLAY != err)
     {
-        printf("Error: %s\n", glewGetErrorString(err));
+        printf("initContext() Error: %s\n", glewGetErrorString(err));
         return;
     }
 
@@ -1362,8 +1366,6 @@ void OpenGLGState::initContext()
     glLoadIdentity();
     glEnable(GL_SCISSOR_TEST);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-    glPixelStorei(GL_PACK_ALIGNMENT,1);
 }
 
 
@@ -1388,6 +1390,9 @@ void OpenGLGState::initGLState()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+    glPixelStorei(GL_PACK_ALIGNMENT,1);
 }
 
 // utility to check if an OpenGL extension is supported on this system
@@ -1400,7 +1405,7 @@ bool OpenGLGState::initGLExtensions()
     {
         GLint sampleCount = 1;
         glGetIntegerv(GL_MAX_SAMPLES, &sampleCount);
-        maxSamples = sampleCount;
+        maxSamples = static_cast<unsigned int>(sampleCount);
     }
 
     return false;

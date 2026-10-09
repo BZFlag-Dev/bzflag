@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@
 // Inherits from
 #include "EighthDimSceneNode.h"
 
-class EighthDBoxSceneNode : public EighthDimSceneNode
+class EighthDBoxSceneNode final : public EighthDimSceneNode
 {
 public:
     EighthDBoxSceneNode(const glm::vec3 &pos,
@@ -32,7 +32,7 @@ public:
     void        addRenderNodes(SceneRenderer&) override;
 
 protected:
-    class EighthDBoxRenderNode : public RenderNode
+    class EighthDBoxRenderNode final : public RenderNode
     {
     public:
         EighthDBoxRenderNode(const EighthDBoxSceneNode*,

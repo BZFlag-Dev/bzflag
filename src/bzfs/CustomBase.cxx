@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -56,7 +56,7 @@ bool CustomBase::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomBase::writeToGroupDef(GroupDefinition *groupdef)
 {
     float absSize[3] = { fabsf(size[0]), fabsf(size[1]), fabsf(size[2]) };
     BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color, ricochet);

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,7 +19,8 @@
 #ifndef BZF_EFFECTS_RENDERER_H
 #define BZF_EFFECTS_RENDERER_H
 
-#include "common.h"
+// Inherits from
+#include "TankSceneNode.h"
 
 /* system headers */
 #include <string>
@@ -28,11 +29,10 @@
 /* common interface headers */
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
-
 #include "Singleton.h"
-
-#include "TankSceneNode.h"
 #include "Flag.h"
+
+// Local headers
 #include "Player.h"
 
 
@@ -78,15 +78,15 @@ public:
         /*if (player)player->setDeathEffect(NULL)*/;
     }
 
-    virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) )
+    bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) ) override
     {
         return false;
     }
-    virtual bool ShowExplosion ( void )
+    bool ShowExplosion ( void ) override
     {
         return true;
     }
-    virtual bool GetDeathVector ( glm::vec3 &UNUSED(vel) )
+    virtual bool GetDeathVector ( glm::vec3 &UNUSED(vel) ) override
     {
         return false;
     }

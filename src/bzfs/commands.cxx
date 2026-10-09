@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,364 +63,364 @@
 
 tmCustomSlashCommandMap customCommands;
 
-class MsgCommand : ServerCommand
+class MsgCommand final : ServerCommand
 {
 public:
     MsgCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ServerQueryCommand : ServerCommand
+class ServerQueryCommand final : ServerCommand
 {
 public:
     ServerQueryCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class PartCommand : ServerCommand
+class PartCommand final : ServerCommand
 {
 public:
     PartCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class QuitCommand : ServerCommand
+class QuitCommand final : ServerCommand
 {
 public:
     QuitCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class UpTimeCommand : ServerCommand
+class UpTimeCommand final : ServerCommand
 {
 public:
     UpTimeCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class PasswordCommand : ServerCommand
+class PasswordCommand final : ServerCommand
 {
 public:
     PasswordCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class SetCommand : ServerCommand
+class SetCommand final : ServerCommand
 {
 public:
     SetCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ResetCommand : ServerCommand
+class ResetCommand final : ServerCommand
 {
 public:
     ResetCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class GameOverCommand : ServerCommand
+class GameOverCommand final : ServerCommand
 {
 public:
     GameOverCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class CountdownCommand : ServerCommand
+class CountdownCommand final : ServerCommand
 {
 public:
     CountdownCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class FlagCommand : ServerCommand
+class FlagCommand final : ServerCommand
 {
 public:
     FlagCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class JitterWarnCommand : ServerCommand
+class JitterWarnCommand final : ServerCommand
 {
 public:
     JitterWarnCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class JitterDropCommand : ServerCommand
+class JitterDropCommand final : ServerCommand
 {
 public:
     JitterDropCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class LagWarnCommand : ServerCommand
+class LagWarnCommand final : ServerCommand
 {
 public:
     LagWarnCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class LagDropCommand : ServerCommand
+class LagDropCommand final : ServerCommand
 {
 public:
     LagDropCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class LagStatCommand : ServerCommand
+class LagStatCommand final : ServerCommand
 {
 public:
     LagStatCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class IdleStatCommand : ServerCommand
+class IdleStatCommand final : ServerCommand
 {
 public:
     IdleStatCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class IdleTimeCommand : ServerCommand
+class IdleTimeCommand final : ServerCommand
 {
 public:
     IdleTimeCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class HandicapCommand : ServerCommand
+class HandicapCommand final : ServerCommand
 {
 public:
     HandicapCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class FlagHistoryCommand : ServerCommand
+class FlagHistoryCommand final : ServerCommand
 {
 public:
     FlagHistoryCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class IdListCommand : ServerCommand
+class IdListCommand final : ServerCommand
 {
 public:
     IdListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class PacketLossWarnCommand : public ServerCommand
+class PacketLossWarnCommand final : public ServerCommand
 {
 public:
     PacketLossWarnCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
 
-class PacketLossDropCommand : public ServerCommand
+class PacketLossDropCommand final : public ServerCommand
 {
 public:
     PacketLossDropCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class PlayerListCommand : ServerCommand
+class PlayerListCommand final : ServerCommand
 {
 public:
     PlayerListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ReportCommand : ServerCommand
+class ReportCommand final : ServerCommand
 {
 public:
     ReportCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class HelpCommand : ServerCommand
+class HelpCommand final : ServerCommand
 {
 public:
     HelpCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class SendHelpCommand : ServerCommand
+class SendHelpCommand final : ServerCommand
 {
 public:
     SendHelpCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class GroupListCommand : ServerCommand
+class GroupListCommand final : ServerCommand
 {
 public:
     GroupListCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ShowGroupCommand : ServerCommand
+class ShowGroupCommand final : ServerCommand
 {
 public:
     ShowGroupCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ShowPermsCommand : ServerCommand
+class ShowPermsCommand final : ServerCommand
 {
 public:
     ShowPermsCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class GroupPermsCommand : ServerCommand
+class GroupPermsCommand final : ServerCommand
 {
 public:
     GroupPermsCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class SetGroupCommand : ServerCommand
+class SetGroupCommand final : ServerCommand
 {
 public:
     SetGroupCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class RemoveGroupCommand : ServerCommand
+class RemoveGroupCommand final : ServerCommand
 {
 public:
     RemoveGroupCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ReloadCommand : ServerCommand
+class ReloadCommand final : ServerCommand
 {
 public:
     ReloadCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class PollCommand : ServerCommand
+class PollCommand final : ServerCommand
 {
 public:
     PollCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class VoteCommand : ServerCommand
+class VoteCommand final : ServerCommand
 {
 public:
     VoteCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class VetoCommand : ServerCommand
+class VetoCommand final : ServerCommand
 {
 public:
     VetoCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ViewReportCommand : ServerCommand
+class ViewReportCommand final : ServerCommand
 {
 public:
     ViewReportCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ClientQueryCommand : ServerCommand
+class ClientQueryCommand final : ServerCommand
 {
 public:
     ClientQueryCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
 class DateTimeCommand : ServerCommand
 {
 public:
     DateTimeCommand();
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override final;
 protected:
     DateTimeCommand(std::string _commandName) : ServerCommand(_commandName, "- display current server time") {};
 };
@@ -437,77 +437,77 @@ public:
     TimeCommand();
 };
 
-class RecordCommand : ServerCommand
+class RecordCommand final : ServerCommand
 {
 public:
     RecordCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ReplayCommand : ServerCommand
+class ReplayCommand final : ServerCommand
 {
 public:
     ReplayCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class SayCommand : ServerCommand
+class SayCommand final : ServerCommand
 {
 public:
     SayCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class CmdList : ServerCommand
+class CmdList final : ServerCommand
 {
 public:
     CmdList();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class CmdHelp : ServerCommand
+class CmdHelp final : ServerCommand
 {
 public:
     CmdHelp();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class ModCountCommand : ServerCommand
+class ModCountCommand final : ServerCommand
 {
 public:
     ModCountCommand();
 
-    virtual bool operator() (const char *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
-class DebugCommand : ServerCommand
+class DebugCommand final : ServerCommand
 {
 public:
     DebugCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
 
-class OwnerCommand : ServerCommand
+class OwnerCommand final : ServerCommand
 {
 public:
     OwnerCommand();
 
-    virtual bool operator() (const char    *commandLine,
-                             GameKeeper::Player *playerData);
+    bool operator() (const char    *commandLine,
+                     GameKeeper::Player *playerData) override;
 };
 
 
@@ -595,11 +595,11 @@ FlagCommand::FlagCommand()       : ServerCommand("/flag",
 LagWarnCommand::LagWarnCommand()     : ServerCommand("/lagwarn",
             "[milliseconds] - display or set the maximum allowed lag time") {}
 LagDropCommand::LagDropCommand()     : ServerCommand("/lagdrop",
-            "[count] - display or set the number of lag warings before a player is kicked") {}
+            "[count] - display or set the number of lag warnings before a player is kicked") {}
 JitterWarnCommand::JitterWarnCommand()   : ServerCommand("/jitterwarn",
             "[milliseconds] - display or set the maximum allowed jitter time") {}
 JitterDropCommand::JitterDropCommand()   : ServerCommand("/jitterdrop",
-            "[count] - display or set the number of jitter warings before a player is kicked") {}
+            "[count] - display or set the number of jitter warnings before a player is kicked") {}
 PacketLossWarnCommand::PacketLossWarnCommand()     : ServerCommand("/packetlosswarn",
             "<%> - change the maximum allowed packetloss") {}
 PacketLossDropCommand::PacketLossDropCommand()   : ServerCommand("/packetlossdrop",
@@ -1166,7 +1166,7 @@ bool ResetCommand::operator() (const char    *message,
 bool ShutdownCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
-    // If no playerData - dont perfom permission check, since it is probably the API
+    // If no playerData - don't perform permission check, since it is probably the API
     if (playerData)
     {
         int t = playerData->getIndex();
@@ -1184,7 +1184,7 @@ bool ShutdownCommand::operator() (const char     *,
 bool SuperkillCommand::operator() (const char    *,
                                    GameKeeper::Player *playerData)
 {
-    // If no playerData - dont perfom permission check, since it is probably the API
+    // If no playerData - dont perform permission check, since it is probably the API
     int t = ServerPlayer;
 
     if (playerData)
@@ -1714,7 +1714,7 @@ bool FlagCommand::operator() (const char     *message,
 
             grantFlag(gkPlayer->getIndex(), *fi, false);
 
-            // send the annoucement
+            // send the announcement
             char buffer[MessageLen];
             snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
                      playerData->player.getCallSign(),
@@ -3699,7 +3699,7 @@ bool RecordCommand::operator() (const char   *message,
  *  /replay play        # began playing
  *  /replay loop        # began playing in looped mode
  *  /replay stats       # report the current replay state
- *  /replay skip <secs>  # fast foward or rewind in time
+ *  /replay skip <secs>  # fast forward or rewind in time
  */
 bool ReplayCommand::operator() (const char   *message,
                                 GameKeeper::Player *playerData)
@@ -3876,7 +3876,7 @@ bool ModCountCommand::operator() (const char* message, GameKeeper::Player *playe
 
 
 
-// parse server comands
+// parse server commands
 void parseServerCommand(const char *message, int t, int sourceChannel)
 {
     if (!message)
@@ -3921,7 +3921,7 @@ void parseServerCommand(const char *message, int t, int sourceChannel)
     if ( strlen(message+1) > params[0].size())
         APIMessage = (message+params[0].size()+2);
 
-    // see if we have a registerd custom command and call it
+    // see if we have a registered custom command and call it
     if (itr != customCommands.end())
     {
         // if it handles it, then we are good

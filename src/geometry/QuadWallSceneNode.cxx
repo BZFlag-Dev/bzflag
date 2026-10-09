@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -138,6 +138,11 @@ QuadWallSceneNode::Geometry::~Geometry()
 #define EMITV(_i)   glVertex3fv(vertex[_i])
 #define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
+const glm::vec3 QuadWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getCenter();
+}
+
 void            QuadWallSceneNode::Geometry::render()
 {
     wall->setColor();
@@ -175,11 +180,6 @@ void            QuadWallSceneNode::Geometry::drawVT() const
 const glm::vec3 &QuadWallSceneNode::Geometry::getVertex(int i) const
 {
     return vertex[i];
-}
-
-const glm::vec3 QuadWallSceneNode::Geometry::getPosition() const
-{
-    return wall->getCenter();
 }
 
 //

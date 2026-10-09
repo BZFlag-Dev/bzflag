@@ -127,7 +127,7 @@ Contrarily,
 
 2,6-10/2	*	*	*	*	*	/say "Hey there"
 
-will run on the SECOND, SIXTH, EIGTH and TENTH minutes, since 2 hits the step
+will run on the SECOND, SIXTH, EIGHTH and TENTH minutes, since 2 hits the step
 value. Zero always matches the step value, no matter what the step value is.
 
 

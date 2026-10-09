@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -86,6 +86,11 @@ EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
     delete[] poly;
 }
 
+const glm::vec3 EighthDimSceneNode::EighthDimRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 void            EighthDimSceneNode::EighthDimRenderNode::render()
 {
     // draw polygons
@@ -105,11 +110,6 @@ void            EighthDimSceneNode::EighthDimRenderNode::setPolygon(
 {
     for (int i = 0; i < 3; i++)
         poly[index][i] = vertex[i];
-}
-
-const glm::vec3 EighthDimSceneNode::EighthDimRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
 }
 
 // Local Variables: ***

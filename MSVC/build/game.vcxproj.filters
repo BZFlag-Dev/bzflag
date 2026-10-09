@@ -61,6 +61,9 @@
     <ClCompile Include="..\..\src\game\Frustum.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\ServerAuth.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\BzMaterial.h">
@@ -112,6 +115,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\StartupInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ServerAuth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

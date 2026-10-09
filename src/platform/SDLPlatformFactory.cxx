@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -65,6 +65,23 @@ BzfJoystick* SdlPlatformFactory::createJoystick()
 {
     return new SDLJoystick;
 }
+
+std::string SdlPlatformFactory::getClipboard()
+{
+    if (SDL_HasClipboardText())
+    {
+        char* clipboard = SDL_GetClipboardText();
+        if (clipboard != nullptr)
+        {
+            const std::string text(clipboard);
+            SDL_free(clipboard);
+            return text;
+        }
+    }
+
+    return std::string();
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

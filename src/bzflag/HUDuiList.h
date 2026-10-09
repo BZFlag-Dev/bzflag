@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,7 +27,7 @@
 
 #include "BzfEvent.h"
 
-class HUDuiList : public HUDuiControl
+class HUDuiList final : public HUDuiControl
 {
 public:
     HUDuiList();
@@ -42,9 +42,9 @@ public:
     void        update();
 
 protected:
-    bool        doKeyPress(const BzfKeyEvent&);
-    bool        doKeyRelease(const BzfKeyEvent&);
-    void        doRender();
+    bool        doKeyPress(const BzfKeyEvent&) override;
+    bool        doKeyRelease(const BzfKeyEvent&) override;
+    void        doRender() override;
 
 private:
     int         index;

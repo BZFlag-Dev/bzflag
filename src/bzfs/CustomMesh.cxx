@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -190,7 +190,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomMesh::writeToGroupDef(GroupDefinition *groupdef)
 {
     // include the old style parameters
     MeshTransform xform;
@@ -221,7 +221,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
         }
         else
             vert[0] = vert[1] = vert[2] = 0.0f;
-        const_cast<std::vector<glm::vec3>*>(&vertices)->push_back(vert);
+        vertices.push_back(vert);
     }
 
     MeshObstacle* mesh =

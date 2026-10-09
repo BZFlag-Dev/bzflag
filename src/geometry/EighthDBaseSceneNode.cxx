@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -124,6 +124,11 @@ EighthDBaseSceneNode::EighthDBaseRenderNode::~EighthDBaseRenderNode()
     // do nothing
 }
 
+const glm::vec3 EighthDBaseSceneNode::EighthDBaseRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
@@ -150,12 +155,6 @@ void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
     glVertex3fv(corner[7]);
     glEnd();
 }
-
-const glm::vec3 EighthDBaseSceneNode::EighthDBaseRenderNode::getPosition() const
-{
-    return sceneNode->getCenter();
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

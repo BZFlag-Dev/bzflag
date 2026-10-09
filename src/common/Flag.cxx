@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -301,22 +301,16 @@ void kill()
 
 void clearCustomFlags()
 {
-    FlagType::Set::iterator itr, nitr;
+    FlagType::Set::iterator itr;
     for (int q = 0; q < (int)FlagQuality::Last; ++q)
-    {
-        for (itr = FlagType::FlagType::Sets[q].begin(); itr != FlagType::FlagType::Sets[q].end(); ++itr)
-        {
+        for (itr = FlagType::FlagType::Sets[q].begin(); itr != FlagType::FlagType::Sets[q].end();)
             if ((*itr)->custom)
             {
                 FlagType::getFlagMap().erase((*itr)->flagAbbv);
-                nitr = itr;
-                ++nitr;
-                FlagType::FlagType::Sets[q].erase(itr);
-                itr = nitr;
-                if (itr == FlagType::FlagType::Sets[q].end()) break;
+                itr = FlagType::FlagType::Sets[q].erase(itr);
             }
-        }
-    }
+            else
+                itr++;
     FlagType::customFlags.clear();
 }
 }
@@ -357,8 +351,7 @@ void* FlagType::packCustom(void* buf) const
 
 const void* FlagType::unpackCustom(const void* buf, FlagType::Ptr &type)
 {
-    uint8_t *abbv = new uint8_t[3];
-    abbv[0]=abbv[1]=abbv[2]=0;
+    unsigned char abbv[3] = {0, 0, 0};
     buf = nboUnpackUByte(buf, abbv[0]);
     buf = nboUnpackUByte(buf, abbv[1]);
 
@@ -384,7 +377,7 @@ const void* FlagType::unpackCustom(const void* buf, FlagType::Ptr &type)
         assert(false); // shouldn't happen
     }
 
-    type = Flags::AddCustomFlag(std::make_shared<FlagType>(sName, reinterpret_cast<const char*>(&abbv[0]), e,
+    type = Flags::AddCustomFlag(std::make_shared<FlagType>(sName, (char *)abbv, e,
                                 (ShotType)shot, (FlagQuality)quality, NoTeam, (FlagEffect)effect, sHelp, true));
     return buf;
 }

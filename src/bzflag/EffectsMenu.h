@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,9 +13,7 @@
 #ifndef __EFFECTSMENU_H__
 #define __EFFECTSMENU_H__
 
-#include "common.h"
-
-/* common interface headers */
+// Inherits from
 #include "HUDDialog.h"
 
 /* local interface headers */
@@ -25,18 +23,18 @@
 
 /** this class provides options for setting the gui
  */
-class EffectsMenu : public HUDDialog
+class EffectsMenu final : public HUDDialog
 {
 public:
     EffectsMenu();
     ~EffectsMenu();
 
-    HUDuiDefaultKey* getDefaultKey()
+    HUDuiDefaultKey* getDefaultKey() override
     {
         return MenuDefaultKey::getInstance();
     }
-    void execute();
-    void resize(int width, int height);
+    void execute() override;
+    void resize(int width, int height) override;
     static void callback(HUDuiControl* w, const void* data);
 
 private:

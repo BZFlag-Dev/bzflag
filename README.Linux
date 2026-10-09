@@ -27,6 +27,10 @@ Different Linux distributions use different naming conventions for the packages
 that provide the dependencies needed to compile and run BZFlag. Known build
 requirements include:
 
+  Alpine:
+    apk add autoconf automake c-ares-dev curl-dev g++ git glew libtool make \
+    ncurses sdl2 zlib
+
   Debian & Ubuntu:
 
     apt-get install g++ libtool automake autoconf libsdl2-dev libcurl3-dev \

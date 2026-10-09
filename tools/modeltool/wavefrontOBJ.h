@@ -1,6 +1,6 @@
 
 //
-// wavefrontOBJ.h : defintions of the model classes
+// wavefrontOBJ.h : definitions of the model classes
 //
 
 #ifndef _WAVEFRONT_OBJ_H_

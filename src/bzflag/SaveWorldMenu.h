@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,26 +13,25 @@
 #ifndef __SAVEWORLDMENU_H__
 #define __SAVEWORLDMENU_H__
 
-// common - 1st
-#include "common.h"
+// Inherits from
+#include "HUDDialog.h"
 
 /* local interface headers */
-#include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiTypeIn.h"
 #include "HUDuiLabel.h"
 
 
-class SaveWorldMenu : public HUDDialog
+class SaveWorldMenu final : public HUDDialog
 {
 public:
     SaveWorldMenu();
     ~SaveWorldMenu();
 
-    HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey() override;
 
-    void execute();
-    void resize(int width, int height);
+    void execute() override;
+    void resize(int width, int height) override;
 
 private:
     HUDuiTypeIn* filename;

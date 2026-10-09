@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -109,24 +109,16 @@ bool            SDLJoystick::joystick() const
     return joystickID != nullptr;
 }
 
-void            SDLJoystick::getJoy(int& x, int& y)
+void            SDLJoystick::getJoy(float& x, float& y)
 {
-    x = y = 0;
+    x = y = 0.0f;
 
     if (!joystickID)
         return;
 
     SDL_JoystickUpdate();
-    x = SDL_JoystickGetAxis(joystickID, xAxis);
-    y = SDL_JoystickGetAxis(joystickID, yAxis);
-
-    x = x * 1000 / 32768;
-    y = y * 1000 / 32768;
-
-    // ballistic
-    x = (x * abs(x)) / 1000;
-    y = (y * abs(y)) / 1000;
-
+    x = float(SDL_JoystickGetAxis(joystickID, xAxis)) / 32768.0f;
+    y = float(SDL_JoystickGetAxis(joystickID, yAxis)) / 32768.0f;
 }
 
 unsigned long       SDLJoystick::getJoyButtons()

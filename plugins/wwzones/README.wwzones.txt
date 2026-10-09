@@ -63,8 +63,8 @@ This optional attribute will issue a plugin defined message to all players
 stating which type of world weapon was triggered by whom:
   infomessage
 
-This optional attribute will cause the world weapon to fire releated every
-<seconds> seconds while player is in defined volume:
+This optional attribute will cause the world weapon to fire every
+<seconds> seconds while player is in the defined volume:
   repeat <seconds>
 
   <seconds>

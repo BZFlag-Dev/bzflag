@@ -390,7 +390,7 @@ msgstr "défile les messages vers le haut"
 #msgid "Toggle Main Flags"
 #msgstr ""
 
-#msgid "Silence/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
 #msgid "Server Admin"
@@ -1271,10 +1271,10 @@ msgstr "des tanks:  les tanks les plus haut ont des points plus larges.  Les dra
 #msgid "Toggle Main Flags:"
 #msgstr ""
 
-#msgid "Silience/UnSilence"
+#msgid "Silence/Unsilence"
 #msgstr ""
 
-#msgid "Silience/UnSilence Key:"
+#msgid "Silence/Unsilence Key:"
 #msgstr ""
 
 #msgid "Server Command Key:"

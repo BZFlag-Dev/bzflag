@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,14 +30,14 @@ typedef std::vector<std::string> QualifierList;
 typedef std::map<FlagType::Ptr, int> ZoneFlagMap; // type, count
 
 
-class CustomZone : public WorldFileLocation
+class CustomZone final : public WorldFileLocation
 {
 public:
     CustomZone();
 
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef()
+    bool read(const char *cmd, std::istream&) override;
+    void writeToWorld(WorldInfo*) const override;
+    bool usesGroupDef() override
     {
         return false;
     }

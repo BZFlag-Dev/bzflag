@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,47 +13,49 @@
 #ifndef __FORMATMENU_H__
 #define __FORMATMENU_H__
 
+// Inherits from
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
+
 /* common interface headers */
 #include "BzfEvent.h"
 
 /* local interface headers */
-#include "HUDDialog.h"
 #include "HUDuiLabel.h"
 #include "HUDuiDefaultKey.h"
-#include "MenuDefaultKey.h"
 
 
 class FormatMenu;
 
-class FormatMenuDefaultKey : public MenuDefaultKey
+class FormatMenuDefaultKey final : public MenuDefaultKey
 {
 public:
     FormatMenuDefaultKey(FormatMenu* _menu) :
         menu(_menu) {}
     ~FormatMenuDefaultKey() {}
 
-    bool keyPress(const BzfKeyEvent&);
-    bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&) override;
+    bool keyRelease(const BzfKeyEvent&) override;
 
 private:
     FormatMenu* menu;
 };
 
-class FormatMenu : public HUDDialog
+class FormatMenu final : public HUDDialog
 {
 public:
     FormatMenu();
     ~FormatMenu();
 
-    HUDuiDefaultKey*  getDefaultKey()
+    HUDuiDefaultKey*  getDefaultKey() override
     {
         return &defaultKey;
     }
     int           getSelected() const;
     void          setSelected(int);
-    void          show();
-    void          execute();
-    void          resize(int width, int height);
+    void          show() override;
+    void          execute() override;
+    void          resize(int width, int height) override;
 
     void          setFormat(bool test);
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Inspired from misc/bzfquery.pl
@@ -7,47 +7,37 @@
 #         <fj@tuxee.net>
 #         <fred@jolliton.com>
 #
-# This script can be used either as a module,
-# a CGI or directly from the command line.
+# This script can be used either as a module or
+# directly from the command line.
 #
 # Example of use:
 #
-#   s = Server( 'bzflag3.tuxee.net' , 45154 )
+#   from bzfquery import *
+#   s = Server( 'localhost' , 5154 )
 #   game = s.queryGame()
-#   print game[ 'style' ]
+#   print( game[ 'style' ] )
 #   teams , players = s.queryPlayers()
-#   print teams.get( 'rogue' )
-#   print players[ 0 ]
+#   print( teams.get( 'rogue' ) )
+#   print( players[ 0 ] )
 #
 # output the following:
 #
-# ['flags', 'jumping', 'ricochet', 'shaking']
-# {'score': 0, 'won': 0, 'lost': 0, 'size': 1}
-# {'lost': 0, 'pId': 0, 'sign': 'FredCods', 'won': 0, 'tks': 0, 'team': 'observer', 'type': 0, 'motto': ''}
+# TeamFFA
+# {'size': 1, 'score': 0, 'won': 0, 'lost': 0}
+# {'pId': 0, 'type': 0, 'team': 'observer', 'score': 0, 'won': 0, 'lost': 0, 'tks': 0, 'sign': 'FredCods', 'motto': ''}
 #
 #
 
 import sys
-import cgi
 import os
 import struct
 import socket
 import time
 import select
+from functools import reduce
 
 #
-# If true, display detailled HTML output when exception occur
-#
-enableCgiTb = True
-
-#
-# If true, then allow ?host=<hostname>&port=<port> on URL
-# instead of using only defaultHostname and defaultPort.
-#
-allowCgiParameters = True
-
-#
-# IMPORTANT: Change value here for CGI
+# Default hostname and port
 #
 defaultHostname = 'localhost'
 defaultPort = 5154
@@ -138,13 +128,13 @@ class Server :
 
 		self.sock = socket.socket( socket.AF_INET , socket.SOCK_STREAM )
 		self.sock.connect( ( host , port ) )
-		self.sock.sendall( "BZFLAG\r\n\r\n" )
+		self.sock.sendall( b"BZFLAG\r\n\r\n" )
 		header = receive( self.sock , 9 , defaultTimeout )
 		magic , self.protocol , self.id = \
 			struct.unpack( '4s4sb' , header )
-		if magic != 'BZFS' :
+		if magic != b'BZFS' :
 			raise Error( 'Not a bzflag server.' )
-		if self.protocol not in [ '0223' ] :
+		if self.protocol not in [ b'0223' ] :
 			raise Error( 'Not compatible with server.' )
 
 	def cmd( self , command ) :
@@ -157,9 +147,13 @@ class Server :
 	def _getPacket( self ) :
 
 		pktData = receive( self.sock , 4 , defaultTimeout )
+		if pktData is None :
+			return
 		size , code = struct.unpack( '>H2s' , pktData )
 		data = receive( self.sock , size , defaultTimeout )
-		return code , data
+		if data is None :
+			return
+		return code.decode('utf-8') , data
 
 	#
 	# If expectedCode is none, we return the first packet that is
@@ -173,10 +167,14 @@ class Server :
 		timeLimit = time.time() + defaultTimeout
 		code = None
 		while time.time() < timeLimit :
-			code , data = self._getPacket()
-			if code == expectedCode :
-				break
+			packet = self._getPacket()
+			if packet is not None :
+				code , data = packet
+				if code == expectedCode :
+					break
 		else :
+			# With 'hardTimeout = True', this may never be reached, because
+			# receive() will time out with the same time limit.
 			if code is not None :
 				raise Error( 'Got wrong response code (got %r, expected %r)' \
 					     % ( code , expectedCode ) )
@@ -194,7 +192,6 @@ class Server :
 			shakeWins , shakeTimeout , maxPlayerScore , maxTeamScore , \
 			maxTime , elapsedTime \
 			= data
-		print "Style is %d\n" % style
 		style = gameStyles[style]
 		options = decodeOptions( options )
 		teams = {
@@ -226,7 +223,8 @@ class Server :
 		data = struct.unpack( '>2H' , data )
 		numTeams_ , numPlayers = data
 		data = self.getResponse( 'tu' )
-		numTeams , data = ord( data[ 0 ] ) , data[ 1 : ]
+		numTeamInfo , data = data[ : 1 ] , data[ 1 : ]
+		numTeams , = struct.unpack( '>1B', numTeamInfo )
 		#if numTeams != numTeams_ :
 		#	raise Error( 'Inconsistency in numTeams (got %d and %d)' \
 		#		% ( numTeams_ , numTeams ) )
@@ -254,8 +252,8 @@ class Server :
 				'won'   : won ,
 				'lost'  : lost ,
 				'tks'   : tks ,
-				'sign'  : sign.rstrip( '\x00' ) ,
-				'motto' : motto.rstrip( '\x00' )
+				'sign'  : sign.rstrip( b'\x00' ).decode( 'utf-8' ) ,
+				'motto' : motto.rstrip( b'\x00' ).decode( 'utf-8' )
 			}
 			playersInfo.append( playerInfo )
 		return teamsInfo , playersInfo
@@ -265,51 +263,49 @@ def getAndPrintStat( hostname , port ) :
 	s = Server( hostname , port )
 	game = s.queryGame()
 
-	if os.environ.has_key( 'QUERY_STRING' ) :
-		print 'Content-Type: text/plain\n'
-	print 'Statistics of the BZFlag server %s (port %s)' % ( hostname , port )
-	print
-	print '--[ GAME ]' + '-' * 40
-	print
-	print 'Type:' , game[ 'style' ]
-	print 'Options:' , ' '.join( game[ 'options' ] )
-	print
-	print 'Max players: %s   Max shots: %s' % ( game[ 'maxPlayers' ] , game[ 'maxShots' ] )
-	print
-	print 'Teams     Size   Max'
-	print '-' * 20
+	print('Statistics of the BZFlag server %s (port %s)' % ( hostname , port ))
+	print()
+	print('--[ GAME ]' + '-' * 40)
+	print()
+	print('Type:' , game[ 'style' ])
+	print('Options:' , ' '.join( game[ 'options' ] ))
+	print()
+	print('Max players: %s   Max shots: %s' % ( game[ 'maxPlayers' ] , game[ 'maxShots' ] ))
+	print()
+	print('Teams     Size   Max')
+	print('-' * 20)
 	for team in teamsName :
 		t = game[ 'teams' ].get( team )
 		if t is not None :
-			print '%-8s %5d %5d' % ( team , t[ 0 ] , t[ 1 ] )
+			print('%-8s %5d %5d' % ( team , t[ 0 ] , t[ 1 ] ))
 	shaking = game.get( 'shake' )
 	if shaking :
-		print
-		print 'Shaking bad flag: wins: %d, timeout: %g' % ( shaking[ 'wins' ] , shaking[ 'timeout' ] )
-	print
-	print 'Max player score: %d' % game[ 'maxPlayerScore' ]
-	print 'Max team score: %d' % game[ 'maxTeamScore' ]
-	print 'Max time: %g' % game[ 'maxTime' ]
-	print 'Time elapsed: %g' % game[ 'elapsedTime' ]
+		print()
+		print('Shaking bad flag: wins: %d, timeout: %g' % ( shaking[ 'wins' ] , shaking[ 'timeout' ] ))
+	print()
+	print('Max player score: %d' % game[ 'maxPlayerScore' ])
+	print('Max team score: %d' % game[ 'maxTeamScore' ])
+	print('Max time: %g' % game[ 'maxTime' ])
+	print('Time elapsed: %g' % game[ 'elapsedTime' ])
 
 	teams , players = s.queryPlayers()
-	print
-	print '--[ TEAMS ]' + '-' * 39
-	print
-	print 'Teams     Size  Score  Won  Lost'
-	print '-' * 32
+	print()
+	print('--[ TEAMS ]' + '-' * 39)
+	print()
+	print('Teams     Size  Score  Won  Lost')
+	print('-' * 32)
 	for team in teamsName :
 		t = teams.get( team )
 		if t is not None :
-			print '%-8s %5d %5d %5d %5d' \
-				% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] )
+			print('%-8s %5d %5d %5d %5d' \
+				% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] ))
 
-	print
-	print '--[ PLAYERS ]' + '-' * 37
-	print
-	print 'Team     Score   Won  Lost Type       Sign'
-	print '-' * 60
-	players.sort( lambda a , b : cmp( b[ 'score' ] , a[ 'score' ] ) )
+	print()
+	print('--[ PLAYERS ]' + '-' * 37)
+	print()
+	print('Team     Score   Won  Lost Type       Sign')
+	print('-' * 60)
+	players.sort(key=lambda x: x['score'], reverse=True)
 	for player in players :
 		sign , team , score , won , lost , motto = \
 			player[ 'sign' ] , player[ 'team' ] , \
@@ -321,45 +317,34 @@ def getAndPrintStat( hostname , port ) :
 			type = 'Unknown player type %s' % player.get( 'tks' )
 		name = sign
 		if motto : name = name + ' <%s>' % motto
-		print '%-8s %5d %5d %5d %-10s %s' % ( team , score , won , lost , type , name )
+		print('%-8s %5d %5d %5d %-10s %s' % ( team , score , won , lost , type , name ))
 
 def usage() :
 
-	print '''Usage: bzfquery.py [OPTIONS] [hostname [port]]
+	print('''Usage: bzfquery.py [OPTIONS] [hostname [port]]
 
  -h, --help  Display this help.
 
-Report bugs to <bzflag@tuxee.net>.'''
+Report bugs on https://github.com/BZFlag-Dev/bzflag/issues''')
 
 def main() :
 
 	hostname , port = defaultHostname , defaultPort
-	if os.environ.has_key( 'QUERY_STRING' ) :
-		if enableCgiTb : import cgitb; cgitb.enable()
+	import getopt
+	options , parameters = getopt.getopt( sys.argv[ 1 : ] , 'h' , ( 'help' , ) )
 
-		if allowCgiParameters :
-			form = cgi.FormContentDict()
-			hostname = form.get( 'host' , [ defaultHostname ] )[ 0 ]
-			try :
-				port = int( form.get( 'port' , [ defaultPort ] )[ 0 ] )
-			except :
-				pass
-	else :
-		import getopt
-		options , parameters = getopt.getopt( sys.argv[ 1 : ] , 'h' , ( 'help' , ) )
-
-		for option , argument in options :
-			if option in [ '-h' , '--help' ] :
-				usage()
-				sys.exit( 0 )
-
-		if len( parameters ) > 2 :
+	for option , argument in options :
+		if option in [ '-h' , '--help' ] :
 			usage()
 			sys.exit( 0 )
-		if 1 <= len( parameters ) <= 2 :
-			hostname = parameters[ 0 ]
-		if len( parameters ) == 2 :
-			port = int( parameters[ 1 ] )
+
+	if len( parameters ) > 2 :
+		usage()
+		sys.exit( 0 )
+	if 1 <= len( parameters ) <= 2 :
+		hostname = parameters[ 0 ]
+	if len( parameters ) == 2 :
+		port = int( parameters[ 1 ] )
 
 	getAndPrintStat( hostname , port )
 

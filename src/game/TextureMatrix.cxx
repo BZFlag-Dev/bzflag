@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -407,7 +407,7 @@ void TextureMatrix::update (double t)
     if (!useDynamic)
     {
         // the matrix has already been setup with the
-        // static tranformations, or an identity matrix.
+        // static transformations, or an identity matrix.
         return;
     }
 

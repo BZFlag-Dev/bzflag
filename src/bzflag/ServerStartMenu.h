@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,9 +13,7 @@
 #ifndef __SERVERSTARTMENU_H__
 #define __SERVERSTARTMENU_H__
 
-#include "common.h"
-
-/* interface header */
+// Inheris from
 #include "HUDDialog.h"
 
 /* system interface headers */
@@ -28,17 +26,17 @@
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
 
-class ServerStartMenu : public HUDDialog
+class ServerStartMenu final : public HUDDialog
 {
 public:
     ServerStartMenu();
     ~ServerStartMenu();
 
-    HUDuiDefaultKey* getDefaultKey();
-    void execute();
-    void show();
-    void dismiss();
-    void resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey() override;
+    void execute() override;
+    void show() override;
+    void dismiss() override;
+    void resize(int width, int height) override;
 
     static const char* getSettings()
     {

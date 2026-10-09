@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2025 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -189,7 +189,7 @@ BzfRegion* BzfRegion::orphanSplitRegion(const float e1[2], const float e2[2])
 {
     // if edge p1,p2 intersects me then split myself along that edge.
     // return new region (the other half of the split), or NULL if no
-    // split occured.  the new region (if it exists) will be to the
+    // split occurred.  the new region (if it exists) will be to the
     // right of the cutting edge (when moving from e1 to e2).
     const int count = corners.size();
     if (count == 0) return NULL;
