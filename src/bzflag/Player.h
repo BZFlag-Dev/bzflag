@@ -85,6 +85,10 @@ public:
     {
         return ShotSlots;
     }
+    const  int& getFlagLimit() const
+    {
+        return flagLimit;
+    }
 
     float     getAngularVelocity() const;
     int       getPhysicsDriver() const;
