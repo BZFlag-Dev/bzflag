@@ -27,6 +27,7 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
     listServerURL(DefaultListServerURL),
     listServerPort(ServerPort + 1)
 {
+    strcpy(serverAllowedTeams, "111111");
     strcpy(serverName, "");
     strcpy(callsign, "");
     strcpy(password, "");
@@ -39,6 +40,7 @@ StartupInfo::~StartupInfo()
 {
     hasConfiguration = false;
     autoConnect = false;
+    memset(serverAllowedTeams, 0, 7);
     memset(serverName, 0, 80);
     serverPort = -1;
     useUDPconnection = false;

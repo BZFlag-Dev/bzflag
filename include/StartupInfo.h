@@ -30,6 +30,7 @@ public:
 
     bool hasConfiguration;
     bool autoConnect;
+    char serverAllowedTeams[7];
     char serverName[80];
     int serverPort;
     bool useUDPconnection;
