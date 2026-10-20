@@ -12,49 +12,13 @@
 
 #include "common.h"
 #include "version.h"
+#include "version_defs.h"
 
 /* system headers */
 #include <sstream>
 #include <string>
 #include <stdio.h>
 #include <string.h>
-
-
-// opaque version number increments on protocol incompatibility
-// update the following files (and their protocol implementations) to match:
-//  misc/bzfquery.php
-//  misc/bzfquery.pl
-//  misc/bzfquery.py
-//  misc/bzls.lua
-#ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION  "0221"
-#endif
-
-// version numbers - also update as needed:
-//  ChangeLog
-//  MSVC/bzflag.rc
-//  README
-//  configure.ac
-//  include/version.h
-//  package/win32/nsis/BZFlag.nsi
-//  Xcode/BZFlag.xcodeproj/project.pbxproj
-//  Xcode/BZFlag-Info.plist
-#ifndef BZ_MAJOR_VERSION
-#  define BZ_MAJOR_VERSION  2
-#endif
-
-#ifndef BZ_MINOR_VERSION
-#  define BZ_MINOR_VERSION  4
-#endif
-
-#ifndef BZ_REV
-#  define BZ_REV        31
-#endif
-
-// DEVEL | RC# | STABLE | MAINT
-#ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE     "DEVEL"
-#endif
 
 const char *bzfcopyright = "Copyright (c) 1993-2025 Tim Riker";
 
@@ -141,10 +105,14 @@ const char*     getAppVersion()
     if (!appVersion.size())
     {
         std::ostringstream  appVersionStream;
-        // TODO add current platform, release, cpu, etc
-        appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
-                         << "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS
-                         << "-SDL2";
+        appVersionStream
+                << getMajorMinorRevVersion() << "." << getBuildDate()
+                << "-" << BZ_BUILD_TYPE
+#if BZ_BUILD_TYPE_REVISION > 0
+                << BZ_BUILD_TYPE_REVISION;
+#endif
+                << "-" << BZ_BUILD_OS
+                << "-SDL2";
         appVersion = appVersionStream.str();
     }
     return appVersion.c_str();

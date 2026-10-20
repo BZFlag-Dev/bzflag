@@ -149,6 +149,7 @@ noinst_HEADERS =			\
 	vectors.h			\
 	vectors_old.h			\
 	version.h			\
+	version_defs.h			\
 	win32.h
 
 
