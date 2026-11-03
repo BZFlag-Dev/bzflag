@@ -127,7 +127,7 @@ void init()
     ShockWave   = new FlagType( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, NoTeam,
                                 "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings.");
     PhantomZone = new FlagType( "Phantom Zone", "PZ", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks).");
+                                "Teleporters zone you; teleport again to unzone.  Drive through buildings and fire Zoned shots; only Super Bullets, Shock Waves, or Zoned tanks can hit you.");
     Genocide    = new FlagType( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, NoTeam,
                                 "Killing one tank kills that tank's whole team.");
     Jumping = new FlagType( "Jumping", "JP", FlagUnstable, NormalShot, FlagGood, NoTeam,
