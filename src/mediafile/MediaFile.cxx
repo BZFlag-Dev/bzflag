@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <cstdint>
 
 /* common implementation headers */
 #include "CacheManager.h"
@@ -174,12 +175,28 @@ unsigned char*      MediaFile::readImage(
         int dy = *height = file->getHeight();
         int dz =       file->getNumChannels();
 
+        // The dimensions come from the image file.  Reject anything whose
+        // product does not fit the allocation arithmetic: a wrapped size here
+        // produces a buffer smaller than the pixel data the decoder then
+        // writes into it, which is a heap overflow.  The decoders handle 1 to 4
+        // channels, so anything else is rejected too.
+        const int64_t totalPixels =
+            static_cast<int64_t>(dx) * static_cast<int64_t>(dy);
+        if ((dx <= 0) || (dy <= 0) || (dz <= 0) || (dz > 4) ||
+            (totalPixels > (static_cast<int64_t>(64) * 1024 * 1024)))
+        {
+            delete file;
+            delete stream;
+            return NULL;
+        }
+
         // make buffer for final image
-        image = new unsigned char[dx * dy * 4];
+        image = new unsigned char[static_cast<size_t>(totalPixels) * 4];
 
         // make buffer to read image.  if the image file has 4 channels
         // then read directly into the final image buffer.
-        unsigned char* buffer = (dz == 4) ? image : new unsigned char[dx * dy * dz];
+        unsigned char* buffer = (dz == 4) ? image :
+            new unsigned char[static_cast<size_t>(totalPixels) * dz];
 
         // read the image
         if (image != NULL && buffer != NULL)
