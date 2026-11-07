@@ -578,7 +578,10 @@ RxStatus NetHandler::tcpReceive()
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-    if (len > MaxPacketLen)
+    // tcpmsg holds the header *and* the body, so the payload can only be
+    // MaxPacketLen - 4 bytes; anything more would make receive() write past
+    // the buffer and into tcplen.
+    if (len > MaxPacketLen - 4)
     {
         logDebugMessage(1,"Player [%d] sent huge packet length (len=%d), possible attack\n",
                         playerIndex, len);
@@ -625,6 +628,15 @@ RxStatus NetHandler::receive(size_t length, bool *retry)
 
     // Degenerate case, because a closed socket should not be sending data, but be paranoid and test for it anyway
     if (closed) return returnValue;
+
+    // tcplen is the read offset into tcpmsg, and every caller's length is a
+    // count of bytes *including* what is already buffered.  Reject an offset
+    // outside the buffer, since it would become the destination of the recv()
+    // below.  tcplen greater than length is not an error: it means more bytes
+    // are already buffered than this call needs, and the ReadAll path below
+    // handles it.
+    if ((tcplen < 0) || ((size_t)tcplen > sizeof(tcpmsg)) || (length > sizeof(tcpmsg)))
+        return returnValue;
 
     if ((int)length <= tcplen) return ReadAll;
     int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
