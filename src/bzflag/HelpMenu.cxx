@@ -427,7 +427,21 @@ Help5Menu::Help5Menu() : HelpMenu("Good Flags")
                 (strcmp((*it)->flagName.c_str(),"") == 0))
             continue;
 
-        listHUD.push_back(createLabel((*it)->flagHelp.c_str(), (*it)->label().c_str()));
+        bool multipleLines = false;
+        std::string flagDescription = (*it)->flagHelp;
+        std::string flagDescription2 = "";
+
+        if (flagDescription.size() >= 120)
+        {
+            multipleLines = true;
+            int position = flagDescription.find(" ", 100);
+            flagDescription2 = "    " + flagDescription.substr(position + 1, std::string::npos);
+            flagDescription = flagDescription.substr(0, position);
+        }
+
+        listHUD.push_back(createLabel(flagDescription.c_str(), (*it)->label().c_str()));
+        if (multipleLines == true)
+            listHUD.push_back(createLabel(flagDescription2.c_str(), ""));
     }
 }
 
