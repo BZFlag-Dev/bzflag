@@ -554,6 +554,29 @@ bool MeshFace::inMovingBox(const float* oldPos, float UNUSED(oldAngle),
         _pos[2] = newPos[2];
     height = height + fabsf(oldPos[2] - newPos[2]);
 
+    // An occupant resting exactly on top of this face is standing on it, not
+    // inside it. BoxBuilding::inMovingBox already says so -- its own test is
+    // `lowerZ >= (getPosition()[2] + getHeight())`, which is clear when the
+    // two are equal -- and a mesh has to agree with a box about that or the
+    // two disagree wherever they meet.
+    //
+    // They meet whenever a box and a mesh of the same height sit side by
+    // side. Because a box is clear at equality, a tank driving on one rests
+    // at exactly the shared top, and inBox()'s own Z test (`extents.maxs[2] <
+    // p[2]`) then calls that tank inside *every* face of the mesh next to it
+    // -- the flat top it is trying to drive onto and the perimeter wall under
+    // that top, both at once. doUpdateMotion's search for the last moment the
+    // tank was clear then has no clear moment to find, at any point in the
+    // step, so the tank stops dead at the seam and stays there.
+    //
+    // The reverse never shows it: a mesh is *not* clear at equality, so a
+    // tank driving on a mesh is left a hair above the top instead of on it,
+    // and from there every face of the next obstacle is below it and misses.
+    // That is why driving mesh -> mesh and mesh -> box are both fine and only
+    // box -> mesh sticks.
+    if (extents.maxs[2] <= _pos[2])
+        return false;
+
     return inBox(_pos, newAngle, dx, dy, height);
 }
 
