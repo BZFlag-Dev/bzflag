@@ -33,6 +33,8 @@
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
 
+char ServerMenu::JoinableTeams[7] = { '1','1','1','1','1','1', '\0' };
+
 ServerMenuDefaultKey::~ServerMenuDefaultKey()
 {
     delete serverListFilterMenu;
@@ -552,6 +554,11 @@ void ServerMenu::pick()
     char buf[60];
     std::vector<HUDuiControl*>& listHUD = getControls();
 
+    // reset JoinableTeams
+    for (int i = 0; i < 6; ++i)
+        JoinableTeams[i] = '1';
+    JoinableTeams[6] = '\0';
+
     const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
                                ping.blueMax, ping.purpleMax, ping.observerMax
                              };
@@ -572,7 +579,10 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[1])->setLabel(buf);
 
         if (ping.rogueMax == 0)
+        {
             buf[0]=0;
+            JoinableTeams[0]='0';
+        }
         else if (ping.rogueMax >= ping.maxPlayers)
             sprintf(buf, "%d", ping.rogueCount);
         else
@@ -580,7 +590,10 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[2])->setLabel(buf);
 
         if (ping.redMax == 0)
+        {
             buf[0]=0;
+            JoinableTeams[1]='0';
+        }
         else if (ping.redMax >= ping.maxPlayers)
             sprintf(buf, "%d", ping.redCount);
         else
@@ -588,7 +601,10 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[3])->setLabel(buf);
 
         if (ping.greenMax == 0)
+        {
             buf[0]=0;
+            JoinableTeams[2]='0';
+        }
         else if (ping.greenMax >= ping.maxPlayers)
             sprintf(buf, "%d", ping.greenCount);
         else
@@ -596,7 +612,10 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[4])->setLabel(buf);
 
         if (ping.blueMax == 0)
+        {
             buf[0]=0;
+            JoinableTeams[3]='0';
+        }
         else if (ping.blueMax >= ping.maxPlayers)
             sprintf(buf, "%d", ping.blueCount);
         else
@@ -604,7 +623,10 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[5])->setLabel(buf);
 
         if (ping.purpleMax == 0)
+        {
             buf[0]=0;
+            JoinableTeams[4]='0';
+        }
         else if (ping.purpleMax >= ping.maxPlayers)
             sprintf(buf, "%d", ping.purpleCount);
         else
@@ -612,7 +634,10 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[6])->setLabel(buf);
 
         if (ping.observerMax == 0)
+        {
             buf[0]=0;
+            JoinableTeams[5]='0';
+        }
         else if (ping.observerMax >= ping.maxPlayers)
             sprintf(buf, "%d", ping.observerCount);
         else
@@ -810,6 +835,8 @@ void ServerMenu::execute()
     info->serverName[sizeof(info->serverName) - 1] = '\0';
     info->serverPort = ntohs((unsigned short)
                              serverList.getServers()[selectedIndex].ping.serverId.port);
+    strncpy(info->serverAllowedTeams, JoinableTeams, sizeof(info->serverAllowedTeams) - 1);
+    info->serverAllowedTeams[sizeof(info->serverAllowedTeams) - 1] = '\0';
 
     // all done
     HUDDialogStack::get()->pop();
