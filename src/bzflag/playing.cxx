@@ -156,7 +156,7 @@ static void     setHuntTarget();
 static void     setTankFlags();
 static const void   *handleMsgSetVars(const void *msg);
 static void     handlePlayerMessage(uint16_t, uint16_t, const void*);
-static void     handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
+static void     handleFlagTransferred(Player* fromTank, Player* toTank, Flag &flag);
 static void     enteringServer(const void *buf);
 static void     joinInternetGame2();
 static void     cleanWorldCache();
@@ -2328,6 +2328,8 @@ static void     handleServerMessage(bool human, uint16_t code,
                 break;
 
             msg = nboUnpackUShort(msg, flagIndex);
+            if (flagIndex >= world->getMaxFlags())
+                break;
             msg = world->getFlag(int(flagIndex)).unpack(msg);
             offset += FlagPLen;
 
@@ -2693,12 +2695,15 @@ static void     handleServerMessage(bool human, uint16_t code,
         uint16_t flagIndex;
         msg = nboUnpackUByte(msg, id);
         msg = nboUnpackUShort(msg, flagIndex);
-        msg = world->getFlag(int(flagIndex)).unpack(msg);
+        if (flagIndex >= world->getMaxFlags())
+            break;
+        Flag &flag = world->getFlag(int(flagIndex));
+        msg = flag.unpack(msg);
         Player* tank = lookupPlayer(id);
         if (!tank) break;
 
         // player now has flag
-        tank->setFlag(world->getFlag(flagIndex).type);
+        tank->setFlag(flag.type);
         if (tank == myTank)
         {
             // grabbed flag
@@ -2713,14 +2718,14 @@ static void     handleServerMessage(bool human, uint16_t code,
         }
         else if (myTank->getTeam() != RabbitTeam && tank &&
                  tank->getTeam() != myTank->getTeam() &&
-                 world->getFlag(flagIndex).type->flagTeam == myTank->getTeam())
+                 flag.type->flagTeam == myTank->getTeam())
         {
             hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
             playLocalSound(SFX_ALERT);
         }
         else
         {
-            FlagType* fd = world->getFlag(flagIndex).type;
+            FlagType* fd = flag.type;
             if ( fd->flagTeam != NoTeam
                     && fd->flagTeam != tank->getTeam()
                     && ((tank && (tank->getTeam() == myTank->getTeam())))
@@ -2744,6 +2749,8 @@ static void     handleServerMessage(bool human, uint16_t code,
         uint16_t flagIndex;
         msg = nboUnpackUByte(msg, id);
         msg = nboUnpackUShort(msg, flagIndex);
+        if (flagIndex >= world->getMaxFlags())
+            break;
         msg = world->getFlag(int(flagIndex)).unpack(msg);
         Player* tank = lookupPlayer(id);
         if (!tank) break;
@@ -3095,10 +3102,13 @@ static void     handleServerMessage(bool human, uint16_t code,
         msg = nboUnpackUByte(msg, fromId);
         msg = nboUnpackUByte(msg, toId);
         msg = nboUnpackUShort(msg, flagIndex);
-        msg = world->getFlag(int(flagIndex)).unpack(msg);
+        if (flagIndex >= world->getMaxFlags())
+            break;
+        Flag& flag = world->getFlag(int(flagIndex));
+        msg = flag.unpack(msg);
         Player* fromTank = lookupPlayer(fromId);
         Player* toTank = lookupPlayer(toId);
-        handleFlagTransferred( fromTank, toTank, flagIndex);
+        handleFlagTransferred( fromTank, toTank, flag);
         break;
     }
 
@@ -3843,10 +3853,8 @@ void handleFlagDropped(Player* tank)
     tank->setFlag(Flags::Null);
 }
 
-static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex)
+static void handleFlagTransferred( Player *fromTank, Player *toTank, Flag &f)
 {
-    Flag f = world->getFlag(flagIndex);
-
     fromTank->setFlag(Flags::Null);
     toTank->setFlag(f.type);
 
