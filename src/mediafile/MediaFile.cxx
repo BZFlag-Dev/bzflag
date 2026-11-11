@@ -17,7 +17,6 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
-#include <cstdint>
 
 /* common implementation headers */
 #include "CacheManager.h"
@@ -175,15 +174,12 @@ unsigned char*      MediaFile::readImage(
         int dy = *height = file->getHeight();
         int dz =       file->getNumChannels();
 
-        // The dimensions come from the image file.  Reject anything whose
-        // product does not fit the allocation arithmetic: a wrapped size here
-        // produces a buffer smaller than the pixel data the decoder then
-        // writes into it, which is a heap overflow.  The decoders handle 1 to 4
-        // channels, so anything else is rejected too.
-        const int64_t totalPixels =
-            static_cast<int64_t>(dx) * static_cast<int64_t>(dy);
-        if ((dx <= 0) || (dy <= 0) || (dz <= 0) || (dz > 4) ||
-            (totalPixels > (static_cast<int64_t>(64) * 1024 * 1024)))
+        // Ensure that the dimensions of the image are not negative and that the color channels are between 1 and 4.
+        // Additionally, ensure that the dimensions of the image do not exceed the maxImageDimension. This is to
+        // handle situations where the image dimenions would result in either a very large memory allocation or an
+        // integer overflow (which would produce a buffer smaller than the pixel data the decoder write into it,
+        // which is a heap overflow).
+        if ((dx <= 0) || (dy <= 0) || (dz <= 0) || (dz > 4) || dx > maxImageDimension || dy > maxImageDimension)
         {
             delete file;
             delete stream;
@@ -191,12 +187,11 @@ unsigned char*      MediaFile::readImage(
         }
 
         // make buffer for final image
-        image = new unsigned char[static_cast<size_t>(totalPixels) * 4];
+        image = new unsigned char[dx * dy * 4];
 
         // make buffer to read image.  if the image file has 4 channels
         // then read directly into the final image buffer.
-        unsigned char* buffer = (dz == 4) ? image :
-            new unsigned char[static_cast<size_t>(totalPixels) * dz];
+        unsigned char* buffer = (dz == 4) ? image : new unsigned char[dx * dy * dz];
 
         // read the image
         if (image != NULL && buffer != NULL)

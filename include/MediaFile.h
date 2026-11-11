@@ -97,6 +97,13 @@ protected:
 
 private:
     std::istream*         stream;
+
+    // This is the maximum width or height that is allowed for a loaded image.
+    // The limit is here to both restrict excessive memory consumption, and to
+    // prevent an integer overflow when defining the buffer size in the
+    // MediaFile::readImage method. There should be little reason to allow a
+    // texture larger than this.
+    static const int      maxImageDimension = 8192;
 };
 
 #endif
