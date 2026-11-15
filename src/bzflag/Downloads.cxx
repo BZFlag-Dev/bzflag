@@ -341,14 +341,29 @@ bool authorizedServer(const std::string& hostname)
 
 bool parseHostname(const std::string& url, std::string& hostname)
 {
-    std::string protocol, path;
-    int port;
-    if (BzfNetwork::parseURL(url, protocol, hostname, port, path))
-    {
-        if ((protocol == "http") || (protocol == "ftp"))
-            return true;
+    // Attempt to create a CURLU handler
+    CURLU *curlu_handler = curl_url();
+    if (curlu_handler == nullptr)
+        return false;
+
+    bool ok = false;
+    char* scheme = nullptr;
+    char* host = nullptr;
+
+    // Try to set the URL and extract/validate the parts of the URL
+    if (curl_url_set(curlu_handler, CURLUPART_URL, url.c_str(), 0) == CURLUE_OK &&
+        curl_url_get(curlu_handler, CURLUPART_SCHEME, &scheme, 0) == CURLUE_OK &&
+        curl_url_get(curlu_handler, CURLUPART_HOST, &host, 0) == CURLUE_OK &&
+        scheme != nullptr && strlen(scheme) > 0 && host != nullptr && strlen(host) > 0 &&
+        (strcmp(scheme, "http") == 0 || strcmp(scheme, "ftp") == 0)) {
+        hostname = host;
+        ok = true;
     }
-    return false;
+
+    curl_free(scheme);
+    curl_free(host);
+    curl_url_cleanup(curlu_handler);
+    return ok;
 }
 
 

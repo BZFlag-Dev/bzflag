@@ -126,19 +126,12 @@ extern "C" {
     int           getErrno();
 }
 
-#include <string>
-
 
 class BzfNetwork
 {
 public:
     static int        setNonBlocking(int fd);
     static int        setBlocking(int fd);
-    static bool   parseURL(const std::string& url,
-                           std::string& protocol,
-                           std::string& hostname,
-                           int& port,
-                           std::string& pathname);
 };
 
 #endif // BZF_NETWORK_H

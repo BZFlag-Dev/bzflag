@@ -304,7 +304,7 @@ AC_CHECK_LIB(cares, ares_getaddrinfo, AC_DEFINE([HAVE_ARES_GETADDRINFO],[1],[Def
 
 dnl detect a usable system curl library
 LIBCURL=""
-LIBCURL_CHECK_CONFIG(, 7.55.0)
+LIBCURL_CHECK_CONFIG(, 7.62.0)
 AC_MSG_CHECKING(checking for curl library)
 if test "x$LIBCURL" = "x" ; then
     AC_MSG_ERROR([working curl library was not found])
