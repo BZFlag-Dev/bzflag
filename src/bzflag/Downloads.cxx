@@ -352,10 +352,11 @@ bool parseHostname(const std::string& url, std::string& hostname)
 
     // Try to set the URL and extract/validate the parts of the URL
     if (curl_url_set(curlu_handler, CURLUPART_URL, url.c_str(), 0) == CURLUE_OK &&
-        curl_url_get(curlu_handler, CURLUPART_SCHEME, &scheme, 0) == CURLUE_OK &&
-        curl_url_get(curlu_handler, CURLUPART_HOST, &host, 0) == CURLUE_OK &&
-        scheme != nullptr && strlen(scheme) > 0 && host != nullptr && strlen(host) > 0 &&
-        (strcmp(scheme, "http") == 0 || strcmp(scheme, "ftp") == 0)) {
+            curl_url_get(curlu_handler, CURLUPART_SCHEME, &scheme, 0) == CURLUE_OK &&
+            curl_url_get(curlu_handler, CURLUPART_HOST, &host, 0) == CURLUE_OK &&
+            scheme != nullptr && strlen(scheme) > 0 && host != nullptr && strlen(host) > 0 &&
+            (strcmp(scheme, "http") == 0 || strcmp(scheme, "ftp") == 0))
+    {
         hostname = host;
         ok = true;
     }
