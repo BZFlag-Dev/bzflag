@@ -225,9 +225,9 @@ Section "!BZFlag (Required)" BZFlag
 
   ; Add some DLL files
   SetOutPath $INSTDIR
-  File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
-  File ..\..\..\bin_Release_${PLATFORM}\zlib1.dll
   File ..\..\..\bin_Release_${PLATFORM}\cares.dll
+  File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
+  File ..\..\..\bin_Release_${PLATFORM}\libz.dll
   File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
   ; This requires the Visual C++ runtime file to be located in the same directory as the NSIS script. This will be

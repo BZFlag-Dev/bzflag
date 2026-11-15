@@ -129,7 +129,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;glew32sd.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl_debug.lib;regex.lib;libglew32d.lib;SDL2d.lib;SDL2maind.lib;libzd.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -191,7 +191,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;glew32sd.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl_debug.lib;regex.lib;libglew32d.lib;SDL2d.lib;SDL2maind.lib;libzd.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -251,7 +251,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;glew32s.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;libglew32.lib;SDL2.lib;SDL2main.lib;libz.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -308,7 +308,7 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;glew32s.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;libglew32.lib;SDL2.lib;SDL2main.lib;libz.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\dependencies\windows-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
