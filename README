@@ -1,5 +1,5 @@
 			    BZFlag 2.4.31
-			 https://BZFlag.org/
+                      https://www.BZFlag.org/
 		Copyright (c) 1993-2025 Tim Riker
 
 BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
@@ -40,7 +40,7 @@ Table of Contents
 Obtaining BZFlag
 ================
 
-Main BZFlag Website:  http://BZFlag.org
+Main BZFlag Website:  http://www.BZFlag.org
 BZFlag Github Site:  https://github.com/BZFlag-Dev/bzflag
 
 The main BZFlag website provides access to most all of the resources
@@ -62,9 +62,9 @@ repository:
 Compiling and Installation
 ==========================
 
-To compile a playable BZFlag, the following steps should get you up
-and running quickly if everything external to BZFlag is properly
-installed:
+To compile a playable BZFlag on Linux, the following steps should get
+you up and running quickly if everything external to BZFlag is
+properly installed:
 
   ./autogen.sh
   ./configure
@@ -119,23 +119,11 @@ directory then run configure and make from there instead.
 
 After configure completes, it will report whether all the requisite
 packages were found that it needs in order to build the client and the
-server.  The client is reliant upon the following external
-dependencies that should be installed before running configure:
-
-  OpenGL 1.0+
-  libSDL 1.2+
+server.
 
 If you're on an operating system that uses a packaging system
 (e.g. apt, portage, ports, etc), be sure to install the development
-kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
-headers are made available.  You may also want to manually install
-other dependencies that BZFlag automatically provides if you do not
-have them pre-installed:
-
-  c-ares
-  libCURL
-  libregex (usually provided as part of libc)
-  zlib
+kit versions of each of those so that headers are made available.
 
 The README.Linux file includes a detailed list of of the packages
 needed to compile and run BZFlag on some popular Linux distributions.

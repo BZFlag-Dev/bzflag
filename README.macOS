@@ -36,7 +36,7 @@ source code from the GitHub repository (https://github.com/BZFlag-Dev/bzflag)
 and install Xcode. You will also need to acquire our three library dependencies,
 SDL2, GLEW, and c-ares. The recommended method for acquiring these dependencies
 is to use our provided dependencies package, which can be accessed from the
-GitHub repository (https://github.com/BZFlag-Dev/bzflag-dependencies). Look for
+GitHub repository (https://github.com/BZFlag-Dev/dependencies). Look for
 a release package for the BZFlag version you are building, or you may download
 the dependencies source package and build them using the following command:
 

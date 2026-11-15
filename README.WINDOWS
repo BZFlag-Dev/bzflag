@@ -9,19 +9,17 @@ https://aka.ms/vs/15/release/vs_community.exe
 
 **Targets**
 There are a total of 4 build targets in the VC projects. There are targets
-for Release and Debug, and each has a 32-bit and 64-bit version. At this time,
-only 32-bit is supported. Our dependencies don't build correctly on 64-bit with
-our current script. Also, there's no real performance advantage in having a
-64-bit BZFlag client as the game doesn't use much RAM.
+for Release and Debug, and each has a 32-bit and 64-bit version. The 64-bit
+version isn't well tested, and at this time we only ship a 32-bit release.
 
 **Required Libraries**
 Various third-party libraries are needed, which are packaged in our
-bzflag-dependencies repository. Either grab a pre-built binary package from
-the releases section, or build the dependencies from source as described at
-the repository. The BZFlag build expects that the dependencies are located at
-the root of the bzflag source directory, such that libraries and headers are in
+dependencies repository. Either grab a pre-built binary package from the
+releases section, or build the dependencies from source as described at the
+repository. The BZFlag build expects that the dependencies are located at the
+root of the bzflag source directory, such that libraries and headers are in
 <bzflag source>/dependencies/windows-<configuration>-<architecture>.
-  https://github.com/BZFlag-Dev/bzflag-dependencies
+  https://github.com/BZFlag-Dev/dependencies
 
 NSIS is needed to build an installer, which is built as part of a release
 build.
