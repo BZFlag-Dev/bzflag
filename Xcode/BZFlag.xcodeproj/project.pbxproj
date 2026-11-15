@@ -6890,6 +6890,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
+				DEPS_ARCH = "arm64-x86_64";
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6904,7 +6905,7 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
-					"../dependencies/macOS-${CONFIGURATION}-${CURRENT_ARCH}/include",
+					"../dependencies/macOS-${CONFIGURATION}-${DEPS_ARCH}/include",
 					/usr/local/include,
 				);
 				"HEADER_SEARCH_PATHS[arch=arm64]" = (
@@ -6913,7 +6914,7 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../PlugIns";
 				LIBRARY_SEARCH_PATHS = (
-					"../dependencies/macOS-${CONFIGURATION}-${CURRENT_ARCH}/lib",
+					"../dependencies/macOS-${CONFIGURATION}-${DEPS_ARCH}/lib",
 					/usr/local/lib,
 				);
 				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
@@ -6933,6 +6934,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
+				DEPS_ARCH = "arm64-x86_64";
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6946,7 +6948,7 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
-					"../dependencies/macOS-${CONFIGURATION}-${CURRENT_ARCH}/include",
+					"../dependencies/macOS-${CONFIGURATION}-${DEPS_ARCH}/include",
 					/usr/local/include,
 				);
 				"HEADER_SEARCH_PATHS[arch=arm64]" = (
@@ -6955,7 +6957,7 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../PlugIns";
 				LIBRARY_SEARCH_PATHS = (
-					"../dependencies/macOS-${CONFIGURATION}-${CURRENT_ARCH}/lib",
+					"../dependencies/macOS-${CONFIGURATION}-${DEPS_ARCH}/lib",
 					/usr/local/lib,
 				);
 				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
