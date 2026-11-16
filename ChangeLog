@@ -1,8 +1,8 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.31
--------------
+BZFlag 2.4.32  "A Narrow Escape" (2026-11-15)
+---------------------------------------------
 
 * Support new miniupnpc API - Alfredo Tupone
 * Fix regression that caused drawInfo/LOD rendering issues - Alfredo Tupone
@@ -15,6 +15,10 @@ BZFlag 2.4.31
 * Resolved a memory leak in the c-ares DNS resolution handler - Alfredo Tupone
 * Fix loading server plugins on macOS - Scott Wichser
 * Fix client hang if window resized to be very narrow - Scott Wichser
+* Fix Out-of-Bounds Heap Write in Flag Handlers - Tristan, Alfredo Tupone
+* Fix TCP length overrun in NetHandler - Andrew Wilke, Scott Wichser
+* Fix image size overflow in MediaFile::readImage - Andrew Wilke, Scott Wichser
+* Fix texture download allow list bypass - Andrew Wilke, Scott Wichser
 
 
 BZFlag 2.4.30  "All Is Clear" (2025-03-16)
