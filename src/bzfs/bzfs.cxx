@@ -2961,6 +2961,15 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         int teamNum = int(playerData->player.getTeam());
         --team[teamNum].team.size;
 
+        // change team wins/losses
+        if(clOptions->gameType == TeamFFA && Team::isColorTeam(playerData->player.getTeam()))
+        {
+            int newTeamWins = team[teamNum].team.getWins() - playerData->score.getWins();
+            int newTeamLosses = team[teamNum].team.getLosses() - playerData->score.getLosses();
+            team[teamNum].team.setWins(newTeamWins);
+            team[teamNum].team.setLosses(newTeamLosses);
+        }
+
         // if last active player on team then remove team's flag if no one
         // is carrying it
         if (Team::isColorTeam((TeamColor)teamNum)
