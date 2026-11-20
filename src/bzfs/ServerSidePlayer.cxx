@@ -135,7 +135,7 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char 
     if (!player || player->playerHandler!=this)
         return ;
 
-    player->player.setType(TankPlayer); // because we like to lie :)
+    player->player.setType(ComputerPlayer);
     player->player.setTeam((TeamColor)convertTeam(_team));
     player->player.setCallSign(callsign);
     player->player.setToken(token);
