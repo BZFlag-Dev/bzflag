@@ -64,6 +64,7 @@ public:
     {
         return &defaultKey;
     }
+
     int getSelected() const;
     void setSelected(int, bool forcerefresh=false);
     void show() override;
@@ -114,6 +115,8 @@ private:
     int lastWidth, lastHeight;
 
     static const int NumReadouts;
+
+    static char JoinableTeams[7];
 };
 
 

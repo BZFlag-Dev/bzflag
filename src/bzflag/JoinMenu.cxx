@@ -80,12 +80,18 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
     std::vector<std::string>& teams = team->getList();
     // these do not need to be in enum order, but must match getTeam() & setTeam()
     teams.push_back(std::string(Team::getName(AutomaticTeam)));
-    teams.push_back(std::string(Team::getName(RogueTeam)));
-    teams.push_back(std::string(Team::getName(RedTeam)));
-    teams.push_back(std::string(Team::getName(GreenTeam)));
-    teams.push_back(std::string(Team::getName(BlueTeam)));
-    teams.push_back(std::string(Team::getName(PurpleTeam)));
-    teams.push_back(std::string(Team::getName(ObserverTeam)));
+    if(info->serverAllowedTeams[0] == '1')
+        teams.push_back(std::string(Team::getName(RogueTeam)));
+    if(info->serverAllowedTeams[1] == '1')
+        teams.push_back(std::string(Team::getName(RedTeam)));
+    if(info->serverAllowedTeams[2] == '1')
+        teams.push_back(std::string(Team::getName(GreenTeam)));
+    if(info->serverAllowedTeams[3] == '1')
+        teams.push_back(std::string(Team::getName(BlueTeam)));
+    if(info->serverAllowedTeams[4] == '1')
+        teams.push_back(std::string(Team::getName(PurpleTeam)));
+    if(info->serverAllowedTeams[5] == '1')
+        teams.push_back(std::string(Team::getName(ObserverTeam)));
     team->update();
     setTeam(info->team);
     listHUD.push_back(team);
@@ -161,7 +167,26 @@ void JoinMenu::show()
     // set fields
     callsign->setString(info->callsign);
     password->setString(info->password);
+    {
+        std::vector<std::string>& teams = team->getList();
+        teams.clear();
+        teams.push_back(std::string(Team::getName(AutomaticTeam)));
+        if (info->serverAllowedTeams[0] == '1')
+            teams.push_back(std::string(Team::getName(RogueTeam)));
+        if (info->serverAllowedTeams[1] == '1')
+            teams.push_back(std::string(Team::getName(RedTeam)));
+        if (info->serverAllowedTeams[2] == '1')
+            teams.push_back(std::string(Team::getName(GreenTeam)));
+        if (info->serverAllowedTeams[3] == '1')
+            teams.push_back(std::string(Team::getName(BlueTeam)));
+        if (info->serverAllowedTeams[4] == '1')
+            teams.push_back(std::string(Team::getName(PurpleTeam)));
+        if (info->serverAllowedTeams[5] == '1')
+            teams.push_back(std::string(Team::getName(ObserverTeam)));
+        team->update();
+    }
     setTeam(info->team);
+    updateTeamTexture();
 
     server->setString(info->serverName);
     char buffer[10];
@@ -273,12 +298,27 @@ void JoinMenu::setFailedMessage(const char* msg)
 
 TeamColor JoinMenu::getTeam() const
 {
-    return team->getIndex() == 0 ? AutomaticTeam : TeamColor(team->getIndex() - 1);
+    const int idx = team->getIndex();
+    const std::vector<std::string> &list = team->getList();
+    if (idx < 0 || idx >= (int)list.size())
+        return AutomaticTeam;
+    return Team::getTeam(list[idx]);
 }
 
 void JoinMenu::setTeam(TeamColor teamcol)
 {
-    team->setIndex(teamcol == AutomaticTeam ? 0 : int(teamcol) + 1);
+    const std::string want = Team::getName(teamcol);
+    const std::vector<std::string> &list = team->getList();
+    for (size_t i = 0; i < list.size(); ++i)
+    {
+        if (list[i] == want)
+        {
+            team->setIndex((int)i);
+            return;
+        }
+    }
+    // fallback to Automatic if not found
+    team->setIndex(0);
 }
 
 void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
