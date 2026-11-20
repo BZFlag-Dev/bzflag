@@ -61,6 +61,7 @@ void            setSceneDatabase();
 StartupInfo*        getStartupInfo();
 void            notifyBzfKeyMapChanged();
 bool            setVideoFormat(int, bool test = false);
+bool            isVideoFormatTestRunning();
 void            startPlaying(BzfDisplay* display,
                              SceneRenderer&);
 

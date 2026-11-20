@@ -220,6 +220,10 @@ void FormatMenu::execute()
 
 void FormatMenu::setFormat(bool test)
 {
+    // A test request during another active test does not mean this format is bad.
+    if (test && isVideoFormatTestRunning())
+        return;
+
     if (selectedIndex >= numFormats || badFormats[selectedIndex])
         return;
 

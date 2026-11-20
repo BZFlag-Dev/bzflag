@@ -483,6 +483,11 @@ bool            setVideoFormat(int index, bool test)
     return true;
 }
 
+bool            isVideoFormatTestRunning()
+{
+    return testVideoFormatTimer != 0.0f;
+}
+
 void            addPlayingCallback(PlayingCallback cb, void* data)
 {
     PlayingCallbackItem item;
