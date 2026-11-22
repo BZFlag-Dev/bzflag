@@ -6297,13 +6297,22 @@ void UPnP::setIGD()
     {
         switch (i)
         {
+#if (MINIUPNPC_API_VERSION >= 18)
+        case UPNP_PRIVATEIP_IGD:
+            std::cerr << "Found an IGD with a private WAN address: "
+                      << urls.controlURL
+                      << std::endl;
+            break;
+        case UPNP_DISCONNECTED_IGD:
+#else
         case 2:
-            std::cerr << "Found a non connected IGD"
+#endif
+            std::cerr << "Found a non connected IGD: "
                       << urls.controlURL
                       << std::endl;
             break;
         default:
-            std::cerr << "Not recognized as IGD"
+            std::cerr << "Not recognized as IGD: "
                       << urls.controlURL
                       << std::endl;
             break;
@@ -6323,7 +6332,7 @@ void UPnP::clearIGD()
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
     FreeUPNPUrls(&urls);
 #endif
-    IGD_Found = true;
+    IGD_Found = false;
 }
 
 void UPnP::setLocalInterface()
