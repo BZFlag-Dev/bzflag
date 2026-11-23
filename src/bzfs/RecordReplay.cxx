@@ -1109,7 +1109,7 @@ bool Replay::sendFileList(int playerIndex, const char* options)
             if (entriesSent >= MaxListOutput)
             {
                 snprintf(buffer, MessageLen, "Not listing more then %i entries, "
-                         "try using pattern matching.", MaxListOutput);
+                                             "try using pattern matching.", MaxListOutput);
                 sendMessage(ServerPlayer, playerIndex, buffer);
                 break;
             }

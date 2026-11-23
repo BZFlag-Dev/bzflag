@@ -682,7 +682,7 @@ void resetTeamScores ( void )
     for (int i = RedTeam; i <= PurpleTeam; i++)
     {
         bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins,
-                team[i].team.getWins(), 0);
+            team[i].team.getWins(), 0);
         worldEventManager.callEvents(&eventData);
         eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
         worldEventManager.callEvents(&eventData);
@@ -1694,7 +1694,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
     if (msglen > MessageLen)
     {
         logDebugMessage(1,"WARNING: Network message being sent is too long! "
-                        "(message is %li, cutoff at %d)\n", msglen, MessageLen);
+                          "(message is %li, cutoff at %d)\n", msglen, MessageLen);
         msglen = MessageLen;
     }
 
@@ -3560,7 +3560,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                     int old = team[int(victim->getTeam())].team.getLosses();
                     team[int(victim->getTeam())].team.setLosses(old+delta);
                     bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses,
-                            old, old+delta);
+                        old, old+delta);
                     worldEventManager.callEvents(&eventData);
                 }
             }
@@ -3573,7 +3573,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                     int old = team[winningTeam].team.getWins();
                     team[winningTeam].team.setWins(old+1);
                     bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old,
-                            old+1);
+                        old+1);
                     worldEventManager.callEvents(&eventData);
                 }
                 if (!victim->isTeam(RogueTeam))
@@ -3581,7 +3581,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                     int old = team[int(victim->getTeam())].team.getLosses();
                     team[int(victim->getTeam())].team.setLosses(old+1);
                     bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses,
-                            old, old+1);
+                        old, old+1);
                     worldEventManager.callEvents(&eventData);
                 }
                 if (killer)
@@ -3935,7 +3935,7 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
                 base == playerData->player.getTeam()))
         {
             logDebugMessage(1,"Player %s [%d] might have sent MsgCaptureFlag for taking their own "
-                            "flag onto their own base\n",
+                              "flag onto their own base\n",
                             playerData->player.getCallSign(), playerIndex);
             //return; //sanity check
         }
@@ -3943,7 +3943,7 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
                 base != playerData->player.getTeam()))
         {
             logDebugMessage(1,"Player %s [%d] (%s) might have tried to capture %s flag without "
-                            "reaching their own base. (Player position: %f %f %f)\n",
+                              "reaching their own base. (Player position: %f %f %f)\n",
                             playerData->player.getCallSign(), playerIndex,
                             Team::getName(playerData->player.getTeam()),
                             Team::getName(teamIndex),
@@ -4019,13 +4019,13 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
             int old = team[winningTeam].team.getWins();
             team[winningTeam].team.setWins(old+1);
             bz_TeamScoreChangeEventData_V1 eventData2 = bz_TeamScoreChangeEventData_V1(convertTeam(winningTeam), bz_eWins, old,
-                    old+1);
+                old+1);
             worldEventManager.callEvents(&eventData2);
         }
         int old = team[teamIndex].team.getLosses();
         team[teamIndex].team.setLosses(old+1);
         bz_TeamScoreChangeEventData_V1 eventData3 = bz_TeamScoreChangeEventData_V1(convertTeam(teamIndex), bz_eLosses, old,
-                old+1);
+            old+1);
         worldEventManager.callEvents(&eventData3);
 
         sendTeamUpdate(-1, winningTeam, teamIndex);
@@ -4533,7 +4533,7 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
             {
                 sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
                 logDebugMessage(2,"Kicking player %s [%d] for spamming too much: "
-                                "2 messages sent within %fs after %d warnings\n",
+                                  "2 messages sent within %fs after %d warnings\n",
                                 player.getCallSign(), t, dt, player.getSpamWarns());
                 removePlayer(t, "spam");
                 return true;
@@ -4645,7 +4645,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             break;
         default:
             logDebugMessage(1,"Player [%d] sent packet type (%x) via udp, "
-                            "possible attack from %s\n",
+                              "possible attack from %s\n",
                             t, code, handler->getTargetIP());
             return;
         }
@@ -6562,7 +6562,7 @@ int main(int argc, char **argv)
         if (LOBYTE(wsaData.wVersion) != major || HIBYTE(wsaData.wVersion) != minor)
         {
             logDebugMessage(2,"Version mismatch in Winsock;"
-                            "  got %d.%d, expected %d.%d.  Terminating.\n",
+                              "  got %d.%d, expected %d.%d.  Terminating.\n",
                             (int)LOBYTE(wsaData.wVersion),
                             (int)HIBYTE(wsaData.wVersion),
                             major,
@@ -6742,7 +6742,7 @@ int main(int argc, char **argv)
         else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers)
         {
             std::cerr << "observer count limited to " << ReplayObservers <<
-                      " for replay" << std::endl;
+                         " for replay" << std::endl;
             clOptions->maxTeam[ObserverTeam] = ReplayObservers;
         }
     }

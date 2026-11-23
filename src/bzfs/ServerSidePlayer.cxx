@@ -585,7 +585,7 @@ BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler 
         return false;
 
     std::vector<bz_ServerSidePlayerHandler*>::iterator itr = std::find(serverSidePlayer.begin(),serverSidePlayer.end(),
-            handler);
+        handler);
     if (itr != serverSidePlayer.end())
         serverSidePlayer.erase(itr);
 

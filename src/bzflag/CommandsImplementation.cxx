@@ -643,7 +643,7 @@ bool LocalSetCommand::operator() (const char *commandLine)
         else
         {
             addMessage (NULL, "This is a server-defined variable. "
-                        "Use /set instead of /localset.");
+                              "Use /set instead of /localset.");
         }
     }
     else

@@ -71,7 +71,7 @@ ShotPathSegment::~ShotPathSegment()
 }
 
 ShotPathSegment&    ShotPathSegment::operator=(const
-        ShotPathSegment& segment)
+    ShotPathSegment& segment)
 {
     if (this != &segment)
     {
