@@ -56,7 +56,7 @@ std::istream*           FileManager::createDataInStream(
         if (BZDB.isSet("directory"))
         {
             std::ifstream* stream = new std::ifstream(catPath(BZDB.get("directory"),
-                    filename).c_str(), mode);
+                filename).c_str(), mode);
             if (stream && *stream)
                 return stream;
             delete stream;
@@ -85,7 +85,7 @@ std::istream*           FileManager::createDataInStream(
     if (relative)
     {
         std::ifstream* stream = new std::ifstream(catPath(INSTALL_DATA_DIR,
-                filename).c_str(), mode);
+            filename).c_str(), mode);
         if (stream && *stream)
             return stream;
         delete stream;

@@ -793,7 +793,7 @@ bool BanCommand::operator() (const char  *message,
                 !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban))
         {
             sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-                         " using default ban time");
+                                          " using default ban time");
         }
         else
             durationInt = specifiedDuration;
@@ -928,7 +928,7 @@ bool HostbanCommand::operator() (const char* message,
                     !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban))
             {
                 sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-                             " using default ban time");
+                                              " using default ban time");
             }
             else
                 durationInt = specifiedDuration;
@@ -1068,7 +1068,7 @@ bool IdBanCommand::operator() (const char* message,
                 !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban))
         {
             sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-                         " using default ban time");
+                                          " using default ban time");
         }
         else
             durationInt = specifiedDuration;
@@ -1189,7 +1189,7 @@ bool MasterBanCommand::operator() (const char    *message,
     {
         sendMessage(ServerPlayer, t,
                     TextUtils::format("%s, you are presently not authorized to "
-                                      "run /masterban", callsign.c_str()).c_str());
+                          "run /masterban", callsign.c_str()).c_str());
         return true;
     }
 
@@ -1204,7 +1204,7 @@ bool MasterBanCommand::operator() (const char    *message,
     if (clOptions->suppressMasterBanList)
     {
         sendMessage(ServerPlayer, t, "The master ban list is disabled on this "
-                    "server.");
+                                     "server.");
     }
 
     std::string argument = &message[10]; /* skip "/masterban" */
@@ -1275,7 +1275,7 @@ bool MasterBanCommand::operator() (const char    *message,
         {
             sendMessage(ServerPlayer, t,
                         TextUtils::format("There are %zu bans, only displaying the "
-                                          "first 20", bans.size()).c_str());
+                              "first 20", bans.size()).c_str());
 
         }
         else if (bans.empty())

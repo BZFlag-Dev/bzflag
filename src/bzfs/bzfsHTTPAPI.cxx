@@ -1191,7 +1191,7 @@ public:
                 if (vDir->RequiredAuthentiction == eHTTPOther)
                 {
                     bzhttp_eAuthenticationStatus authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,
-                            NULL,Request);
+                        NULL,Request);
                     if (authStatus == eAuthOK)
                     {
                         Authenticated = true;

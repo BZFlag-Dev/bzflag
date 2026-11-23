@@ -118,9 +118,9 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef)
     for (i = 0; i < MaterialCount; i++)
         mats[i] = MATERIALMGR.addMaterial(&materials[i]);
     SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
-            useNormals, hemisphere, divisions, mats,
-            phydrv,
-            smoothBounce, driveThrough, shootThrough, ricochet);
+        useNormals, hemisphere, divisions, mats,
+        phydrv,
+        smoothBounce, driveThrough, shootThrough, ricochet);
 
     if (sphere->isValid())
         groupdef->addObstacle(sphere);

@@ -173,11 +173,11 @@ int main(int argc, char* argv[])
             if (outputFileList[i] == fileItem)
             {
                 std::cerr <<
-                          "Directory " <<
+                "Directory " <<
                           outputDirectory <<
-                          " contains file " <<
+                " contains file " <<
                           fileItem <<
-                          " which would be overwritten by output." <<
+                " which would be overwritten by output." <<
                           std::endl;
 
                 closedir(outputDirectoryStream);
@@ -253,9 +253,9 @@ int main(int argc, char* argv[])
                 if ((ftError = FT_Load_Glyph(ftFaces[i], FT_Get_Char_Index(ftFaces[i], requiredCharacters[j]), FT_LOAD_DEFAULT)))
                 {
                     std::cerr <<
-                              "failed; unable to load glyph for character '" <<
+                    "failed; unable to load glyph for character '" <<
                               requiredCharacters[j] <<
-                              "'." <<
+                    "'." <<
                               std::endl;
 
                     return EXIT_FAILURE;
@@ -269,9 +269,9 @@ int main(int argc, char* argv[])
                                    )))
                     {
                         std::cerr <<
-                                  "failed; unable to render bitmap of glyph for character '" <<
+                        "failed; unable to render bitmap of glyph for character '" <<
                                   requiredCharacters[j] <<
-                                  "'." <<
+                        "'." <<
                                   std::endl;
 
                         return EXIT_FAILURE;
@@ -293,16 +293,16 @@ int main(int argc, char* argv[])
                     for (int column = 0; column < charInfo.width; ++column)
                         if (ftFaces[i]->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
                             ((char*) charInfo.bitmap)[row * charInfo.width + column] = *(
-                                        ftFaces[i]->glyph->bitmap.buffer +
-                                        row * ftFaces[i]->glyph->bitmap.pitch +
-                                        column / 8
-                                    ) & (128 >> (column % 8)) ? 0xFF : 0; // splice out the individual bit
+                                    ftFaces[i]->glyph->bitmap.buffer +
+                                    row * ftFaces[i]->glyph->bitmap.pitch +
+                                    column / 8
+                                ) & (128 >> (column % 8)) ? 0xFF : 0; // splice out the individual bit
                         else
                             ((char*) charInfo.bitmap)[row * charInfo.width + column] = *(
-                                        ftFaces[i]->glyph->bitmap.buffer +
-                                        row * ftFaces[i]->glyph->bitmap.pitch +
-                                        column
-                                    );
+                                    ftFaces[i]->glyph->bitmap.buffer +
+                                    row * ftFaces[i]->glyph->bitmap.pitch +
+                                    column
+                                );
 
                 // store the character info
                 charInfoList.push_back(charInfo);
@@ -351,11 +351,11 @@ int main(int argc, char* argv[])
             }
 
             fmtFile <<
-                    "NumChars: " << charInfoList.size() << "\n" <<
-                    "TextureWidth: " << textureWidth << "\n" <<
-                    "TextureHeight: " << textureHeight << "\n" <<
-                    "TextZStep: " << maxPixels << "\n" <<
-                    "\n";
+            "NumChars: " << charInfoList.size() << "\n" <<
+            "TextureWidth: " << textureWidth << "\n" <<
+            "TextureHeight: " << textureHeight << "\n" <<
+            "TextZStep: " << maxPixels << "\n" <<
+            "\n";
 
             // copy all of the character bitmap values into the texture's alpha channel and write format data
             for (size_t j = 0; j < charInfoList.size(); ++j)
@@ -373,15 +373,15 @@ int main(int argc, char* argv[])
                         ] = ((char*) charInfoList[j].bitmap)[row * charInfoList[j].width + column];
 
                 fmtFile <<
-                        "Char: \"" << charInfoList[j].character << "\"\n" <<
-                        "InitialDist: " << charInfoList[j].adjustX << "\n" <<
-                        "Width: " << charInfoList[j].width << "\n" <<
-                        "Whitespace: " << (charInfoList[j].advanceX - charInfoList[j].adjustX - charInfoList[j].width) << "\n" <<
-                        "StartX: " << basePositionX << "\n" <<
-                        "EndX: " << (basePositionX + charInfoList[j].width) << "\n" <<
-                        "StartY: " << (j / (textureWidth / maxPixels) * maxPixels) << "\n" <<
-                        "EndY: " << ((j / (textureWidth / maxPixels) + 1) * maxPixels - paddingPixels) << "\n" <<
-                        "\n";
+                "Char: \"" << charInfoList[j].character << "\"\n" <<
+                "InitialDist: " << charInfoList[j].adjustX << "\n" <<
+                "Width: " << charInfoList[j].width << "\n" <<
+                "Whitespace: " << (charInfoList[j].advanceX - charInfoList[j].adjustX - charInfoList[j].width) << "\n" <<
+                "StartX: " << basePositionX << "\n" <<
+                "EndX: " << (basePositionX + charInfoList[j].width) << "\n" <<
+                "StartY: " << (j / (textureWidth / maxPixels) * maxPixels) << "\n" <<
+                "EndY: " << ((j / (textureWidth / maxPixels) + 1) * maxPixels - paddingPixels) << "\n" <<
+                "\n";
             }
 
             // write the texture to file

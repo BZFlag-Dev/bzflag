@@ -260,7 +260,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (!pFont)
     {
         logDebugMessage(2,"Could not find applicable font size for rendering; font face ID %d, "
-                        "requested size %f\n", faceID, size);
+                          "requested size %f\n", faceID, size);
         return;
     }
 
@@ -501,7 +501,7 @@ float FontManager::getStrLength(int faceID, float size, const std::string &text,
     if (!pFont)
     {
         logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
-                        "requested size %f\n", faceID, size);
+                          "requested size %f\n", faceID, size);
         return 0.0f;
     }
 
@@ -590,7 +590,7 @@ ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, flo
         if (!font)
         {
             logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
-                            "requested size %f\n", faceID, desiredSize);
+                              "requested size %f\n", faceID, desiredSize);
             return NULL;
         }
         actualSize = (float)font->getSize();
