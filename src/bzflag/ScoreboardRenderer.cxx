@@ -749,7 +749,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
         float badFactor = 1.5f;
         if (linSpeed > player->getMaxSpeed()*badFactor)
             playerInfo += ColorStrings[RedColor];
-        if (linSpeed > player->getMaxSpeed())
+        else if (linSpeed > player->getMaxSpeed())
             playerInfo += ColorStrings[YellowColor];
         else if (linSpeed < 0.0001f)
             playerInfo += ColorStrings[GreyColor];
